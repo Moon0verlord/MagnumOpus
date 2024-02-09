@@ -1,3 +1,3 @@
 # MagnumOpus
 
-## WE WILL BE COOKING.
+## WE WILL BE COOKING CHILDREN.
