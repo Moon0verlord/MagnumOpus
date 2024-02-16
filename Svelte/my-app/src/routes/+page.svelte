@@ -13,6 +13,8 @@
         <span class="btm-nav-label">Profile</span>
     </button>
 </div>
+
+<!-- Content -->
 <div class="flex justify-center items-center min-h-screen">
     <div class="card w-96 bg-base-100 shadow-xl">
         <figure class="px-10 pt-10">
