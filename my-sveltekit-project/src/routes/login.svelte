@@ -1,0 +1,85 @@
+<script>
+	import { goto } from '$app/navigation';
+
+	import 'daisyui/dist/full.css';
+	import './styles.css'; 
+	let name = "Dave";
+	let password = "123";
+	let nameGuess = "";
+	let passwordGuess = "";
+	let message = "";
+	function navigateToCounter() {
+		goto('/dashboard')
+	}
+	function CheckLogin()
+	{
+		if(name != nameGuess || password !=passwordGuess)
+		{
+			message =  "Incorrect name or password "
+		}
+		else
+		{
+			navigateToCounter()
+
+		}
+	}
+	import { onMount } from 'svelte';
+  
+  // Set the background image on mount
+  onMount(() => {
+	
+  });
+  
+</script>
+<style>
+	/* Create an overlay with a blurred background */
+	
+	.btn {
+    /* Add your existing button styles here */
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+	border-radius: 10%;
+  }
+
+  .btn-wide {
+    width: 150px; /* Example width */
+  }
+
+  /* Apply a light blue tint to the buttons */
+  .btn-tint {
+    background-color: #10B3AE; 
+	color: black;
+	
+  }
+.Message{
+	color:black
+}
+.container {
+     
+      background-color: #fff;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+	  overflow: hidden
+    }
+  </style>
+  
+  
+  
+  <div class="containerlarge py-10 px-10 mx-0 min-w-full flex flex-col items-center">
+		<p class="Message">{message}</p>
+		<div class="container border border-black border-1/2 w-6/12 flex flex-col items-center space-y-1 py-3 rounded-lg bg-white">
+			<label class="input input-bordered flex items-center gap-2">
+			  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+				<path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
+			  </svg>
+			  <input bind:value={nameGuess} type="text" class="w-full" placeholder="Username" />
+			</label>
+			<label class="input input-bordered flex items-center gap-2">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+					<path fill-rule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clip-rule="evenodd" /></svg>
+				<input bind:value={passwordGuess} type="password" class="w-full" placeholder="Password"/>
+			</label>
+		<button class="btn btn-wide btn-tint" on:click={CheckLogin}>Login</button>
+<button class="btn btn-wide btn-tint" on:click={CheckLogin}>Register</button>
+	</div>
+</div>
