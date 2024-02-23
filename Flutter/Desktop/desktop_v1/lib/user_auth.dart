@@ -7,8 +7,30 @@ class LoginPage extends StatelessWidget {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
   final sqlite3.Database db = sqlite3.sqlite3.open('assets/db/auth.db');
+
+void authenticateUser(BuildContext context) {
+  String email = emailController.text;
+  String password = passwordController.text;
+  final result = db.select('SELECT * FROM users WHERE email = ? AND password = ?', [email, password]);
+  if (result.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text(
+          'Invalid email or password', 
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+    return;
+  } else {
+    Navigator.pushNamed(context, '/dashboard');
+  }
+  print('Email: $email, Password: $password');
+  print('Authenticating user...');
+}
 
 
   @override
@@ -121,17 +143,7 @@ class LoginPage extends StatelessWidget {
                           ),
                           onPressed: () {
                             // Add code to authenticate user
-                            String email = emailController.text;
-                            String password = passwordController.text;
-                            final result = db.select('SELECT * FROM users WHERE email = ? AND password = ?', [email, password]);
-                            if (result.isEmpty) {
-                              print('Invalid email or password');
-                              return;
-                            }
-                            String name = result[0]['name'];
-                            print('Email: $email, Password: $password');
-                            print('Authenticating user...');
-                            print("Welcome, $name! ");
+                            authenticateUser(context);
                           },
                           child: const Text('Login',
                             style: TextStyle(

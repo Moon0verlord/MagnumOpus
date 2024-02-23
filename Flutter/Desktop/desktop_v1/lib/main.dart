@@ -1,5 +1,6 @@
 import 'package:desktop_v1/user_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:desktop_v1/dashboard.dart';
 
 
 
@@ -17,7 +18,10 @@ class MainApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue.shade600),
         brightness: Brightness.light,),
-      home: LoginPage(), // Use LoginPage as the home widget
+      routes: {
+        '/': (context) => LoginPage(),
+        '/dashboard': (context) => Dashboard(),
+      },
     );
   }
 }
