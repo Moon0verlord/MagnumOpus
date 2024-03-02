@@ -20,6 +20,7 @@ class MainApp extends StatelessWidget {
         brightness: Brightness.light,),
       routes: {
         '/': (context) => LoginPage(),
+        '/signup': (context) => SignupPage(),
         '/dashboard': (context) => Dashboard(),
       },
     );

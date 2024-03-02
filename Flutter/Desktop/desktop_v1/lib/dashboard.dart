@@ -23,42 +23,46 @@ class _DashboardState extends State<Dashboard> {
       }
     }
 
-    return Scaffold(
-      body: Row(
-        children: [
-          SafeArea(
-            child: NavigationRail(
-              extended: false,
-              destinations: const [
-                NavigationRailDestination(
-                  icon: Icon(Icons.favorite_border),
-                  label: Text('Dashboard'),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          body: Row(
+            children: [
+              SafeArea(
+                child: NavigationRail(
+                  extended: constraints.maxWidth > 600,
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.favorite_border),
+                      label: Text('Dashboard'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.bookmark_border),
+                      label: Text('Second'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.star_border),
+                      label: Text('Third'),
+                    ),
+                  ],
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: (value) {
+                    setState(() {
+                      selectedIndex = value;
+                    });
+                  },
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.bookmark_border),
-                  label: Text('Second'),
+              ),
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: getPageWidget(), // Dynamically display the selected page/widget
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.star_border),
-                  label: Text('Third'),
-                ),
-              ],
-              selectedIndex: selectedIndex,
-              onDestinationSelected: (value) {
-                setState(() {
-                  selectedIndex = value;
-                });
-              },
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            child: Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              child: getPageWidget(), // Dynamically display the selected page/widget
-            ),
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 }
