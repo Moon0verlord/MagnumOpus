@@ -1,0 +1,28 @@
+﻿#### Schuberg GET Stations
+GET https://schubergphilis.workflows.okta-emea.com/api/flo/d71da429cdb215bef89ffe6448097dee/invoke?clientToken=01d762901510b3c7f422595fa18d8d7bd71c1f3e58ad860fd3ae2d0c87a80955&url=%2Fpoi%2Fv1%2Flocations&method=GET
+
+#### GET ALL USERS
+GET http://localhost:3000/api/users
+
+#### POST NEW USER
+POST http://localhost:3000/api/users
+Content-Type:  application/json
+
+{
+  "firstName" : "TestX",
+  "lastName" : "LastNameX"
+}
+
+#### GET SPECIFIC USER BY ID
+GET http://localhost:3000/api/users/1
+
+#### CHANGE USER DATA BY ID
+PUT http://localhost:3000/api/users/1
+Content-Type: application/json
+
+{
+  "firstName": "ChangedByPUT"
+}
+
+#### DELETE USER BY ID
+DELETE http://localhost:3000/api/users/1
