@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite3;
 
+
 // Custom text field widget to reduce duplication
 Widget customTextField({
   required TextEditingController controller,
@@ -59,6 +60,8 @@ class LoginPage extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).colorScheme.error,
         duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
     return;
@@ -71,6 +74,8 @@ class LoginPage extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
         duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
     Navigator.pushNamed(context, '/dashboard');
@@ -170,6 +175,9 @@ class SignupPage extends StatelessWidget {
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
         duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+
       ),
     );
     print('Email: $email, Password: $password');
