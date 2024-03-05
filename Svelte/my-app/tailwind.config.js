@@ -1,12 +1,4 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./src/**/*.{html,svelte,js,ts}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-  daisyui: {
-    themes: ["light", "dark"],
-  },
-}
-
+module.exports = {
+  content: ['./src/routes/**/*.{html,svelte,js,ts}'],
+  plugins: [require('daisyui')],
+};
