@@ -3,11 +3,14 @@ import { object, string, type InferType } from 'yup'
 import * as yup from 'yup';
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
+definePageMeta({
+  layout: 'empty'
+})
+
+
 const toast = useToast();
-
-
 const schema = object({
-  username: string().required('Required').min(3, 'Must at least be 2 characters'),
+  username: string().required('Required').min(5, 'Must at least be 5 characters'),
   password: string()
       .min(8, 'Must be at least 8 characters')
       .required('Required'),
