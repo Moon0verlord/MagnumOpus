@@ -143,7 +143,10 @@ class _DashboardContentState extends State<DashboardContent> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SizedBox(
                   height: 25,
-                  child: LinearProgressIndicator(),
+                  child: LinearProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                  ),
                 );
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
@@ -160,6 +163,7 @@ class _DashboardContentState extends State<DashboardContent> {
                           subtitle: Text('Status: ${station.status}\nStreet Name: ${station.streetname}\nMax Power: ${station.maxPower}'),
                           trailing: station.status == 'available'
                           ? ElevatedButton(
+                            
                             onPressed: (){
 
                             },
