@@ -3,13 +3,13 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite3;
 
-
 // Custom text field widget to reduce duplication
 Widget customTextField({
   required TextEditingController controller,
   required IconData icon,
   required String label,
   bool isPassword = false,
+  ValueChanged<String>? onFieldSubmitted,
 }) {
   return TextFormField(
     controller: controller,
@@ -26,6 +26,7 @@ Widget customTextField({
       enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
     ),
     obscureText: isPassword,
+    onFieldSubmitted: onFieldSubmitted,
   );
 }
 
@@ -45,6 +46,7 @@ class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final sqlite3.Database db = sqlite3.sqlite3.open('assets/db/auth.db');
+  final _formKey = GlobalKey<FormState>();
 
   // Authentication logic for login
   void authenticateUser(BuildContext context) {
@@ -101,36 +103,51 @@ class LoginPage extends StatelessWidget {
             elevation: 5,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Image.asset('assets/images/logo.png', width: 150, height: 150),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        const Text('Login', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 15),
-                        customTextField(controller: emailController, icon: Icons.email, label: 'Email'),
-                        const SizedBox(height: 20),
-                        customTextField(controller: passwordController, icon: Icons.lock, label: 'Password', isPassword: true),
-                        const SizedBox(height: 20),
-                        customButton(
-                          text: 'Login',
-                          onPressed: () {
-                            authenticateUser(context);
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        customButton(
-                          text: 'Sign up',
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/signup');
-                          },
-                        ),
-                      ],
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    Image.asset('assets/images/logo.png', width: 150, height: 150),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          const Text('Login', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 15),
+                          customTextField(controller: emailController, icon: Icons.email, label: 'Email'),
+                          const SizedBox(height: 20),
+                          customTextField(
+                            controller: passwordController, 
+                            icon: Icons.lock, 
+                            label: 'Password', 
+                            isPassword: true,
+                            onFieldSubmitted: (_) {
+                              if (_formKey.currentState!.validate()) {
+                                authenticateUser(context);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          customButton(
+                            text: 'Login',
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                authenticateUser(context);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          customButton(
+                            text: 'Sign up',
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/signup');
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -141,13 +158,17 @@ class LoginPage extends StatelessWidget {
 }
 
 
+
+
 class SignupPage extends StatelessWidget {
   SignupPage({Key? key}) : super(key: key);
 
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   final sqlite3.Database db = sqlite3.sqlite3.open('assets/db/auth.db');
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> registerUser(BuildContext context) async {
     String email = emailController.text;
@@ -186,7 +207,6 @@ class SignupPage extends StatelessWidget {
     Navigator.pushNamed(context, '/');
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,32 +224,48 @@ class SignupPage extends StatelessWidget {
             elevation: 5,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Image.asset('assets/images/logo.png', width: 150, height: 150),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      // todo add a name field
-                      children: <Widget>[
-                        const Text('Signup', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 15),
-                        customTextField(controller: emailController, icon: Icons.email, label: 'Email'),
-                        const SizedBox(height: 20),
-                        customTextField(controller: passwordController, icon: Icons.lock, label: 'Password', isPassword: true),
-                        const SizedBox(height: 20),
-                        customTextField(controller: confirmPasswordController, icon: Icons.lock, label: 'Confirm Password', isPassword: true),
-                        const SizedBox(height: 20),
-                        customButton(
-                          text: 'Signup',
-                          onPressed: () async {
-                            await registerUser(context);
-                          },
-                        ),
-                      ],
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    Image.asset('assets/images/logo.png', width: 150, height: 150),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          const Text('Signup', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 15),
+                          customTextField(controller: nameController, icon: Icons.person, label: 'Name'),
+                          const SizedBox(height: 20),
+                          customTextField(controller: emailController, icon: Icons.email, label: 'Email'),
+                          const SizedBox(height: 20),
+                          customTextField(controller: passwordController, icon: Icons.lock, label: 'Password', isPassword: true),
+                          const SizedBox(height: 20),
+                          customTextField(
+                            controller: confirmPasswordController, 
+                            icon: Icons.lock, 
+                            label: 'Confirm Password', 
+                            isPassword: true,
+                            onFieldSubmitted: (_) async {
+                              if (_formKey.currentState!.validate()) {
+                                await registerUser(context);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          customButton(
+                            text: 'Signup',
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                await registerUser(context);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
