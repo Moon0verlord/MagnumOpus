@@ -14,10 +14,6 @@ const links = [
     label: 'Requests',
     icon: 'i-heroicons-arrows-right-left',
     to: '/requests'
-  }, {
-    label: 'API',
-    icon: 'i-heroicons-command-line',
-    to: '/api_page'
   }], [{
     label: 'Settings',
     icon: 'i-heroicons-cog-6-tooth-20-solid',

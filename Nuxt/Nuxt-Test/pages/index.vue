@@ -57,16 +57,29 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
           </div>
           <a href="#" class="text-xs text-base hover:underline hover:text-blue-600">Forget Password?</a>
           <div>
-            <UButton type="submit" class="btn btn-block" color="blue">Login</UButton>
-            <div class="divider accent-blue-500"></div>
-            <label class="label">
-              <span class="text-base label-text text-xs">No account? Register here.</span>
-            </label>
-            <NuxtLink to="register">
-              <UButton class="btn" color="blue">Register</UButton>
-            </NuxtLink>
+            <UButton type="submit" class="btn btn-block" color="blue">
+              Login
+              <template #leading>
+                <UIcon name="i-heroicons-arrow-right-20-solid" />
+              </template>
+            </UButton>
           </div>
         </UForm>
+        <div class="divider accent-blue-500">OR</div>
+        <UButton color="black" label="Login with Okta" block>
+          <template #leading>
+            <UAvatar src="https://i.ibb.co/bN0cXRj/okta-icon-logo-BA04542-B4-E-seeklogo-com.png" size="2xs"/>
+          </template>
+        </UButton>
+        <div class="w-full h-full flex flex-col flex-start">
+          <label class="label">
+            <span class="text-base label-text text-xs">No account? Register here.</span>
+          </label>
+          <NuxtLink to="register">
+            <UButton class="btn" color="blue">Register</UButton>
+          </NuxtLink>
+        </div>
+       
       </div>
     </div>
   </div>
