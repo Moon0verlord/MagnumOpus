@@ -91,6 +91,45 @@ class Station {
   }
 }
 
+enum StationStatus { all, available, charging, unknown }
+
+class StatusFilter extends StatefulWidget {
+  final StationStatus selectedStatus;
+  final ValueChanged<StationStatus> onStatusChanged;
+
+  const StatusFilter({required this.selectedStatus, required this.onStatusChanged, Key? key}) : super(key: key);
+
+  @override
+  State<StatusFilter> createState() => _StatusFilterState();
+}
+
+class _StatusFilterState extends State<StatusFilter> {
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<StationStatus>(
+      segments: const <ButtonSegment<StationStatus>>[
+        ButtonSegment<StationStatus>(
+            value: StationStatus.all,
+            label: Text('All')),
+        ButtonSegment<StationStatus>(
+            value: StationStatus.available,
+            label: Text('Available')),
+        ButtonSegment<StationStatus>(
+            value: StationStatus.charging,
+            label: Text('Charging')),
+        ButtonSegment<StationStatus>(
+            value: StationStatus.unknown,
+            label: Text('Unavailable')),
+      ],
+      selected: <StationStatus>{widget.selectedStatus},
+      onSelectionChanged: (Set<StationStatus> newSelection) {
+        widget.onStatusChanged(newSelection.first);
+      },
+    );
+  }
+}
+
+
 class DashboardContent extends StatefulWidget {
   const DashboardContent({super.key});
 
@@ -100,7 +139,9 @@ class DashboardContent extends StatefulWidget {
 
 class _DashboardContentState extends State<DashboardContent> {
   late Future<List<Station>> stationDataFuture;
-
+    List<Station> allStations = [];
+  List<Station> filteredStations = [];
+  StationStatus selectedStatus = StationStatus.all;
   @override
   void initState() {
     super.initState();
@@ -112,21 +153,32 @@ class _DashboardContentState extends State<DashboardContent> {
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       var stationsJson = jsonResponse['stationList'] as List;
-      return stationsJson.map((station) => Station.fromJson(station)).toList();
+      allStations = stationsJson.map((station) => Station.fromJson(station)).toList();
+      filterStations();
+      return filteredStations;
     } else {
       throw Exception('Failed to load dashboard data');
     }
   }
 
+  void filterStations() {
+    if (selectedStatus != StationStatus.all) {
+      String statusString = selectedStatus.toString().split('.').last;
+      filteredStations = allStations.where((station) => station.status == statusString).toList();
+    } else {
+      filteredStations = List.from(allStations);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'Dashboard Home',
+            'Welcome User',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           ElevatedButton(
@@ -135,51 +187,85 @@ class _DashboardContentState extends State<DashboardContent> {
                 stationDataFuture = fetchStationData();
               });
             },
-            child: Text('Dashboard Action'),
+            child: Text('Refresh Stations'),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StatusFilter(
+              selectedStatus: selectedStatus,
+              onStatusChanged: (newStatus) {
+                setState(() {
+                  selectedStatus = newStatus;
+                  filterStations();
+                });
+              },
+            ),
           ),
           FutureBuilder<List<Station>>(
             future: stationDataFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(
-                  height: 25,
-                  child: LinearProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                double screenHeight = MediaQuery.of(context).size.height;
+                double screenWidth = MediaQuery.of(context).size.width;
+                return Padding(
+                  padding: EdgeInsets.only(top:10),
+                  child: SizedBox(
+                    height: 25,
+                    width: screenWidth * 0.6,
+                    child: const LinearProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                    ),
                   ),
                 );
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      var station = snapshot.data![index];
-                      return Card(
-                        elevation: 5,
-                        child: ListTile(
-                          title: Text('ID: ${station.id}'),
-                          subtitle: Text('Status: ${station.status}\nStreet Name: ${station.streetname}\nMax Power: ${station.maxPower}'),
-                          trailing: station.status == 'available'
-                          ? ElevatedButton(
-                            
-                            onPressed: (){
-
-                            },
-                            child: const Text('Start'),
-                          )
-                          : station.status == 'charging'
-                          ? ElevatedButton(
-                            onPressed: (){
+                double screenHeight = MediaQuery.of(context).size.height;
+                double screenWidth = MediaQuery.of(context).size.width;
+                var stations = filteredStations;
+                return Padding(
+                  padding: const EdgeInsets.only(top:20),
+                  child: SizedBox(
+                    height: screenHeight * 0.7,
+                    width: screenWidth * 0.6,
+                    child: ListView.builder(
+                      itemCount: stations.length,
+                      itemBuilder: (context, index) {
+                        var station = stations[index];
+                        return Card(
+                          elevation: 5,
+                          child: ListTile(
+                            title: Text('Station ${station.streetname}'),
+                            subtitle: Text('Status: ${station.status}\nStreet Name: ${station.streetname}\nMax Power: ${station.maxPower}'),
+                            trailing: station.status == 'available'
+                            ? ElevatedButton(
                               
-                            },
-                            child: const Text('Request'),
-                        )
-                        : null
-                        ),
-                      );
-                    }
+                              onPressed: (){
+                  
+                              },
+                              child: const Text('Start'),
+                            )
+                            : station.status == 'charging'
+                            ? ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.green),
+                                foregroundColor: MaterialStateProperty.all(Colors.white),
+                              ),
+                              onPressed: (){
+                                
+                              },
+                              child: const Text('Request'),
+                          )
+                          : const ElevatedButton(
+                            onPressed: null,
+                            
+                            child: Text('Unavailable'),
+                          ),
+                          ),
+                        );
+                      }
+                    ),
                   ),
                 );
               }

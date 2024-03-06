@@ -3,31 +3,71 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite3;
 
-// Custom text field widget to reduce duplication
-Widget customTextField({
-  required TextEditingController controller,
-  required IconData icon,
-  required String label,
-  bool isPassword = false,
-  ValueChanged<String>? onFieldSubmitted,
-}) {
-  return TextFormField(
-    controller: controller,
-    cursorColor: Colors.white,
-    style: const TextStyle(color: Colors.white),
-    decoration: InputDecoration(
-      prefixIcon: Icon(icon, color: Colors.white),
-      labelText: label,
-      hintText: 'Enter your $label',
-      hintStyle: const TextStyle(color: Colors.white60),
-      labelStyle: const TextStyle(color: Colors.white),
-      border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-      enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-    ),
-    obscureText: isPassword,
-    onFieldSubmitted: onFieldSubmitted,
-  );
+class CustomTextField extends StatefulWidget {
+  final TextEditingController controller;
+  final IconData icon;
+  final String label;
+  final bool isPassword;
+  final ValueChanged<String>? onFieldSubmitted;
+  final String? Function(String?)? validator;
+
+  CustomTextField({
+    required this.controller,
+    required this.icon,
+    required this.label,
+    this.isPassword = false,
+    this.onFieldSubmitted,
+    this.validator,
+  });
+
+  @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Theme(
+      data: ThemeData(
+        textSelectionTheme: TextSelectionThemeData(
+          selectionColor: Colors.white70,
+        ),
+      ),
+      child: TextFormField(
+        controller: widget.controller,
+        cursorColor: Colors.white,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          prefixIcon: Icon(widget.icon, color: Colors.white),
+          labelText: widget.label,
+          hintText: 'Enter your ${widget.label}',
+          hintStyle: const TextStyle(color: Colors.white60),
+          labelStyle: const TextStyle(color: Colors.white),
+          border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          suffixIcon: widget.isPassword
+              ? IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                )
+              : null,
+        ),
+        obscureText: widget.isPassword ? _obscureText : false,
+        onFieldSubmitted: widget.onFieldSubmitted,
+        validator: widget.validator,
+      ),
+    );
+  }
 }
 
 // Custom button widget to reduce duplication
@@ -90,8 +130,8 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: const Text('Login Page'),
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        title: const Text('Login'),
       ),
       body: Center(
         child: SizedBox(
@@ -114,9 +154,22 @@ class LoginPage extends StatelessWidget {
                         children: <Widget>[
                           const Text('Login', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 15),
-                          customTextField(controller: emailController, icon: Icons.email, label: 'Email'),
+                          CustomTextField(
+                            controller: emailController, 
+                          icon: Icons.email, 
+                          label: 'Email' ,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Email is required';
+                            }
+                            if (!value.contains('@')) {
+                              return 'Invalid email';
+                            }
+                            return null;
+                          },
+                          ),
                           const SizedBox(height: 20),
-                          customTextField(
+                          CustomTextField(
                             controller: passwordController, 
                             icon: Icons.lock, 
                             label: 'Password', 
@@ -125,6 +178,15 @@ class LoginPage extends StatelessWidget {
                               if (_formKey.currentState!.validate()) {
                                 authenticateUser(context);
                               }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Password is required';
+                              }
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
+                              return null;
                             },
                           ),
                           const SizedBox(height: 20),
@@ -228,20 +290,35 @@ class SignupPage extends StatelessWidget {
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
-                    Image.asset('assets/images/logo.png', width: 150, height: 150),
+                    Image.asset('assets/images/logo.png', width: 120, height: 120),
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           const Text('Signup', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 15),
-                          customTextField(controller: nameController, icon: Icons.person, label: 'Name'),
+                          CustomTextField(controller: nameController,
+                           icon: Icons.person,
+                            label: 'Name'
+                            ),
                           const SizedBox(height: 20),
-                          customTextField(controller: emailController, icon: Icons.email, label: 'Email'),
+                          CustomTextField(controller: emailController, 
+                          icon: Icons.email, 
+                          label: 'Email',
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Email is required';
+                            }
+                            if (!value.contains('@')) {
+                              return 'Invalid email';
+                            }
+                            return null;
+                          },
+                          ),
                           const SizedBox(height: 20),
-                          customTextField(controller: passwordController, icon: Icons.lock, label: 'Password', isPassword: true),
+                          CustomTextField(controller: passwordController, icon: Icons.lock, label: 'Password', isPassword: true),
                           const SizedBox(height: 20),
-                          customTextField(
+                          CustomTextField(
                             controller: confirmPasswordController, 
                             icon: Icons.lock, 
                             label: 'Confirm Password', 
@@ -251,8 +328,17 @@ class SignupPage extends StatelessWidget {
                                 await registerUser(context);
                               }
                             },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Password is required';
+                              }
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
+                              return null;
+                            },
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 40),
                           customButton(
                             text: 'Signup',
                             onPressed: () async {

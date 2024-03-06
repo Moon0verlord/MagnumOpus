@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue.shade600),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade500),
         brightness: Brightness.light,),
       routes: {
         '/': (context) => LoginPage(),
