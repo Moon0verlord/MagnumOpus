@@ -88,7 +88,6 @@ class LoginPage extends StatelessWidget {
   final sqlite3.Database db = sqlite3.sqlite3.open('assets/db/auth.db');
   final _formKey = GlobalKey<FormState>();
 
-  // Authentication logic for login
   void authenticateUser(BuildContext context) {
   String email = emailController.text;
   String password = passwordController.text;
@@ -131,54 +130,58 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        title: const Text('Login'),
+        title: const Text('Sign in Page'),
       ),
       body: Center(
         child: SizedBox(
-          width: 500,
-          height: 600,
+          width: 1000, // Adjust the width as needed
+          height: 400,
           child: Card(
             color: Theme.of(context).colorScheme.primary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    Image.asset('assets/images/logo.png', width: 150, height: 150),
-                    Expanded(
+            child: Row( // Use Row instead of Column
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset('assets/images/logo.png', width: 150, height: 150, alignment: Alignment.center),// Adjust this value to bring the text closer to the image
+                        const Text('Sign in', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Form(
+                      key: _formKey,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const Text('Login', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 15),
                           CustomTextField(
-                            controller: emailController, 
-                          icon: Icons.email, 
-                          label: 'Email' ,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Email is required';
-                            }
-                            if (!value.contains('@')) {
-                              return 'Invalid email';
-                            }
-                            return null;
-                          },
+                            controller: emailController,
+                            icon: Icons.email,
+                            label: 'Email',
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Email is required';
+                              }
+                              if (!value.contains('@')) {
+                                return 'Invalid email';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 20),
                           CustomTextField(
-                            controller: passwordController, 
-                            icon: Icons.lock, 
-                            label: 'Password', 
+                            controller: passwordController,
+                            icon: Icons.lock,
+                            label: 'Password',
                             isPassword: true,
-                            onFieldSubmitted: (_) {
-                              if (_formKey.currentState!.validate()) {
-                                authenticateUser(context);
-                              }
-                            },
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Password is required';
@@ -189,7 +192,7 @@ class LoginPage extends StatelessWidget {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 40), // Adjust spacing as needed
                           customButton(
                             text: 'Login',
                             onPressed: () {
@@ -198,7 +201,7 @@ class LoginPage extends StatelessWidget {
                               }
                             },
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20), // Adjust spacing as needed
                           customButton(
                             text: 'Sign up',
                             onPressed: () {
@@ -208,9 +211,9 @@ class LoginPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
