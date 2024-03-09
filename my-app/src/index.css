@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.h1{
+    color: blue;
+}
+@media only screen and (max-width: 1200px) {
+    .schimg {
+        width: 7rem;
+        height: 5rem;
+    }
+}
+input {
+    display: inline-block;
+    padding: 4px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.error-message {
+    color: red;
+    padding: 8px;
+}
+.error-input {
+    box-shadow: 0px 0px 2px 1px red;
+}
+ul:before{
+     content:attr(aria-label);
+     font-size:120%;
+     font-weight:bold;
+     margin-left:-15px;
+ }

@@ -1,0 +1,68 @@
+{
+  "stationList": [
+    {
+      "id": "ec780ed9-6120-4396-b133-f722204d1798",
+      "locationId": "0000673D-7BF1-4F2D-96B2-F14D65A40A5F",
+      "reference": null,
+      "status": "available",
+      "coordinates": {
+        "lng": 4.86162,
+        "lat": 52.35539
+      },
+      "address": {
+        "state": null,
+        "streetName": "Koningslaan 54",
+        "postcode": "1075 AG",
+        "city": "Amsterdam",
+        "country": {
+          "code": "NL",
+          "name": "Netherlands"
+        }
+      },
+      "maxPower": 11.04,
+      "evses": [
+        {
+          "id": "NL-GFX-EEVB-P1552145-2",
+          "emi3Id": "NLGFXEEVB*P1552145*2",
+          "status": "available",
+          "connectors": [
+            {
+              "id": "2",
+              "type": "IEC_62196_T2",
+              "format": "SOCKET"
+            }
+          ]
+        },
+        {
+          "id": "NL-GFX-EEVB-P1552145-1",
+          "emi3Id": "NLGFXEEVB*P1552145*1",
+          "status": "charging",
+          "connectors": [
+            {
+              "id": "1",
+              "type": "IEC_62196_T2",
+              "format": "SOCKET"
+            }
+          ]
+        }
+      ],
+      "connectors": [
+        {
+          "status": "available",
+          "type": "IEC_62196_T2",
+          "format": "SOCKET"
+        },
+        {
+          "status": "charging",
+          "type": "IEC_62196_T2",
+          "format": "SOCKET"
+        }
+      ],
+      "visibilityScope": "roaming",
+      "accountId": null,
+      "externalAccountId": null,
+      "externalParentAccountId": null
+    }
+  ]
+}
+ 
