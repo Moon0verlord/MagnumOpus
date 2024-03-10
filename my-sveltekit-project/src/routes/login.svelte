@@ -32,10 +32,8 @@
   
 </script>
 <style>
-	/* Create an overlay with a blurred background */
-	
+
 	.btn {
-    /* Add your existing button styles here */
     padding: 10px 20px;
     border: none;
     cursor: pointer;
@@ -43,27 +41,24 @@
   }
 
   .btn-wide {
-    width: 150px; /* Example width */
+    width: 150px; 
   }
 
-  /* Apply a light blue tint to the buttons */
+
   .btn-tint {
     background-color: #10B3AE; 
 	color: black;
 	
   }
 .Message{
-	color:black
+	color:white
 }
 .container {
-     
       background-color: #fff;
       box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
 	  overflow: hidden
     }
   </style>
-  
-  
   
   <div class="containerlarge py-10 px-10 mx-0 min-w-full flex flex-col items-center">
 		<p class="Message">{message}</p>
