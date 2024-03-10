@@ -14,7 +14,7 @@ def generate_random_data(num_entries, usernames, mail_servers, domains, names):
         username = random.choice(usernames)
         mail_server = random.choice(mail_servers)
         domain = random.choice(domains)
-        name = random.choice(names)
+        name = random.choice(names) + " " + random.choice(surnames)
         email = f"{username}@{mail_server}.{domain}"
         password = generate_password()
         data.append((i+1, name, email, password))
@@ -45,10 +45,11 @@ conn.commit()
 cursor.execute('VACUUM;')
 
 # Define arrays for customization
-usernames = ["Joe", "Donald", "Joseph", "Klaus", "Obamna","Xi","Rutte","Jeffery"]
-mail_servers = ["clintonemail", "BidenCrimeFamily", "ClintonCrimeFamily","Juice","Whitehouse"]
+usernames = ["Joe", "Donald", "Joseph", "Klaus", "Obamna","Xi","Rutte","Jeffery","Bill","Hillary","Hunter","JoeRogan","Christine","Mark","Epstein"]
+mail_servers = ["clintonemail", "BidenCrimeFamily", "ClintonCrimeFamily","Juice","Whitehouse","HunterBiden","JoeRogan","Epstein","BillClinton","HillaryClinton","XiJinping","MarkRutte","JefferyEpstein","JoeRogan","ChristineLagarde","MarkRutte","JefferyEpstein"]
 domains = ["gov", "net", "org", "com","us"]
-names = ["Joe Rogan", "Donald Trump", "Joseph Biden", "Klaus Schwab", "Christine Lagarde","Xi Jinping","Mark Rutte","Jeffery Epstein"]
+names = ["Joe", "Donald", "Joseph", "Klaus", "Christine","Xi","Mark","Jeffery"]
+surnames = ["Biden", "Trump", "Clinton", "Rutte", "Lagarde","Xi","Epstein","Rogan","Gates","Clinton","Biden"]
 
 # Generate and insert random data into Users table
 num_entries = 10  # Change this to the desired number of entries

@@ -1,4 +1,4 @@
-import type { PageServerLoad } from "../../../.svelte-kit/types/src/routes/$types";
+import type { PageServerLoad} from "./$types";
 import { getInititalChargingPorts } from "$lib/server/db";
 
 export const load = (() => {

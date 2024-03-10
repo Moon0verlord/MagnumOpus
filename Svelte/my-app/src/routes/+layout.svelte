@@ -9,7 +9,7 @@
 
 <slot />
 
-{#if currentPage !== '/'}
+{#if currentPage !== '/' && currentPage !== '/register'}
     <!-- Menu -->
     <div class="btm-nav">
         <button class="{currentPage === '/home' ? 'active' : ''}">
@@ -23,8 +23,13 @@
             </a>
         </button>
         <button class="{currentPage === '/profile' ? 'active' : ''}">
-            <a href="/profile">
-                <span class="btm-nav-label">Profile</span>
+            <a href="/settings">
+                <span class="btm-nav-label">Settings</span>
+            </a>
+        </button>
+        <button class="{currentPage === '/schuberg_api' ? 'active' : ''}">
+            <a href="/schuberg_api">
+                <span class="btm-nav-label">API</span>
             </a>
         </button>
     </div>

@@ -9338,7 +9338,7 @@ export const allowed = new Set([
 	'poses',
 	'posey',
 	'posho',
-	'posts',
+	'register',
 	'potae',
 	'potch',
 	'poted',

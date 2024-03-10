@@ -10,7 +10,7 @@
 </label>
 
 <!-- Stations -->
-<div class="card w-90 min-h-full bg-base-100 shadow-xl  ml-2.5 mr-2.5 mt-2.5">
+<div class="card w-90 min-h-full bg-base-100 shadow-xl  ml-2.5 mr-2.5 mt-2.5 mb-20">
     <div class="card-body">
         <h2 class="card-title">Stations</h2>
         <div class="overflow-x-auto">
