@@ -128,16 +128,12 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        title: const Text('Sign in Page'),
-      ),
       body: Center(
         child: SizedBox(
           width: 1000, // Adjust the width as needed
           height: 400,
           child: Card(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.secondary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 5,
             child: Row( // Use Row instead of Column
@@ -235,102 +231,116 @@ class SignupPage extends StatelessWidget {
   final sqlite3.Database db = sqlite3.sqlite3.open('assets/db/auth.db');
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> registerUser(BuildContext context) async {
-    String email = emailController.text;
-    String password = passwordController.text;
-    String confirmPassword = confirmPasswordController.text;
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'Passwords do not match', 
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-      return;
-    }
-    db.execute('INSERT INTO users (email, password) VALUES (?, ?)', [email, password]);
+Future<void> registerUser(BuildContext context) async {
+  if (!_formKey.currentState!.validate()) {
+    return;
+  }
+
+  String name = nameController.text;
+  String email = emailController.text;
+  String password = passwordController.text;
+  String confirmPassword = confirmPasswordController.text;
+
+  if (password != confirmPassword) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text(
-          'User registered', 
+          'Passwords do not match', 
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        backgroundColor: Theme.of(context).colorScheme.error,
         duration: const Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-
       ),
     );
-    print('Email: $email, Password: $password');
-    print('Registering user...');
-    Future.delayed(const Duration(seconds: 2));
-    Navigator.pushNamed(context, '/');
+    return;
   }
+
+  db.execute('INSERT INTO users (email, password) VALUES (?, ?)', [email, password]);
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: const Text(
+        'User registered', 
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      duration: const Duration(seconds: 3),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
+  );
+  print('Email: $email, Password: $password');
+  print('Registering user...');
+  Future.delayed(const Duration(seconds: 2));
+  Navigator.pushNamed(context, '/');
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        title: const Text('Signup Page'),
-      ),
       body: Center(
         child: SizedBox(
-          width: 500,
+          width: 1000,
           height: 600,
           child: Card(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.secondary,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    Image.asset('assets/images/logo.png', width: 120, height: 120),
-                    Expanded(
+            child: Row( // Use Row instead of Column
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Form(
+
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const Text('Signup', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 15),
-                          CustomTextField(controller: nameController,
-                           icon: Icons.person,
-                            label: 'Name'
-                            ),
-                          const SizedBox(height: 20),
-                          CustomTextField(controller: emailController, 
-                          icon: Icons.email, 
-                          label: 'Email',
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Email is required';
-                            }
-                            if (!value.contains('@')) {
-                              return 'Invalid email';
-                            }
-                            return null;
-                          },
+                        Image.asset('assets/images/logo.png', width: 150, height: 150, alignment: Alignment.center),
+                        const Text('Sign up', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                            CustomTextField(
+                            controller: nameController,
+                            icon: Icons.person,
+                            label: 'Name',
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Name is required';
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 20),
-                          CustomTextField(controller: passwordController, icon: Icons.lock, label: 'Password', isPassword: true),
+                          CustomTextField(
+                            controller: emailController,
+                            icon: Icons.email,
+                            label: 'Email',
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Email is required';
+                              }
+                              if (!value.contains('@')) {
+                                return 'Invalid email';
+                              }
+                              return null;
+                            },
+                          ),
                           const SizedBox(height: 20),
                           CustomTextField(
-                            controller: confirmPasswordController, 
-                            icon: Icons.lock, 
-                            label: 'Confirm Password', 
-                            isPassword: true,
-                            onFieldSubmitted: (_) async {
-                              if (_formKey.currentState!.validate()) {
-                                await registerUser(context);
-                              }
-                            },
+                            controller: passwordController,
+                            icon: Icons.lock,
+                            label: 'Password',
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return 'Password is required';
@@ -340,22 +350,43 @@ class SignupPage extends StatelessWidget {
                               }
                               return null;
                             },
+                            isPassword: true,
                           ),
+                          const SizedBox(height: 20),
+                            CustomTextField(
+                              controller: confirmPasswordController,
+                              icon: Icons.lock,
+                              label: 'Confirm Password',
+                              isPassword: true,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Confirm password is required';
+                                }
+                                if (value != passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                            ),
                           const SizedBox(height: 40),
                           customButton(
                             text: 'Signup',
-                            onPressed: () async {
+                            onPressed: () {
+                              print('Signup button pressed');
                               if (_formKey.currentState!.validate()) {
-                                await registerUser(context);
+                                print('Form is valid');
+                                registerUser(context);
+                              } else {
+                                print('Form is invalid');
                               }
                             },
                           ),
-                        ],
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                )
+              ],
             ),
           ),
         ),
