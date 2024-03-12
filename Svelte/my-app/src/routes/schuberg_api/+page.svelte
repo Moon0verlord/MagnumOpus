@@ -25,7 +25,7 @@
 </style>
 
 <!-- API -->
-<div class="card w-90 min-h-full bg-base-100 shadow-xl  ml-2.5 mr-2.5 mt-2.5 mb-20">
+<div class="card w-90 min-h-full bg-base-100 shadow-xl ml-2.5 mr-2.5 mt-2.5 mb-20">
     <div class="card-body">
         <h2 class="card-title">API</h2>
         <div class="overflow-x-auto">
@@ -46,7 +46,7 @@
                         </li>
                         <li><strong>Address:</strong>
                             <ul class="nested">
-                                <li><strong>State:</strong>{item.address ? item.address.state : 'null'}</li>
+                                <li><strong>State:</strong> {item.address ? item.address.state : 'null'}</li>
                                 <li><strong>Street:</strong> {item.address ? item.address.streetName : 'null'}</li>
                                 <li><strong>City:</strong> {item.address ? item.address.city : 'null'}</li>
                                 <li><strong>Postal Code:</strong> {item.address ? item.address.postcode : 'null'}</li>
