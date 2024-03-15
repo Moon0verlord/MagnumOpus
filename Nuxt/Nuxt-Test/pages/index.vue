@@ -1,5 +1,15 @@
 ﻿<script setup lang="ts">
 import type { FormError } from '#ui/types'
+const {
+  status,
+  data,
+  lastRefreshedAt,
+  getCsrfToken,
+  getProviders,
+  getSession,
+  signIn,
+  signOut,
+} = useAuth()
 
 definePageMeta({
   layout: 'empty'
@@ -30,12 +40,16 @@ const validate = async (state: any) => {
   return errors
 }
 
+async function handleSignIn() {
+  await signIn("okta", { callbackUrl: '/dashboard' });
+}
+
 const providers = [{
   label: 'Continue with Okta',
   icon: 'i-logos-okta-icon',
   color: 'green' as const,
   click: () => {
-    console.log('Redirect to Okta')
+    handleSignIn();
   }
 }]
 
