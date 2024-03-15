@@ -1,14 +1,12 @@
 <script setup lang="ts">
   import { Input } from '@/components/ui/input'
   import { useRouter } from 'vue-router';
-  import { Separator } from '@/components/ui/separator'
 
 const router = useRouter();
 
-  const goToSignUp = () => {
-  router.push('/SignUp');
-  };
-
+const goToLogin = () => {
+  router.push('/');
+};
 </script>
 
 <template>
@@ -25,15 +23,16 @@ const router = useRouter();
     />
   </div>
 
-      <!-- Sign Up Button at the top right of the page -->
+
+      <!-- Login Button at the top right of the page -->
     <div class="absolute top-0 right-0 pt-4 pr-4">
-      <Button @click="goToSignUp" variant="ghost">
-        Sign Up
+      <Button @click="goToLogin" variant="ghost">
+        Login
       </Button>
     </div>
 
   <div class="flex h-screen overflow-hidden lg:grid lg:grid-cols-2">
-    <!-- Revised dark section with accurate text styling -->
+    <!-- Dark section -->
     <div class="flex flex-col justify-center bg-zinc-900 text-white lg:min-h-screen">
       <div class="px-10 py-20">
         <div class="flex items-center text-lg font-medium">
@@ -53,19 +52,20 @@ const router = useRouter();
         </div>
         <blockquote class="mt-8 space-y-4">
           <p class="text-lg leading-relaxed">
-            &ldquo;There's no strategy i have no strategy, there's zero strategy .&rdquo;
+            &ldquo;Pee is stored in the balls.&rdquo;
           </p>
           <footer class="text-sm font-medium">
-            — Doland tremp
+            — Gingus Khan
           </footer>
         </blockquote>
       </div>
     </div>
     
-    <!-- Form section on the right -->
+    <!-- Form section with login button on top right -->
     <div class="flex flex-col justify-center lg:min-h-screen">
-      <div class="p-8 mx-auto w-full max-w-md">
-        <h1 class="text-2xl font-semibold text-center">Log In</h1>
+      <div class="relative p-8 mx-auto w-full max-w-md">
+        
+        <h1 class="text-2xl font-semibold text-center">Create an account</h1>
         <Form class="mt-8 space-y-6">
           <div>
             <label for="email" class="sr-only">Email address</label>
@@ -75,26 +75,17 @@ const router = useRouter();
             <label for="password" class="sr-only">Password</label>
             <Input type="password" name="password" id="password" autocomplete="current-password" placeholder="Password" />
           </div>
-          <Button type="submit" class="w-full"  >
+          <div>
+            <label for="confirm-password" class="sr-only">Confirm Password</label>
+            <Input type="password" name="confirm-password" id="confirm-password" autocomplete="new-password" placeholder="Confirm Password" />
+          </div>
+          <Button type="submit">
             Continue
           </Button>
         </Form>
-        <div class="mt-8">
-  <!-- Divider with 'Or continue with' text -->
-        <Separator>
-          <div class="text-sm text-gray-500"><div>Blog</div></div>
-        </Separator>
-  <!-- Button for alternative login method -->
-      <div class="mt-6 grid grid-cols-1 gap-4">
-        <Button>
-          <img src="@/assets/img/okta.svg" alt="GitHub" class="h-5 w-5 mr-1" />
-          <span> Okta</span>
-        </Button>
-      </div>
-    </div>
         <p class="mt-6 text-center text-sm text-gray-600">
           By clicking continue, you agree to our 
-          <a href="/terms" class="underline text-inherit hover:text-blue-500">Terms of Service</a> 
+          <a href="/terms"class="underline text-inherit hover:text-blue-500">Terms of Service</a> 
           and 
           <a href="/privacy" class="underline text-inherit hover:text-blue-500">Privacy Policy</a>.
         </p>
