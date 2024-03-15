@@ -1,6 +1,7 @@
 ﻿<script setup lang="ts">
 import { object, string, type InferType } from 'yup'
 import type { FormError, FormSubmitEvent } from '#ui/types'
+import { Separator } from '~/components/ui/separator'
 
 definePageMeta({
   layout: 'empty'
@@ -65,7 +66,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
             </UButton>
           </div>
         </UForm>
-        <div class="divider accent-blue-500">OR</div>
+        <Separator class="my-2" />
         <UButton color="black" label="Login with Okta" block>
           <template #leading>
             <UAvatar src="https://i.ibb.co/bN0cXRj/okta-icon-logo-BA04542-B4-E-seeklogo-com.png" size="2xs"/>

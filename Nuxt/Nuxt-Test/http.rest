@@ -38,3 +38,6 @@ Content-Type: application/json
 
 #### DELETE USER BY ID
 DELETE http://localhost:3000/api/users/1
+
+#### SEED DATABASE WITH SCHUBERG DATA
+GET http://localhost:3000/api/seeder

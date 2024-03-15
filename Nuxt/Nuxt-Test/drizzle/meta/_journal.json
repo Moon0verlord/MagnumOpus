@@ -3,10 +3,38 @@
   "dialect": "sqlite",
   "entries": [
     {
-      "idx": 0,
+      "idx": 1,
       "version": "5",
-      "when": 1709561534212,
-      "tag": "0000_thick_norrin_radd",
+      "when": 1710494341712,
+      "tag": "0001_slippery_dazzler",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1710500175030,
+      "tag": "0002_unique_professor_monster",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1710501349962,
+      "tag": "0003_freezing_doctor_strange",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1710502026472,
+      "tag": "0004_naive_ezekiel",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1710502177230,
+      "tag": "0005_nasty_whirlwind",
       "breakpoints": true
     }
   ]

@@ -73,8 +73,8 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
               <FormError name="passwordConfirm" />
             </UFormGroup>
           </div>
-          <div>
-            <UButton type="submit" class="btn btn-block" color="blue">Register</UButton>
+          <div class="flex flex-col">
+            <UButton type="submit" class="btn btn-block max-w-max" color="blue">Register</UButton>
             <NuxtLink to="/">
               <button class="text-xs text-base hover:underline hover:text-blue-600">Already have an account? Log in here.</button>
             </NuxtLink>

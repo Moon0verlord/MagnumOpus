@@ -2,8 +2,8 @@
 
 </script>
 
-<template>
-  <NuxtPage />
+<template class="w-full h-full">
+  <NuxtPage class="w-full h-full" />
 </template>
 
 <style scoped>

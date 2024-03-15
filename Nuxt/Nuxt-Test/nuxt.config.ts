@@ -2,7 +2,12 @@
 import { resolve } from 'path';
 import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
-  modules: ['@vueuse/nuxt', "@vee-validate/nuxt", "@nuxt/ui", 'nuxt-electron'],
+  modules: ['@vueuse/nuxt',
+    "@vee-validate/nuxt", 
+    "@nuxt/ui", 
+    'nuxt-electron', 
+    'shadcn-nuxt',
+    '@nuxtjs/color-mode'],
   devtools: { enabled: true },
   alias: {
     '@': "/<rootDir>",
@@ -15,4 +20,15 @@ export default defineNuxtConfig({
       },
     ],
   },
+  shadcn: {
+    /**
+     * Prefix for all the imported component
+     */
+    prefix: '',
+    /**
+     * Directory that the component lives in.
+     * @default "./components/ui"
+     */
+    componentDir: './components/ui'
+  }
 });
