@@ -58,9 +58,9 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                userName: name,
-                userEmail: email,
-                userPassword: password
+                name: name,
+                email: email,
+                password: password
             })
         });
 

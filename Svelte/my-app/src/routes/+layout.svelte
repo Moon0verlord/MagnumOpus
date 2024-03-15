@@ -1,9 +1,16 @@
 <script lang="ts">
     import "../app.css";
-    import { page } from "$app/stores";
+    import {page} from "$app/stores";
+
+    export let theme: string;
+    theme = 'light';
 
     let currentPage: string;
     $: currentPage = $page.url.pathname;
+
+    // $: if (typeof window !== 'undefined') {
+    //     document.documentElement.setAttribute('data-theme', theme);
+    // }
 
     function navigateTo(url: string) {
         if (typeof window !== 'undefined') {
@@ -12,12 +19,11 @@
     }
 </script>
 
-<div>
-    <slot/>
-</div>
+<html lang="en" data-theme={theme}>
+<slot/>
 
 <!-- Menu -->
-{#if currentPage !== '/' && currentPage !== '/register'}
+{#if ['/home', '/stations', '/settings', '/schuberg_api'].includes(currentPage)}
     <div class="btm-nav">
         <button class:active={currentPage === '/home'} on:click={() => navigateTo('/home')}>
             <span class="btm-nav-label">Home</span>
@@ -33,3 +39,4 @@
         </button>
     </div>
 {/if}
+</html>

@@ -1,74 +1,84 @@
 import Database from "better-sqlite3";
-import type { User, ChargingPort} from "./types";
+import { v4 as uuidv4 } from 'uuid';
+import type { User, Request, Station, Port } from "./types";
 
 const db = new Database("./data/Main.db");
 
-export function getInititalUsers(): User[] {
-    const query = `select Users.id as userId
-    , Users.name as userName
-    , Users.email as userEmail
-    , Users.password as userPassword
-    from Users
-    `;
+// export function getTheme(userId: string): string {
+//     const query = `SELECT theme FROM Users WHERE id = ?`;
+//     const row = db.prepare(query).get(userId);
+//     if (row) {
+//         return row.userTheme;
+//     } else {
+//         return "light";
+//     }
+// }
 
-    const stmnt = db.prepare(query);
-    const rows = stmnt.all();
+// export function updateTheme(userId: string, theme: string): boolean {
+//     const query = `UPDATE Users SET theme = ? WHERE id = ?`;
+//     const info = db.prepare(query).run(theme, userId);
+//     return info.changes === 1;
+// }
+
+export function getInitialUsers(): User[] {
+    const query = `SELECT userId AS userId, name AS userName, email AS userEmail, password AS userPassword FROM Users`;
+    const rows = db.prepare(query).all();
     return rows as User[];
 }
 
-export function postUser(userName: string, userEmail: string, userPassword: string): boolean {
-    const query = `insert into Users (name, email, password)
-    values (?, ?, ?)
-    `;
-
-    const stmnt = db.prepare(query);
-    const info = stmnt.run(userName, userEmail, userPassword);
-    if (info.changes === 1) {
-        return true;
-    }
-
-    return false;
+export function postUser(name: string, email: string, password: string): boolean {
+    const userId = uuidv4();
+    console.log(userId, name, email, password)
+    const query = `INSERT INTO Users (userId, name, email, password, isAdmin) VALUES (?, ?, ?, ?, ?)`;
+    const info = db.prepare(query).run(userId, name, email, password, 0);
+    return info.changes === 1;
 }
 
-export function loginUser(userEmail: string, userPassword: string): User | null {
-    const query = `select Users.id as userId
-    , Users.name as userName
-    , Users.email as userEmail
-    , Users.password as userPassword
-    
-    from Users
-    where LOWER(Users.email) = LOWER(?) and Users.password = ?
-    `;
-
-    const stmnt = db.prepare(query);
-    const row = stmnt.get(userEmail, userPassword);
+export function loginUser(email: string, password: string): User | null {
+    const query = `SELECT userId AS userId, name AS userName, email AS userEmail, password AS userPassword FROM Users WHERE LOWER(email) = LOWER(?) AND password = ?`;
+    const row = db.prepare(query).get(email, password);
     return row ? row as User : null;
 }
 
 export function getUserByEmail(userEmail: string, userPassword: string): User | null {
-    const query = `select Users.id as userId
-    , Users.name as userName
-    , Users.email as userEmail
-    , Users.password as userPassword
-    
-    from Users
-    where LOWER(Users.email) = LOWER(?) and Users.password = ?
-    `;
-
-    const stmnt = db.prepare(query);
-    const row = stmnt.get(userEmail, userPassword);
+    const query = `SELECT id AS userId, name AS userName, email AS userEmail, password AS userPassword FROM Users WHERE LOWER(email) = LOWER(?) AND password = ?`;
+    const row = db.prepare(query).get(userEmail, userPassword);
     return row ? row as User : null;
 }
 
-export function getInititalChargingPorts(): ChargingPort[] {
-    const query = `select ChargingPorts.id as chargingPortId
-    , ChargingPorts.port_number as chargingPortNumber
-    , ChargingPorts.charging_speed as chargingPortSpeed
-    , ChargingPorts.status as chargingPortStatus
-    from ChargingPorts
-    `;
 
-    const stmnt = db.prepare(query);
-    const rows = stmnt.all();
-    return rows as ChargingPort[];
+export function getInitialStations(): Station[] {
+    const query = `SELECT * FROM Stations`;
+    const rows = db.prepare(query).all();
+    return rows as Station[];
+}
+
+export function getInitialPorts(): Port[] {
+    const query = `SELECT * FROM Ports`;
+    const rows = db.prepare(query).all();
+    return rows as Port[];
+}
+
+export function getInitialRequests(): Request[] {
+    const query = `SELECT * FROM Requests`;
+    const rows = db.prepare(query).all();
+    return rows as Request[];
+}
+
+export function postStation(station: Station): boolean {
+    const query = `INSERT INTO Stations VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const info = db.prepare(query).run(station.stationId, station.locationId, station.overallStatus, JSON.stringify(station.coordinates), station.address, station.maxPower, JSON.stringify(station.portIds));
+    return info.changes === 1;
+}
+
+export function postPort(port: Port): boolean {
+    const query = `INSERT INTO Ports VALUES (?, ?, ?, ?, ?)`;
+    const info = db.prepare(query).run(port.portId, port.stationId, port.usedByUser, port.emi3Id, port.status);
+    return info.changes === 1;
+}
+
+export function postRequest(request: Request): boolean {
+    const query = `INSERT INTO Requests VALUES (?, ?, ?, ?, ?, ?)`;
+    const info = db.prepare(query).run(request.requestId, request.priority, request.fromUserId, request.toUserId, request.portId, request.message);
+    return info.changes === 1;
 }

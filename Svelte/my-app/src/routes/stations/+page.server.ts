@@ -1,10 +1,12 @@
-import type { PageServerLoad } from "./$types";
-import { getInititalChargingPorts } from "$lib/server/db";
+import {getInitialPorts} from "$lib/server/db";
+import type {PageServerLoad} from "./$types";
 
-export const load = (() => {
-    const chargingPorts = getInititalChargingPorts();
+export const load: PageServerLoad = async () => {
+    const chargingPorts = await getInitialPorts();
 
     return {
-        chargingPorts
+        props: {
+            chargingPorts,
+        }
     }
-}) satisfies PageServerLoad;
+};
