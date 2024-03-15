@@ -35,6 +35,7 @@ const colorMode = useColorMode()
       <UButton class="w-max h-max mt-4" @click="showNotification">
         Notification Tryout on App!
       </UButton>
+      
 
       <Drawer>
         <DrawerTrigger>

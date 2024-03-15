@@ -1,39 +1,51 @@
 ﻿<script setup lang="ts">
-import { object, string, type InferType } from 'yup'
-import * as yup from 'yup';
-import type { FormError, FormSubmitEvent } from '#ui/types'
+import type { FormError } from '#ui/types'
+import { v4 as uuidv4 } from 'uuid';
 
 definePageMeta({
   layout: 'empty'
 })
 
+const fields_register = [
+  {
+  name: 'username',
+  type: 'text',
+  label: 'Username',
+  placeholder: 'Enter your username'
+}, 
+  {
+  name: 'password',
+  label: 'Password',
+  type: 'password',
+  placeholder: 'Enter your password'
+}, 
+  {
+  name: 'passwordConfirm',
+  label: 'Password Confirmation',
+  type: 'password',
+  placeholder: 'Enter your password again'
+}]
+
+const validate = async (state: any) => {
+  const errors: FormError[] = []
+  if (!state.username) errors.push({ path: 'username', message: 'Username is required' })
+  if (!state.password) errors.push({ path: 'password', message: 'Password is required' })
+  if (state.password != state.passwordConfirm) errors.push({ path: 'passwordConfirm', message: 'Passwords are not the same.' })
+  return errors
+}
 
 const toast = useToast();
-const schema = object({
-  username: string().required('Required').min(5, 'Must at least be 5 characters'),
-  password: string()
-      .min(8, 'Must be at least 8 characters')
-      .required('Required'),
-  passwordConfirm: string().min(8, 'Must at least be 8 characters').required().oneOf([yup.ref('password')], "Passwords do not match"),
-});
-
-
-type Schema = InferType<typeof schema>
-
-const state = reactive({
-  username: undefined,
-  password: undefined,
-  passwordConfirm: undefined
-})
-
-const form = ref();
-async function onSubmit (event: FormSubmitEvent<Schema>) {
+function onSubmit (data: any) {
   try {
-    const result = await $fetch('api/users', {
+    const result = $fetch('api/users', {
       method: "POST",
       body: {
-        userName: event.data.username,
-        userPassword: event.data.password
+        userId: uuidv4(),
+        name: data.username,
+        email: 'example@test.com', 
+        password: data.password,
+        oktaId: null,
+        isAdmin: 0
       }
     });
     // check for response code here
@@ -50,41 +62,26 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
 }
 </script>
 
+<!-- eslint-disable vue/multiline-html-element-content-newline -->
+<!-- eslint-disable vue/singleline-html-element-content-newline -->
 <template>
-  <div class="w-full h-dvh flex flex-row items-center justify-center gap-4">
-    <div class="relative flex flex-col justify-center h-screen overflow-hidden">
-      <div class="flex flex-col w-full p-6 m-auto bg-slate-800 rounded-lg shadow-md ring-2 ring-gray-800/50 lg:max-w-lg items-center justify-center align-middle">
-        <h1 class="text-2xl font-semibold text-center text-white mb-1.5 rounded-lg p-2">Register</h1>
-        <img src="~/assets/img/logo.png" class="mb-2.5">
-        <UForm class="space-y-4 w-full" :schema="schema" :state="state" @submit="onSubmit">
-          <div class="w-full">
-            <UFormGroup label="Username" name="username" required>
-              <UInput v-model="state.username" type="text" placeholder="..." />
-            </UFormGroup>
-          </div>
-          <div>
-            <UFormGroup label="Password" name="password" required>
-              <UInput v-model="state.password" type="password" placeholder="..." class="w-full" />
-            </UFormGroup>
-          </div>
-          <div>
-            <UFormGroup label="Confirm Password" name="passwordConfirm" required>
-              <UInput v-model="state.passwordConfirm" type="password" placeholder="..." class="w-full" />
-              <FormError name="passwordConfirm" />
-            </UFormGroup>
-          </div>
-          <div class="flex flex-col">
-            <UButton type="submit" class="btn btn-block max-w-max" color="blue">Register</UButton>
-            <NuxtLink to="/">
-              <button class="text-xs text-base hover:underline hover:text-blue-600">Already have an account? Log in here.</button>
-            </NuxtLink>
-          </div>
-        </UForm>
-      </div>
+  <div class="w-screen h-screen flex align-middle justify-center">
+    <div class="p-20">
+      <UCard class="max-w-sm w-full">
+        <UAuthForm
+            :fields="fields_register"
+            :validate="validate"
+            title="Register an Account"
+            align="top"
+            icon="i-heroicons-user-circle"
+            :ui="{ base: 'text-center', footer: 'text-center' }"
+            @submit="onSubmit"
+        >
+          <template #description>
+            Already have an account? <NuxtLink to="/" class="text-primary font-medium">Sign in</NuxtLink>.
+          </template>
+        </UAuthForm>
+      </UCard>
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

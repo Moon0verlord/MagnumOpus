@@ -1,14 +1,14 @@
-﻿import { users, User, InsertUser} from "~/db/schemas/schema";
+﻿import {InsertUserSchuberg, Users} from "~/db/schemas/schubergSchema";
 import { db, sqlite } from "../sqlite-service"
 
 export default defineEventHandler(async (event) => {
     try {
         const body = await readBody(event);
-        const newUser: InsertUser = { 
+        const newUser: InsertUserSchuberg = { 
             ...body
         }
-        const result = await db.insert(users).values(newUser).run();
-        return { newUser: result}
+        const result = await db.insert(Users).values(newUser).run();
+        return { newUser: result }
     }
     catch (e: any) {
         throw createError({

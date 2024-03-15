@@ -1,9 +1,6 @@
-﻿export const useUtils = () => {
-    const sayHello = () => {
-        console.log("hello from useUtils")
+﻿
+export class Guid {
+    newGuid = () => {
+        
     }
-    
-    return {
-        sayHello,
-    };
 }

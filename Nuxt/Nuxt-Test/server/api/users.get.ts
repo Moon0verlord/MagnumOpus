@@ -1,9 +1,9 @@
-﻿import { users, User } from "~/db/schemas/schema";
+﻿import { Users } from "~/db/schemas/schubergSchema";
 import { db, sqlite } from "../sqlite-service"
 
 export default defineEventHandler(async (event) => {
     try {
-        const userResponse = db.select().from(users).all();
+        const userResponse = db.select().from(Users).all();
         return { users : userResponse };
     }
     catch (e: any) {

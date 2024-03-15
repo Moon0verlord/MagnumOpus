@@ -2,6 +2,7 @@
 import { resolve } from 'path';
 import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
+  extends: ['@nuxt/ui-pro'],
   modules: ['@vueuse/nuxt',
     "@vee-validate/nuxt", 
     "@nuxt/ui", 
@@ -30,5 +31,8 @@ export default defineNuxtConfig({
      * @default "./components/ui"
      */
     componentDir: './components/ui'
+  },
+  ui: {
+    icons: ['simple-icons', 'logos'],
   }
 });

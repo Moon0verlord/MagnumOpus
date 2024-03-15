@@ -1,5 +1,6 @@
 ﻿import {type InferInsertModel, type InferSelectModel, sql} from "drizzle-orm";
 import {blob, integer, real, sqliteTable, text} from "drizzle-orm/sqlite-core";
+import {users} from "~/db/schemas/schema";
 
 export enum Status {
     Available = "AVAILABLE",
@@ -26,6 +27,8 @@ export const Users  = sqliteTable("Users", {
     oktaId: text("okta_id"),
     isAdmin: integer("isAdmin", {mode: "boolean" })
 });
+
+export type InsertUserSchuberg = InferInsertModel<typeof Users>;
 
 export const Stations = sqliteTable("Stations", {
     stationId: text("station_id").primaryKey(),

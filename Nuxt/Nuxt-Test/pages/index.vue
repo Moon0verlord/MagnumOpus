@@ -1,87 +1,79 @@
 ﻿<script setup lang="ts">
-import { object, string, type InferType } from 'yup'
-import type { FormError, FormSubmitEvent } from '#ui/types'
-import { Separator } from '~/components/ui/separator'
+import type { FormError } from '#ui/types'
 
 definePageMeta({
   layout: 'empty'
 })
 
-const schema = object({
-  username: string().required('Required'),
-  password: string()
-      .min(8, 'Must be at least 8 characters')
-      .required('Required')
-});
+const fields = [{
+  name: 'username',
+  type: 'text',
+  label: 'Username',
+  placeholder: 'Enter your username'
+}, {
+  name: 'password',
+  label: 'Password',
+  type: 'password',
+  placeholder: 'Enter your password'
+}]
 
-
-type Schema = InferType<typeof schema>
-
-const state = reactive({
-  username: undefined,
-  password: undefined
-})
-
-const form = ref();
-async function onSubmit (event: FormSubmitEvent<Schema>) {
-  try {
-    const allUsers = (await $fetch('/api/users')).users;
-    const entered = event.data
-    if (allUsers?.filter(x => x.userName == entered.username && x.userPassword == entered.password).length > 0)
-    {
-      navigateTo('/dashboard')
-    }
+const validate = async (state: any) => {
+  const errors: FormError[] = []
+  if (!state.username) errors.push({ path: 'username', message: 'Username is required' })
+  if (!state.password) errors.push({ path: 'password', message: 'Password is required' })
+  if (errors.length >= 1) return errors; // speed up errors if any one of these errors has already been found, else search for user in DB which takes longer.
+  const response = await $fetch('/api/users');
+  const allUsers = response.users;
+  if (allUsers?.filter(x => x.name == state.username && x.password == state.password).length <= 0) {
+    errors.push({path: 'password', message: 'Username or password not found.'})
   }
-  catch (err: any) {
-    
-  }
+  return errors
 }
 
+const providers = [{
+  label: 'Continue with Okta',
+  icon: 'i-logos-okta-icon',
+  color: 'blue' as const,
+  click: () => {
+    console.log('Redirect to Okta')
+  }
+}]
+
+function onSubmit (data: any) {
+  navigateTo("/dashboard")
+}
 </script>
 
+<!-- eslint-disable vue/multiline-html-element-content-newline -->
+<!-- eslint-disable vue/singleline-html-element-content-newline -->
 <template>
-  <div class="w-full h-dvh flex flex-row items-center justify-center gap-4">
-    <div class="relative flex flex-col justify-center h-screen overflow-hidden">
-      <div class="flex flex-col w-full p-6 m-auto bg-slate-800 rounded-lg shadow-md ring-2 ring-gray-800/50 lg:max-w-lg items-center justify-center align-middle">
-        <h1 class="text-2xl font-semibold text-center text-white mb-1.5 rounded-lg p-2">Sign In</h1>
-        <img src="~/assets/img/logo.png" class="mb-2.5">
-        <UForm class="space-y-4 w-full" :schema="schema" :state="state" @submit="onSubmit">
-          <div class="w-full">
-              <UFormGroup label="Username" name="username">
-                <UInput v-model="state.username" type="text" placeholder="..." />
-              </UFormGroup>
-          </div>
-          <div>
-            <UFormGroup label="Password" name="password">
-              <UInput v-model="state.password" type="password" placeholder="..." class="w-full" />
-            </UFormGroup>
-          </div>
-          <a href="#" class="text-xs text-base hover:underline hover:text-blue-600">Forget Password?</a>
-          <div>
-            <UButton type="submit" class="btn btn-block" color="blue">
-              Login
-              <template #leading>
-                <UIcon name="i-heroicons-arrow-right-20-solid" />
-              </template>
-            </UButton>
-          </div>
-        </UForm>
-        <Separator class="my-2" />
-        <UButton color="black" label="Login with Okta" block>
-          <template #leading>
-            <UAvatar src="https://i.ibb.co/bN0cXRj/okta-icon-logo-BA04542-B4-E-seeklogo-com.png" size="2xs"/>
+  <div class="w-screen h-screen flex align-middle justify-center">
+    <div class="p-20">
+      <UCard class="max-w-sm w-full">
+        <UAuthForm
+            :fields="fields"
+            :validate="validate"
+            :providers="providers"
+            title="Welcome back!"
+            align="top"
+            icon="i-heroicons-lock-closed"
+            :ui="{ base: 'text-center', footer: 'text-center' }"
+            @submit="onSubmit"
+        >
+          <template #description>
+            Don't have an account? <NuxtLink to="/register" class="text-primary font-medium">Sign up</NuxtLink>.
           </template>
-        </UButton>
-        <div class="w-full h-full flex flex-col flex-start">
-          <label class="label">
-            <span class="text-base label-text text-xs">No account? Register here.</span>
-          </label>
-          <NuxtLink to="register">
-            <UButton class="btn" color="blue">Register</UButton>
-          </NuxtLink>
-        </div>
-       
-      </div>
+
+          <template #password-hint>
+            <NuxtLink to="/" class="text-primary font-medium">Forgot password?</NuxtLink>
+          </template>
+
+          <template #footer>
+            By signing in, you agree to our <NuxtLink to="/" class="text-primary font-medium">Terms of Service</NuxtLink>.
+          </template>
+        </UAuthForm>
+      </UCard>
     </div>
+    
   </div>
 </template>
