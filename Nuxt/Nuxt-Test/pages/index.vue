@@ -33,7 +33,7 @@ const validate = async (state: any) => {
 const providers = [{
   label: 'Continue with Okta',
   icon: 'i-logos-okta-icon',
-  color: 'blue' as const,
+  color: 'green' as const,
   click: () => {
     console.log('Redirect to Okta')
   }
