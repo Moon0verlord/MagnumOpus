@@ -48,5 +48,6 @@ export const Ports = sqliteTable("Ports", {
     status: text("status")
 });
 
+export type Port = InferSelectModel<typeof Ports>;
 
 

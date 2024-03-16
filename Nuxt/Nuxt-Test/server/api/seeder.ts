@@ -2,6 +2,7 @@
 import {Address, Ports, Stations, Status} from "~/db/schemas/schubergSchema";
 import type {StationData} from "~/composables/useTypes";
 import {ref} from 'vue';
+import {eq} from "drizzle-orm";
 
 export const getData = async () => {
     const stationData = ref<StationData[]>([]);
@@ -46,7 +47,7 @@ const getPortIds = (data : StationData) : string => {
     return portIds
 }
 
-const Seeder = (data : StationData[]) => {
+const Seeder = async (data : StationData[]) => {
     data.forEach(station => {
             // Can't do a mass insert and then run once after bulk insertion sadly, drizzle seems to not support this i thonk.
             // running after each insert works for now.
@@ -72,9 +73,26 @@ const Seeder = (data : StationData[]) => {
     });
 }
 
+// Set all ports to available to make use of our own state management.
+const allPortsAvailable = async () => {
+    const allPorts = db.select().from(Ports).all();
+    allPorts.forEach(x => {
+        db.update(Ports).set({...x, status: 'available'}).where(eq(Ports.portId, x.portId)).run();
+    })
+}
+
+const allStationsAvailable = async () => {
+    const allPorts = db.select().from(Stations).all();
+    allPorts.forEach(x => {
+        db.update(Stations).set({...x, overallStatus: 'available'}).where(eq(Stations.stationId, x.stationId)).run();
+    })
+}
+
 export default defineEventHandler(async (event) => {
     try {
-        await Seeder((await getData()).value)
+        // await Seeder((await getData()).value);
+        await allPortsAvailable();
+        await allStationsAvailable();
         return "Seeder has completed successfully!"
     }
     catch (e: any) {

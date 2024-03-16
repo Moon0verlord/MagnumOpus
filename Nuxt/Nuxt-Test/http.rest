@@ -41,3 +41,6 @@ DELETE http://localhost:3000/api/users/1
 
 #### SEED DATABASE WITH SCHUBERG DATA
 GET http://localhost:3000/api/seeder
+
+#### GET PORTS
+GET http://localhost:3000/api/ports

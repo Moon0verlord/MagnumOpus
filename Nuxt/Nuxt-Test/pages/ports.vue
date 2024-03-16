@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import type {StationData} from "~/composables/useTypes";
-import {awaitExpression} from "@babel/types"; 
+import {awaitExpression} from "@babel/types";
+import type {Port} from "~/db/schemas/schubergSchema"; 
 
 const columns = [{
-    key: 'id',
+    key: 'portId',
     label: 'ID',
-    sortable: true,
-  },
-  {
-    key: 'maxPower',
-    label: 'Max Power',
     sortable: true,
   },
   {
@@ -22,10 +18,10 @@ const columns = [{
   }
 ];
 
-const {data, error, pending} = useAsyncData('poi-locations', () => {
-  return fetch('https://schubergphilis.workflows.okta-emea.com/api/flo/d71da429cdb215bef89ffe6448097dee/invoke?clientToken=01d762901510b3c7f422595fa18d8d7bd71c1f3e58ad860fd3ae2d0c87a80955&url=/poi/v1/locations&method=GET')
+const {data, error, pending} = useAsyncData('ports-get', () => {
+  return fetch('http://localhost:3000/api/ports')
       .then(response => response.json())
-      .then(responseData => responseData.stationList as StationData[]);
+      .then(responseData => responseData.ports as Port[]);
 })
 if (error) {
   console.log(error)
@@ -37,7 +33,7 @@ if (error) {
 
 let buttonColor = ref('green');
 const changeButtonColor = (row: StationData) => {
-  if (row.status === 'out of order' || row.status === 'unknown')
+  if (row.status === 'out of order' || row.status === 'unknown' || row.status === 'occupied')
     buttonColor = ref('gray');
   else if (row.status === 'charging')
     buttonColor = ref('sky')
@@ -67,7 +63,7 @@ const rows = computed(() => {
       >
       <template #actions-data="{ row }">
         {{ changeButtonColor(row) }}
-        <UButton :disabled="row.status === 'out of order' || row.status === 'unknown'" @click=""
+        <UButton :disabled="row.status === 'out of order' || row.status === 'unknown' || row.status === 'occupied'" @click=""
           :color="buttonColor"
         >
           {{ row.status === 'available' ? 'Reserve' : row.status === 'charging' ? 'Request' : 'Unavailable' }}
