@@ -1,12 +1,33 @@
 <script setup lang="ts">
   import { Input } from '@/components/ui/input'
   import { useRouter } from 'vue-router';
-  import { Separator } from '@/components/ui/separator'
+  import { toTypedSchema } from '@vee-validate/zod'
+  import * as z from 'zod'
+  import { useForm } from 'vee-validate';
 
-const router = useRouter();
+  const formSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+  })
 
-  const goToSignUp = () => {
-  router.push('/SignUp');
+  const typedFormSchema = toTypedSchema(formSchema)
+
+  const { handleSubmit } = useForm({
+  validationSchema: typedFormSchema,
+})
+
+  const onSubmit = handleSubmit((values) => {
+  console.log('Form submitted!', values)
+  })
+
+  const router = useRouter();
+
+    const goToSignUp = () => {
+    router.push('/SignUp');
+    };
+
+  const userlogin = () => {
+    router.push('/Dashboard');
   };
 
 </script>
@@ -53,7 +74,7 @@ const router = useRouter();
         </div>
         <blockquote class="mt-8 space-y-4">
           <p class="text-lg leading-relaxed">
-            &ldquo;There's no strategy i have no strategy, there's zero strategy .&rdquo;
+            &ldquo;There is no strategy i have no strategy, there's zero strategy .&rdquo;
           </p>
           <footer class="text-sm font-medium">
             — Doland tremp
@@ -64,30 +85,48 @@ const router = useRouter();
     
     <!-- Form section on the right -->
     <div class="flex flex-col justify-center lg:min-h-screen">
-      <div class="p-8 mx-auto w-full max-w-md">
-        <h1 class="text-2xl font-semibold text-center">Log In</h1>
-        <Form class="mt-8 space-y-6">
-          <div>
-            <label for="email" class="sr-only">Email address</label>
-            <Input type="email" placeholder="Email" />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <Input type="password" name="password" id="password" autocomplete="current-password" placeholder="Password" />
-          </div>
-          <Button type="submit" class="w-full"  >
-            Continue
-          </Button>
-        </Form>
-        <div class="mt-8">
+    <div class="p-8 mx-auto w-full max-w-md">
+      <h1 class="text-2xl font-semibold text-center">Log In</h1>
+      <form class="mt-8 space-y-6" @submit="onSubmit">
+        <FormField v-slot="{ componentField }" name="email">
+          <FormItem>
+            <FormLabel>Email address</FormLabel>
+            <FormControl>
+              <Input type="email" placeholder="Email" v-bind="componentField" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <FormField v-slot="{ componentField }" name="password">
+          <FormItem>
+            <FormLabel>Password</FormLabel>
+            <FormControl>
+              <Input type="password" id="password" autocomplete="current-password" placeholder="Password" v-bind="componentField" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <Button type="submit" class="w-full">
+          Continue
+        </Button>
+      </form>
+      <div class="mt-8">
+
   <!-- Divider with 'Or continue with' text -->
-        <Separator>
-          <div class="text-sm text-gray-500"><div>Blog</div></div>
-        </Separator>
+      <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <span class="w-full border-t"/>
+          </div>
+          <div class="relative flex justify-center text-xs uppercase">
+            <span class="bg-background px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
   <!-- Button for alternative login method -->
       <div class="mt-6 grid grid-cols-1 gap-4">
-        <Button>
-          <img src="@/assets/img/okta.svg" alt="GitHub" class="h-5 w-5 mr-1" />
+        <Button @click="userlogin" >
+          <img src="@/assets/img/okta.svg" alt="Okta" class="h-5 w-5 mr-1" />
           <span> Okta</span>
         </Button>
       </div>

@@ -4,7 +4,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     'shadcn-nuxt',
     '@nuxtjs/color-mode',
-    '@vite-pwa/nuxt'
+    '@vite-pwa/nuxt',
   ],
   colorMode: {
     classSuffix: ''

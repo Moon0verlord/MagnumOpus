@@ -1,12 +1,31 @@
 <script setup lang="ts">
   import { Input } from '@/components/ui/input'
   import { useRouter } from 'vue-router';
+  import { toTypedSchema } from '@vee-validate/zod'
+  import * as z from 'zod'
+  import { useForm } from 'vee-validate';
 
-const router = useRouter();
+  const formSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+    confirm_password: z.string().min(8),
+  })
 
-const goToLogin = () => {
-  router.push('/');
-};
+  const typedFormSchema = toTypedSchema(formSchema)
+
+  const { handleSubmit } = useForm({
+    validationSchema: typedFormSchema,
+  })
+
+  const onSubmit = handleSubmit((values) => {
+    console.log('Form submitted!', values)
+  })
+
+  const router = useRouter();
+
+  const goToLogin = () => {
+    router.push('/');
+  };
 </script>
 
 <template>
@@ -62,30 +81,44 @@ const goToLogin = () => {
     </div>
     
     <!-- Form section with login button on top right -->
-    <div class="flex flex-col justify-center lg:min-h-screen">
-      <div class="relative p-8 mx-auto w-full max-w-md">
-        
+      <div class="flex flex-col justify-center lg:min-h-screen">
+      <div class="p-8 mx-auto w-full max-w-md">
         <h1 class="text-2xl font-semibold text-center">Create an account</h1>
-        <Form class="mt-8 space-y-6">
-          <div>
-            <label for="email" class="sr-only">Email address</label>
-            <Input type="email" placeholder="Email" />
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <Input type="password" name="password" id="password" autocomplete="current-password" placeholder="Password" />
-          </div>
-          <div>
-            <label for="confirm-password" class="sr-only">Confirm Password</label>
-            <Input type="password" name="confirm-password" id="confirm-password" autocomplete="new-password" placeholder="Confirm Password" />
-          </div>
-          <Button type="submit">
+        <form class="mt-8 space-y-6" @submit="onSubmit">
+          <FormField v-slot="{ componentField }" name="email">
+            <FormItem>
+              <FormLabel>Email address</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="Email" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="password">
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" id="password" autocomplete="current-password" placeholder="Password" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <FormField v-slot="{ componentField }" name="confirm_password">
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type="password" id="confirm-password" autocomplete="new-password" placeholder="Confirm Password" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+          <Button type="submit" class="w-full">
             Continue
           </Button>
-        </Form>
+        </form>
         <p class="mt-6 text-center text-sm text-gray-600">
           By clicking continue, you agree to our 
-          <a href="/terms"class="underline text-inherit hover:text-blue-500">Terms of Service</a> 
+          <a href="/terms" class="underline text-inherit hover:text-blue-500">Terms of Service</a> 
           and 
           <a href="/privacy" class="underline text-inherit hover:text-blue-500">Privacy Policy</a>.
         </p>
