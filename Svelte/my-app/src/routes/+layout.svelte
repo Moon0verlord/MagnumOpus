@@ -36,6 +36,15 @@
     }
 </script>
 
+<svelte:head>
+    <script>
+        if (typeof window !== 'undefined') {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+    </script>
+</svelte:head>
+
 <html lang="en" class="bg">
 <slot/>
 

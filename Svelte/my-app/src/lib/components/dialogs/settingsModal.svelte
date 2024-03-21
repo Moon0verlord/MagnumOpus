@@ -1,6 +1,6 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
-    import { theme } from '../../../routes/theme/theme'; // Import the theme store
+    import {theme} from '../../../routes/theme/theme'; // Import the theme store
 
     const dispatch = createEventDispatcher();
     export let show = false;
@@ -31,13 +31,6 @@
                 <h2 class="card-title">Appearance</h2>
                 <div class="form-control">
                     <label class="label cursor-pointer gap-4">
-                        <span class="label-text">Default</span>
-                        <input type="radio" name="theme-radios" class="radio theme-controller" value="default"
-                               bind:group={selectedTheme} on:change={() => changeTheme('default')}/>
-                    </label>
-                </div>
-                <div class="form-control">
-                    <label class="label cursor-pointer gap-4">
                         <span class="label-text">Light</span>
                         <input type="radio" name="theme-radios" class="radio theme-controller" value="light"
                                bind:group={selectedTheme} on:change={() => changeTheme('light')}/>
@@ -52,16 +45,16 @@
                 </div>
                 <div class="form-control">
                     <label class="label cursor-pointer gap-4">
-                        <span class="label-text">Retro</span>
-                        <input type="radio" name="theme-radios" class="radio theme-controller" value="retro"
-                               bind:group={selectedTheme} on:change={() => changeTheme('retro')}/>
+                        <span class="label-text">Black</span>
+                        <input type="radio" name="theme-radios" class="radio theme-controller" value="black"
+                               bind:group={selectedTheme} on:change={() => changeTheme('black')}/>
                     </label>
                 </div>
                 <div class="form-control">
                     <label class="label cursor-pointer gap-4">
-                        <span class="label-text">Cyberpunk</span>
-                        <input type="radio" name="theme-radios" class="radio theme-controller" value="cyberpunk"
-                               bind:group={selectedTheme} on:change={() => changeTheme('cyberpunk')}/>
+                        <span class="label-text">Retro</span>
+                        <input type="radio" name="theme-radios" class="radio theme-controller" value="retro"
+                               bind:group={selectedTheme} on:change={() => changeTheme('retro')}/>
                     </label>
                 </div>
                 <div class="form-control">
