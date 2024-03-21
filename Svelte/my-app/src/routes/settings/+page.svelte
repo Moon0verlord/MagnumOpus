@@ -3,11 +3,19 @@
 
     let showModal = false;
 
+    let theme = 'retro';
+
+    if (typeof window !== 'undefined') {
+        const localTheme = localStorage.getItem('theme');
+        if (localTheme) {
+            theme = localTheme;
+        }
+    }
+
     const openSettings = () => {
         showModal = true;
     };
 </script>
-
 
 <!-- Settings -->
 <ul class="menu bg-base-200 w-90 rounded-box ml-2.5 mr-2.5 mt-2.5">

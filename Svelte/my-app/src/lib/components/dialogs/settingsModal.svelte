@@ -1,5 +1,6 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
+    import { theme } from '../../../routes/theme/theme'; // Import the theme store
 
     const dispatch = createEventDispatcher();
     export let show = false;
@@ -13,12 +14,13 @@
         dispatch("close");
     }
 
-    const changeTheme = (theme: string) => {
-        selectedTheme = theme;
+    const changeTheme = (themeName: string) => {
+        selectedTheme = themeName;
         if (typeof window !== 'undefined') {
-            window.localStorage.setItem('theme', theme);
+            window.localStorage.setItem('theme', themeName);
         }
-        document.documentElement.className = theme;
+        theme.set(themeName); // Update the theme store
+        document.documentElement.className = themeName;
     }
 </script>
 

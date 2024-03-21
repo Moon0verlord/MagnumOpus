@@ -1,25 +1,42 @@
 <script lang="ts">
     import "../app.css";
-    import {page} from "$app/stores";
+    import { page } from "$app/stores";
+    import { theme } from '../routes/theme/theme';
 
-    export let theme: string;
-    theme = 'light';
+    if (typeof window !== 'undefined') {
+        const localTheme = localStorage.getItem('theme');
+        if (localTheme) {
+            theme.set(localTheme); // Update the theme store
+        }
+    }
 
     let currentPage: string;
     $: currentPage = $page.url.pathname;
 
-    // $: if (typeof window !== 'undefined') {
-    //     document.documentElement.setAttribute('data-theme', theme);
-    // }
+    // Subscribe to the theme store
+    theme.subscribe(value => {
+        if (typeof window !== 'undefined') {
+            document.documentElement.setAttribute('data-theme', value); // Update the data-theme attribute
+        }
+    });
 
     function navigateTo(url: string) {
         if (typeof window !== 'undefined') {
             window.location.href = url;
         }
     }
+
+    // Add a storage event listener
+    if (typeof window !== 'undefined') {
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'theme') {
+                theme.set(localStorage.getItem('theme') || 'light'); // Update the theme store
+            }
+        });
+    }
 </script>
 
-<html lang="en" data-theme={theme}>
+<html lang="en" class="bg">
 <slot/>
 
 <!-- Menu -->
