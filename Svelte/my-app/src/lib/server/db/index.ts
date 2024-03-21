@@ -28,7 +28,6 @@ export function getInitialUsers(): User[] {
 
 export function postUser(name: string, email: string, password: string): boolean {
     const userId = uuidv4();
-    console.log(userId, name, email, password)
     const query = `INSERT INTO Users (userId, name, email, password, isAdmin) VALUES (?, ?, ?, ?, ?)`;
     const info = db.prepare(query).run(userId, name, email, password, 0);
     return info.changes === 1;
