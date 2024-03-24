@@ -1,7 +1,20 @@
 <script lang="ts">
     import "../app.css";
-    import { page } from "$app/stores";
-    import { theme } from '../routes/theme/theme';
+    import {page} from "$app/stores";
+    import {theme} from '../routes/theme/theme';
+    import {onMount} from 'svelte';
+
+    let isMobile = false;
+
+    onMount(() => {
+        // Initial check
+        isMobile = window.innerWidth < 768;
+
+        // Listen for resize events
+        window.addEventListener('resize', () => {
+            isMobile = window.innerWidth < 768;
+        });
+    });
 
     if (typeof window !== 'undefined') {
         const localTheme = localStorage.getItem('theme');
@@ -45,11 +58,28 @@
     </script>
 </svelte:head>
 
-<html lang="en" class="bg">
+<html lang="en" class="bg outline-none">
+
+<!-- Desktop Navbar -->
+{#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api'].includes(currentPage)}
+    <div class="navbar bg-base-100 fixed">
+        <div class="flex-1">
+            <a href="/home" class="btn btn-ghost text-xl">Schuberg Hub</a>
+        </div>
+        <div class="flex-none">
+            <ul class="menu menu-horizontal px-1">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/stations">Stations</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </div>
+    </div>
+{/if}
+
 <slot/>
 
-<!-- Menu -->
-{#if ['/home', '/stations', '/settings', '/schuberg_api'].includes(currentPage)}
+<!-- Mobile Navbar -->
+{#if isMobile && ['/home', '/stations', '/settings', '/schuberg_api'].includes(currentPage)}
     <div class="btm-nav">
         <button class:active={currentPage === '/home'} on:click={() => navigateTo('/home')}>
             <span class="btm-nav-label">Home</span>
@@ -59,9 +89,6 @@
         </button>
         <button class:active={currentPage === '/settings'} on:click={() => navigateTo('/settings')}>
             <span class="btm-nav-label">Settings</span>
-        </button>
-        <button class:active={currentPage === '/schuberg_api'} on:click={() => navigateTo('/schuberg_api')}>
-            <span class="btm-nav-label">API</span>
         </button>
     </div>
 {/if}
