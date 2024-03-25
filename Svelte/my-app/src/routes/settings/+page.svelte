@@ -19,9 +19,11 @@
         <li>
             <button on:click={openSettings}>Appearance</button>
         </li>
+        <li class="menu-title">Information</li>
         <li><a href="/settings">Privacy</a></li>
         <li><a href="/settings">Help & Support</a></li>
         <li><a href="/settings">About</a></li>
+        <li><a href="/test">???</a></li>
     </ul>
 
     <!-- Logout -->

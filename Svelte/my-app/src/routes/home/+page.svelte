@@ -1,7 +1,3 @@
-<script lang="ts">
-
-</script>
-
 <div class="flex items-center justify-center h-screen">
     <div class="card bg-base-100 shadow-xl">
         <div class="card-body">

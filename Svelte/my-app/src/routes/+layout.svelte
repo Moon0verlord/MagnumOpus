@@ -1,8 +1,8 @@
 <script lang="ts">
     import "../app.css";
     import {page} from "$app/stores";
-    import {theme} from '../routes/theme/theme';
-    import {mobile} from '../routes/mobile/mobile';
+    import {theme} from './theme/theme';
+    import {mobile} from './mobile/mobile';
     import {onMount, onDestroy} from 'svelte';
 
     export let isMobile = false;
@@ -79,7 +79,7 @@
 <html lang="en" class="bg outline-none">
 
 <!-- Desktop Navbar -->
-{#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api'].includes(currentPage)}
+{#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
     <div class="navbar bg-base-100 fixed">
         <div class="flex-1">
             <a href="/home" class="btn btn-ghost text-xl">Schuberg Hub</a>
@@ -97,7 +97,7 @@
 <slot/>
 
 <!-- Mobile Navbar -->
-{#if isMobile && ['/home', '/stations', '/settings', '/schuberg_api'].includes(currentPage)}
+{#if isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
     <div class="btm-nav">
         <button class:active={currentPage === '/home'} on:click={() => navigateTo('/home')}>
             <span class="btm-nav-label">Home</span>
