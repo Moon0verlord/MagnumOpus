@@ -162,7 +162,11 @@
                     Register
                 {/if}
             </button>
-            <a href="/" class="link link-hover">Login</a>
+            <div class="label">
+                <span class="label-text-alt">
+                    <a href="/" class="link link-hover">Login</a>
+                </span>
+            </div>
         </div>
     </div>
 </div>

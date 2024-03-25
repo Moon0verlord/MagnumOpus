@@ -2,17 +2,20 @@
     import "../app.css";
     import {page} from "$app/stores";
     import {theme} from '../routes/theme/theme';
-    import {onMount} from 'svelte';
+    import {mobile} from '../routes/mobile/mobile';
+    import {onMount, onDestroy} from 'svelte';
 
-    let isMobile = false;
+    export let isMobile = false;
 
     onMount(() => {
         // Initial check
         isMobile = window.innerWidth < 768;
+        mobile.set(isMobile);
 
         // Listen for resize events
         window.addEventListener('resize', () => {
             isMobile = window.innerWidth < 768;
+            mobile.set(isMobile);
         });
     });
 
@@ -33,6 +36,10 @@
         }
     });
 
+    const unsubscribe = mobile.subscribe(value => {
+        isMobile = value;
+    });
+
     function navigateTo(url: string) {
         if (typeof window !== 'undefined') {
             window.location.href = url;
@@ -47,6 +54,17 @@
             }
         });
     }
+
+    const unsubscribeTheme = theme.subscribe(value => {
+        if (typeof window !== 'undefined') {
+            document.documentElement.setAttribute('data-theme', value); // Update the data-theme attribute
+        }
+    });
+
+    onDestroy(() => {
+        unsubscribe();
+        unsubscribeTheme();
+    });
 </script>
 
 <svelte:head>
