@@ -1,5 +1,6 @@
 ﻿import {type InferInsertModel, type InferSelectModel, sql} from "drizzle-orm";
 import {blob, integer, real, sqliteTable, text} from "drizzle-orm/sqlite-core";
+import * as pg from "drizzle-orm/pg-core"
 import {users} from "~/db/schemas/schema";
 
 export enum Status {
@@ -19,33 +20,33 @@ export type Address = {
     };
 }
 
-export const Users  = sqliteTable("Users", {
-    userId: text("user_id").primaryKey(), // String because there is no Guid class, will make it ourselves.
-    name: text("name"),
-    email: text("email").unique(),
-    password: text("password"),
-    oktaId: text("okta_id"),
-    isAdmin: integer("isAdmin", {mode: "boolean" })
+export const Users  = pg.pgTable("Users", {
+    userId: pg.text("user_id").primaryKey(),
+    name: pg.text("name"),
+    email: pg.text("email").unique(),
+    password: pg.text("password"),
+    oktaId: pg.text("okta_id"),
+    isAdmin: pg.boolean('isAdmin')
 });
 
 export type InsertUserSchuberg = InferInsertModel<typeof Users>;
 
-export const Stations = sqliteTable("Stations", {
-    stationId: text("station_id").primaryKey(),
-    locationId: text("location_id"),
-    overallStatus: text("status"),
-    coordinates: text("coordinates"), // needs to be parsed into an array on leaving
-    address: blob("address"),
-    maxPower: real("max_power"),
-    portIds: text("port_ids") // needs to be parsed into an array on leaving
+export const Stations = pg.pgTable("Stations", {
+    stationId: pg.text("station_id").primaryKey(),
+    locationId: pg.text("location_id"),
+    overallStatus: pg.text("status"),
+    coordinates: pg.text("coordinates"),
+    address: pg.json("address"),
+    maxPower: pg.real("max_power"),
+    portIds: pg.text("port_ids") // needs to be parsed into an array on leaving
 });
 
-export const Ports = sqliteTable("Ports", {
-   portId: text("port_id").primaryKey(),
-   stationId: text("station_id").references(() => Stations.stationId), 
-    usedBy: text("used_by").references(() => Users.userId),
-    emi3Id: text("emi3_id"),
-    status: text("status")
+export const Ports = pg.pgTable("Ports", {
+   portId: pg.text("port_id").primaryKey(),
+   stationId: pg.text("station_id").references(() => Stations.stationId),
+    usedBy: pg.text("used_by").references(() => Users.userId),
+    emi3Id: pg.text("emi3_id"),
+    status: pg.text("status")
 });
 
 export type Port = InferSelectModel<typeof Ports>;

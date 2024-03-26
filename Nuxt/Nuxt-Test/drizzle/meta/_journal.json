@@ -36,6 +36,13 @@
       "when": 1710502177230,
       "tag": "0005_nasty_whirlwind",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1711460686164,
+      "tag": "0006_jazzy_lockjaw",
+      "breakpoints": true
     }
   ]
 }

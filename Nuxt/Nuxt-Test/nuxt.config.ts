@@ -11,7 +11,6 @@ export default defineNuxtConfig({
     'nuxt-electron', 
     'shadcn-nuxt',
     '@nuxtjs/color-mode',
-    '@sidebase/nuxt-auth'
   ],
   devtools: { enabled: true },
   alias: {
