@@ -59,7 +59,7 @@ const Seeder = async (data : StationData[]) => {
                 address: JSON.stringify(station.address),
                 maxPower: station.maxPower,
                 portIds: getPortIds(station),
-            }).run();
+            });
 
             station.evses.forEach(port => {
                 db.insert(Ports).values({
@@ -68,9 +68,10 @@ const Seeder = async (data : StationData[]) => {
                     usedBy: null,
                     emi3Id: port.emi3Id,
                     status: port.status,
-                }).run();
+                });
             });
     });
+
 }
 
 // Set all ports to available to make use of our own state management.

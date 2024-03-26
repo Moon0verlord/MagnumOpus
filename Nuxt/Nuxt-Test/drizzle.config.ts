@@ -2,8 +2,8 @@
 export default {
     schema: "./db/schemas/schubergSchema.ts",
     out: "./drizzle",
-    driver: "better-sqlite",
+    driver: "pg",
     dbCredentials: {
-        url: "./db/Project.db"
+        connectionString: 'http://localhost:5432'
     }
 } satisfies Config;

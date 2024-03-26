@@ -1,6 +1,11 @@
-﻿import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
-import {users} from "~/db/schemas/schema";
+﻿    import { drizzle } from 'drizzle-orm/postgres-js';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import postgres from 'postgres';
 
-export const sqlite = new Database('./db/Project.db');
-export const db =  drizzle(sqlite);
+    // for migrations
+    // const migrationClient = postgres("postgres://postgres:adminadmin@0.0.0.0:5432/db", { max: 1 });
+    // migrate(drizzle(migrationClient), ...)
+
+    // for query purposes
+    const queryClient = postgres("http://localhost:5432");
+    export const db = drizzle(queryClient);
