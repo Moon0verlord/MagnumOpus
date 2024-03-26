@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type {StationData} from "~/composables/useTypes";
 import {awaitExpression} from "@babel/types";
-import type {Port} from "~/db/schemas/schubergSchema"; 
+import type {Port} from "~/db/schemas/schubergSchema";
+import ReserveModal from "~/components/self/ReserveModal.vue"; 
 
 const columns = [{
     key: 'portId',
@@ -18,7 +19,7 @@ const columns = [{
   }
 ];
 
-const {data, error, pending} = useAsyncData('ports-get', () => {
+const {data, error, refresh, pending} = useAsyncData('ports-get', () => {
   return fetch('http://localhost:3000/api/ports')
       .then(response => response.json())
       .then(responseData => responseData.ports as Port[]);
@@ -43,16 +44,39 @@ const changeButtonColor = (row: StationData) => {
 const page = ref(1)
 const pageCount = 8
 
-const rows = computed(() => {
+let rows = computed(() => {
   if (data.value != null)
     return data.value.slice((page.value - 1) * pageCount, (page.value) * pageCount)
   return [];
 })
+
+watch(() => data.value, (newData) => {
+  rows = computed(() => {
+    if (data.value != null)
+      return data.value.slice((page.value - 1) * pageCount, (page.value) * pageCount)
+    return [];
+  })
+});
+
+const isReverseModalOpen = ref(false);
+const portIdData = ref("");
+function HandleButtonRequest(status: string, portId: string) {
+  if (status === 'available')
+  {
+    isReverseModalOpen.value = true;
+    portIdData.value = portId;
+  }
+  else if (status === 'charging')
+  {
+    
+  }
+}
 </script>
 
 <template>
   <div class="flex justify-center align-middle mt-10">
     <div class="max-w-4xl">
+      <ReserveModal id="reserve" v-model="isReverseModalOpen" :port-id="portIdData" @reserveDone="refresh"/>
       <UTable
           :loading="pending"
           :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }"
@@ -63,9 +87,7 @@ const rows = computed(() => {
       >
       <template #actions-data="{ row }">
         {{ changeButtonColor(row) }}
-        <UButton :disabled="row.status === 'out of order' || row.status === 'unknown' || row.status === 'occupied'" @click=""
-          :color="buttonColor"
-        >
+        <UButton :disabled="row.status === 'out of order' || row.status === 'unknown' || row.status === 'occupied'" @click="HandleButtonRequest(row.status, row.portId)" :color="buttonColor">
           {{ row.status === 'available' ? 'Reserve' : row.status === 'charging' ? 'Request' : 'Unavailable' }}
         </UButton>
       </template>
