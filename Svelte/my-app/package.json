@@ -8,7 +8,10 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"tauri": "tauri"
+		"tauri": "tauri",
+		"studio": "drizzle-kit studio --config drizzle.config.ts",
+		"generate": "drizzle-kit generate:pg --config drizzle.config.ts",
+		"migrate": "drizzle-kit push:pg --config drizzle.config.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
@@ -20,6 +23,8 @@
 		"@types/uuid": "^9.0.8",
 		"autoprefixer": "^10.4.17",
 		"daisyui": "^4.7.2",
+		"drizzle-kit": "^0.20.14",
+		"pg": "^8.11.5",
 		"postcss": "^8.4.35",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
@@ -33,6 +38,9 @@
 		"@tauri-apps/api": "^1.5.3",
 		"@tauri-apps/plugin-notification": "^2.0.0-beta.2",
 		"better-sqlite3": "^9.4.3",
+		"dotenv": "^16.4.5",
+		"drizzle-orm": "^0.30.8",
+		"postgres": "^3.4.4",
 		"uuid": "^9.0.1",
 		"uuid4": "^2.0.3"
 	}
