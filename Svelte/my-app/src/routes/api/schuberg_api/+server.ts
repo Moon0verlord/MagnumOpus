@@ -1,5 +1,6 @@
 import { API_URL } from '$env/static/private';
 
+// @ts-ignore
 export const GET = async ({ request }) => {
     const authHeader = request.headers.get("Authorization");
 
