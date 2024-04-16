@@ -121,7 +121,7 @@
                     <div class="join flex justify-center">
                         {#each Array(Math.ceil(data.props.chargingPorts.length / itemsPerPage)) as _, i (i)}
                             {#if i === 0 || i === Math.ceil(data.props.chargingPorts.length / itemsPerPage) - 1 || i === currentPage || (i >= currentPage - 3 && i <= currentPage + 1)}
-                                <button class="join-item btn" on:click={() => goToPage(i + 1)}>{i + 1}</button>
+                                <button class="{i + 1 === currentPage ? 'join-item btn bg-base-300' : 'join-item btn'}" on:click={() => goToPage(i + 1)}>{i + 1}</button>
                             {:else if i === currentPage - 4 || i === currentPage + 2}
                                 <button class="join-item btn btn-disabled">...</button>
                             {/if}
