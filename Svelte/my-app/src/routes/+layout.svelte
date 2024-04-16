@@ -3,7 +3,6 @@
     import {page} from "$app/stores";
     import {theme} from './theme/theme';
     import {mobile} from './mobile/mobile';
-    import logo from '../lib/assets/Schuberg.jpeg'
     import {onMount, onDestroy} from 'svelte';
     
 
