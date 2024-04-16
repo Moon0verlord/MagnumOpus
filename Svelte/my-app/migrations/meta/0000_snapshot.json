@@ -1,0 +1,188 @@
+{
+  "id": "6ed42952-a5f3-411b-80d9-92d16cf9040b",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "Ports": {
+      "name": "Ports",
+      "schema": "",
+      "columns": {
+        "port_id": {
+          "name": "port_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "station_id": {
+          "name": "station_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "used_by": {
+          "name": "used_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emi3_id": {
+          "name": "emi3_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Ports_station_id_Stations_station_id_fk": {
+          "name": "Ports_station_id_Stations_station_id_fk",
+          "tableFrom": "Ports",
+          "tableTo": "Stations",
+          "columnsFrom": [
+            "station_id"
+          ],
+          "columnsTo": [
+            "station_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "Ports_used_by_Users_user_id_fk": {
+          "name": "Ports_used_by_Users_user_id_fk",
+          "tableFrom": "Ports",
+          "tableTo": "Users",
+          "columnsFrom": [
+            "used_by"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "Stations": {
+      "name": "Stations",
+      "schema": "",
+      "columns": {
+        "station_id": {
+          "name": "station_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "location_id": {
+          "name": "location_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coordinates": {
+          "name": "coordinates",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "max_power": {
+          "name": "max_power",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "port_ids": {
+          "name": "port_ids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "Users": {
+      "name": "Users",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "okta_id": {
+          "name": "okta_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isAdmin": {
+          "name": "isAdmin",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Users_email_unique": {
+          "name": "Users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

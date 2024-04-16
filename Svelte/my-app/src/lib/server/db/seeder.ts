@@ -1,19 +1,26 @@
 ﻿import {db} from "$lib/server/db/db.server"
 import type {Address, Port, Station, StationData, Status} from "$lib/server/db/types";
-import {eq} from "drizzle-orm";
+import {eq, sql} from "drizzle-orm";
 import {Ports, Stations} from "$lib/server/db/schema";
 import { API_URL } from '$env/static/private';
 
-export const getData = async () => {
+export const getData = async (json?: any) => {
     let stationData: StationData[] = [];
-
     try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch data: ${response.statusText}`);
-        }
+        let responseData;
+        if (json == null)
+        {
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch data: ${response.statusText}`);
+            }
 
-        const responseData = await response.json();
+            responseData = await response.json();
+        }
+        else {
+            responseData = json;
+        }
+        console.log("Data loaded.");
         stationData.values = await responseData.stationList.map((station: any) => ({
             id: station.id,
             locationId: station.locationId,
@@ -59,7 +66,7 @@ export const Seeder = async (data : StationData[]) => {
             address: JSON.stringify(station.address),
             maxPower: station.maxPower,
             portIds: getPortIds(station),
-        });
+        }).execute();
 
         station.evses.forEach(port => {
             db.insert(Ports).values({
@@ -68,7 +75,7 @@ export const Seeder = async (data : StationData[]) => {
                 usedBy: null,
                 emi3Id: port.emi3Id,
                 status: port.status,
-            });
+            }).execute();
         });
     });
 
