@@ -1,6 +1,5 @@
 <script lang="ts">
 
-  import type {PageData} from './$types';
   import {mobile} from './mobile/mobile';
 
     let isLoading = false;
@@ -142,43 +141,54 @@
   <div class="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[100vh]">
     <!-- Blank section with logo and quote on the left -->
     <div class="flex flex-col justify-between p-12 bg-base-200 text-base-content">
-      <div>
-        <img src="src/lib/assets/logo.svg" alt="Acme Inc Logo" class="w-24 h-24 mb-4" />
-        <h2 class="text-2xl font-bold mb-3">Acme Inc</h2>
-        <blockquote>
-          "Drip or drown"
+      <div class="relative z-20 flex items-center text-lg font-medium">
+        <img src="src/lib/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
+        <h2 class="text-2xl font-bold mb-1">Schuberg Philis</h2>
+      </div>
+      <div class="relative z-20 mt-auto">
+        <blockquote class="space-y-2">
+          <p class="text-lg">
+            &ldquo;Sorry losers and haters, but my I.Q. is one of the highest and you all know it! 
+            Please don't feel so stupid or insecure, it's not your fault&rdquo;
+          </p>
+          <footer class="text-sm">—The 45th president of the United States</footer>
         </blockquote>
-        <cite>Mozart</cite>
       </div>
     </div>
   
-    <!-- Login section on the right -->
-    <div class="flex items-center justify-center bg-base-100 py-12 lg:min-h-[600px] xl:min-h-[100vh]">
-      <div class="w-full max-w-md">
-        <div class="mb-6">
-          <h1 class="text-3xl font-bold text-center mb-4">Login</h1>
-          <form on:submit|preventDefault={handleLogin}>
-            <div class="mb-4">
-              <label for="email" class="label">
-                <span class="label-text">Email</span>
-              </label>
-              <input id="email" type="email" placeholder="name@example.com" class="input input-bordered w-full" required on:keydown={handleLoginKey} bind:value={email} />
-            </div>
-            <div class="mb-6">
-              <label for="password" class="label">
-                <span class="label-text">Password</span>
-              </label>
-              <input id="password" type="password" class="input input-bordered w-full" required on:keydown={handleLoginKey} bind:value={password} />
-              <a href="##" class="label-text-alt link link-hover">Forgot Password?</a>
-            </div>
-            <button type="submit" class="btn btn-primary w-full">Login</button>
-          </form>
-        </div>
-        <p class="text-center text-sm">
-          Don't have an account?
-          <a href="##" class="link link-hover">Sign up</a>
-        </p>
+  <!-- Login section on the right -->
+  <div class="flex items-center justify-center bg-base-100 py-12 lg:min-h-[600px] xl:min-h-[100vh]">
+    <div class="w-full max-w-md">
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-center mb-4">Login</h1>
+        <form on:submit|preventDefault={handleLogin}>
+          <div class="mb-4">
+            <label for="email" class="label">
+              <span class="label-text">Email</span>
+            </label>
+            <input id="email" type="email" placeholder="name@example.com" class="input input-bordered w-full" required on:keydown={handleLoginKey} bind:value={email} style="background-image: url('src/lib/assets/Mail.svg'); background-repeat: no-repeat; background-size: 16px; background-position: 10px center; padding-left: 35px;"/>
+          </div>
+          <div class="mb-6">
+            <label for="password" class="label">
+              <span class="label-text">Password</span>
+            </label>
+            <input id="password" type="password" class="input input-bordered w-full" required on:keydown={handleLoginKey} bind:value={password} style="background-image: url('src/lib/assets/Pasword.svg'); background-repeat: no-repeat; background-size: 16px; background-position: 10px center; padding-left: 35px;"/>
+            <a href="##" class="label-text-alt link link-hover">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
       </div>
+      <p class="text-center text-sm">
+        Don't have an account?
+        <a href="##" class="link link-hover">Sign up</a>
+      </p>
     </div>
   </div>
+  </div>
   {/if}
+
+
+<!-- TODO
+Make sure text and icons works with both colorshemes
+tweak the theme colors
+rewrite backend -->
