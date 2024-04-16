@@ -14,14 +14,12 @@ export const getData = async (json?: any) => {
             if (!response.ok) {
                 throw new Error(`Failed to fetch data: ${response.statusText}`);
             }
-
             responseData = await response.json();
         }
         else {
             responseData = json;
         }
-        console.log("Data loaded.");
-        stationData.values = await responseData.stationList.map((station: any) => ({
+        stationData = responseData.stationList.map((station: any) => ({
             id: station.id,
             locationId: station.locationId,
             reference: station.reference,
@@ -36,10 +34,10 @@ export const getData = async (json?: any) => {
             externalAccountId: station.externalAccountId,
             externalParentAccountId: station.externalParentAccountId
         }));
+        return stationData;
     } catch (error) {
         console.error('Error fetching station data:', error);
     }
-
     return stationData;
 };
 
@@ -55,10 +53,8 @@ const getPortIds = (data : StationData) : string => {
 }
 
 export const Seeder = async (data : StationData[]) => {
-    data.forEach(station => {
-        // Can't do a mass insert and then run once after bulk insertion sadly, drizzle seems to not support this i thonk.
-        // running after each insert works for now.
-        db.insert(Stations).values({
+    for (const station of data) {
+        await db.insert(Stations).values({
             stationId: station.id,
             locationId: station.locationId,
             overallStatus: station.status,
@@ -66,20 +62,20 @@ export const Seeder = async (data : StationData[]) => {
             address: JSON.stringify(station.address),
             maxPower: station.maxPower,
             portIds: getPortIds(station),
-        }).execute();
+        });
 
-        station.evses.forEach(port => {
-            db.insert(Ports).values({
+        for (const port of station.evses) {
+            await db.insert(Ports).values({
                 portId: port.id,
                 stationId: station.id,
                 usedBy: null,
                 emi3Id: port.emi3Id,
                 status: port.status,
-            }).execute();
-        });
-    });
-
+            });
+        }
+    }
 }
+
 export const allPortsAvailable = async () => {
     const allPorts = await db.select().from(Ports).execute();
 

@@ -6,16 +6,18 @@ import path from 'path';
 export const GET = async () => {
     try {
         const data = fs.readFileSync("src/lib/server/data/apidata.json", 'utf-8');
-        const jsonData = JSON.parse(data);
+        const jsonData = await JSON.parse(data);
         console.log("JSON Data loaded.");
-        await Seeder((await getData(jsonData)));
+        const stationData = await getData(jsonData);
+        console.log("Station data fetched.");
+        await Seeder(stationData);
         console.log("Seeder completed.");
         await allPortsAvailable();
         console.log("All ports set to available.");
         await allStationsAvailable();
         console.log("All stations set to available.");
         return new Response(JSON.stringify(
-            { message: "OK" }),
+                { message: "OK" }),
             { status: 200 });
     } catch (e: any) {
         console.error(e.message);
