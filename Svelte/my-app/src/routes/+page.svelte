@@ -129,10 +129,6 @@
               </span>
               <span class="label-text-alt"><a href="/forgotpassword" class="link link-hover">Forgot Password</a></span>
           </div>
-          <div class="divider">or</div>
-          <button class="btn btn-block">
-              Login with Okta
-          </button>
       </div>
   </div>
 </div>

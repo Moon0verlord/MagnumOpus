@@ -4,7 +4,7 @@
     import {theme} from './theme/theme';
     import {mobile} from './mobile/mobile';
     import {onMount, onDestroy} from 'svelte';
-    
+
 
     export let isMobile = false;
 
@@ -96,7 +96,7 @@
     </div>
 {/if}
 
-<div class="{isMobile ? '-mb-16' : '-mt-24'}">
+<div class="{isMobile ? (currentPage === '/' || currentPage === '/register' ? '' : '-mb-16') : (currentPage === '/' || currentPage === '/register' ? '' : '-mt-24')}">
     <slot/>
 </div>
 
