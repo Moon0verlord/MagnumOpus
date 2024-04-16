@@ -139,46 +139,58 @@
 
 {:else}
 
-  <div class="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[100vh]">
-    <!-- Blank section with logo and quote on the left -->
-    <div class="flex flex-col justify-between p-12 bg-base-200 text-base-content">
-      <div>
-        <img src="src/lib/assets/logo.svg" alt="Acme Inc Logo" class="w-24 h-24 mb-4" />
-        <h2 class="text-2xl font-bold mb-3">Acme Inc</h2>
-        <blockquote>
-          "Drip or drown"
-        </blockquote>
-        <cite>Mozart</cite>
-      </div>
+<div class="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[100vh]">
+  <!-- Blank section with logo and quote on the left -->
+  <div class="flex flex-col justify-between p-12 bg-base-200 text-base-content">
+    <div class="relative z-20 flex items-center text-lg font-medium">
+      <img src="src/lib/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
+      <h2 class="text-2xl font-bold mb-1">Schuberg Philis</h2>
     </div>
-  
-    <!-- Login section on the right -->
-    <div class="flex items-center justify-center bg-base-100 py-12 lg:min-h-[600px] xl:min-h-[100vh]">
-      <div class="w-full max-w-md">
-        <div class="mb-6">
-          <h1 class="text-3xl font-bold text-center mb-4">Login</h1>
-          <form on:submit|preventDefault={handleLogin}>
-            <div class="mb-4">
-              <label for="email" class="label">
-                <span class="label-text">Email</span>
-              </label>
-              <input id="email" type="email" placeholder="name@example.com" class="input input-bordered w-full" required on:keydown={handleLoginKey} bind:value={email} />
-            </div>
-            <div class="mb-6">
-              <label for="password" class="label">
-                <span class="label-text">Password</span>
-              </label>
-              <input id="password" type="password" class="input input-bordered w-full" required on:keydown={handleLoginKey} bind:value={password} />
-              <a href="##" class="label-text-alt link link-hover">Forgot Password?</a>
-            </div>
-            <button type="submit" class="btn btn-primary w-full">Login</button>
-          </form>
-        </div>
-        <p class="text-center text-sm">
-          Don't have an account?
-          <a href="##" class="link link-hover">Sign up</a>
+    <div class="relative z-20 mt-auto">
+      <blockquote class="space-y-2">
+        <p class="text-lg">
+          &ldquo;Sorry losers and haters, but my I.Q. is one of the highest and you all know it! 
+          Please don't feel so stupid or insecure, it's not your fault&rdquo;
         </p>
-      </div>
+        <footer class="text-sm">—The 45th president of the United States</footer>
+      </blockquote>
     </div>
   </div>
+  
+  <!-- Login section on the right -->
+  <div class="flex items-center justify-center bg-base-100 py-12 lg:min-h-[600px] xl:min-h-[100vh]">
+    <div class="w-full max-w-md">
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-center mb-4">Login</h1>
+        <form on:submit|preventDefault={handleLogin}>
+          <div class="mb-4">
+            <label class="input input-bordered {isEmailError ? 'input-error animate-pulse' : ''} flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.587 1.413T20 20zm8-7.175q.125 0 .263-.038t.262-.112L19.6 8.25q.2-.125.3-.312t.1-.413q0-.5-.425-.75T18.7 6.8L12 11L5.3 6.8q-.45-.275-.875-.012T4 7.525q0 .25.1.438t.3.287l7.075 4.425q.125.075.263.113t.262.037"/>
+              </svg>
+              <input type="text" class="grow" placeholder="Email" bind:value={email} on:keydown={handleLoginKey} on:input={handleInput}/>
+          </label>
+          </div>
+          <div class="mb-6">
+            <label class="input input-bordered {isPasswordError ? 'input-error animate-pulse' : ''} flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M2 19v-2h20v2zm1.15-6.05l-1.3-.75l.85-1.5H1V9.2h1.7l-.85-1.45L3.15 7L4 8.45L4.85 7l1.3.75L5.3 9.2H7v1.5H5.3l.85 1.5l-1.3.75l-.85-1.5zm8 0l-1.3-.75l.85-1.5H9V9.2h1.7l-.85-1.45l1.3-.75l.85 1.45l.85-1.45l1.3.75l-.85 1.45H15v1.5h-1.7l.85 1.5l-1.3.75l-.85-1.5zm8 0l-1.3-.75l.85-1.5H17V9.2h1.7l-.85-1.45l1.3-.75l.85 1.45l.85-1.45l1.3.75l-.85 1.45H23v1.5h-1.7l.85 1.5l-1.3.75l-.85-1.5z"/>
+              </svg>
+              <input type="password" class="grow" placeholder="Password" bind:value={password} on:keydown={handleLoginKey} on:input={handleInput}/>
+          </label>
+            <a href="##" class="label-text-alt link link-hover">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn btn-primary w-full">Login</button>
+        </form>
+      </div>
+      <p class="text-center text-sm">
+        Don't have an account?
+        <a href="##" class="link link-hover">Sign up</a>
+      </p>
+    </div>
+  </div>
+  </div>
   {/if}
+
+
+<!-- TODO Make sure text and icons works with both colorshemes. - tweak the theme colors - rewrite backend -->
