@@ -1,8 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-.SchubergLogo{
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+
+[data-theme="black"] * {
+    @apply rounded;
+  }

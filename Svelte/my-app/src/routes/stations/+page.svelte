@@ -2,6 +2,9 @@
     import {tick} from 'svelte';
     import type {PageData} from './$types';
     import {mobile} from '../mobile/mobile';
+    import charger from "$lib/assets/MaterialSymbolsEvCharger.svg";
+    import charge from "$lib/assets/SolarBatteryChargeBold.svg";
+    import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg";
 
     $: isMobile = $mobile;
     export let data: PageData;
@@ -25,16 +28,58 @@
     };
 </script>
 
+
 <!-- Ports -->
 {#if !isMobile}
     <div class="flex items-center justify-center h-screen">
-        <div class="w-3/4">
+<!--        <div class="mt-60 w-auto flex flex-col items-center justify-left h-screen pl-8">-->
+<!--            <div class="card bg-base-100 shadow-xl h-4/6">-->
+<!--                <div class="card-body flex flex-col gap-6">-->
+<!--                    <span class="text-3xl"><b>Menu</b></span>-->
+<!--                    <span class="flex"> -->
+<!--            <img class="h-12 w-12" src={charger} alt="charge">-->
+<!--             <span class="text-2xl">-->
+<!--                schedule request-->
+<!--            </span>-->
+<!--          </span>-->
+<!--                    <span class="flex"> -->
+<!--            <img class="h-12 w-12" src={charge} alt="charge"> -->
+<!--               <span class="text-2xl">-->
+<!--                Charge status -->
+<!--            </span>-->
+<!--          </span>-->
+<!--                    <span class="flex"> -->
+<!--            <img class="h-12 w-12" src={lock} alt="charge"> -->
+<!--            <span class="text-2xl">-->
+<!--                Unlock connector -->
+<!--            </span>-->
+<!--          </span>-->
+<!--                    <div>-->
+<!--                        <p class="text-2xl font-bold gray-600">Charging</p>-->
+<!--                        <div class="w-full accent-gray-700 rounded-full dark:bg-gray-700">-->
+<!--                            <div class="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 -->
+<!--                                  leading-none rounded-full" style="width: 45%"> 45%</div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div class="button-container flex flex-wrap gap-4">-->
+<!--                        <p class="text-2xl font-bold gray-600">Sort charging list</p>-->
+<!--                        <button> All Stations </button>-->
+<!--                        <button> Available Now </button>-->
+<!--                        <button> 15-30 min wait </button>-->
+<!--                        <button> Fast Charger </button>-->
+<!--                        <button> Slow Charger </button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="flex-grow flex w-full items-center h-screen">
             <div class="card bg-base-100 shadow-xl mx-auto mt-2.5">
-                <div class="card-body">
+                <div class=" w-auto card-body">
                     <h2 class="card-title">Ports</h2>
                     <div class="overflow-x-auto">
                         <table class="table">
-                            <!-- head -->
                             <thead>
                             <tr>
                                 <th>Port ID</th>
@@ -44,7 +89,6 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <!-- body -->
                             <tbody>
                             {#each currentPageData as port}
                                 <tr>
