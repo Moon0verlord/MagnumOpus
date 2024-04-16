@@ -3,7 +3,9 @@
     import {page} from "$app/stores";
     import {theme} from './theme/theme';
     import {mobile} from './mobile/mobile';
+    import logo from '../lib/assets/Schuberg.jpeg'
     import {onMount, onDestroy} from 'svelte';
+    
 
     export let isMobile = false;
 
@@ -79,9 +81,10 @@
 <html lang="en" class="bg outline-none">
 
 <!-- Desktop Navbar -->
+
 {#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
-    <div class="navbar bg-base-100 fixed">
-        <div class="flex-1">
+    <div class="navbar bg-base-100 fixed h-24">
+        <div class="flex-1 items-center h-20 ">
             <a href="/home" class="btn btn-ghost text-xl">Schuberg Hub</a>
         </div>
         <div class="flex-none">
