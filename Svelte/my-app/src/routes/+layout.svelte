@@ -82,7 +82,7 @@
 <!-- Desktop Navbar -->
 
 {#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
-    <div class="navbar bg-base-100 fixed h-24">
+    <div class="navbar bg-base-100 h-24">
         <div class="flex-1 items-center h-20 ">
             <a href="/home" class="btn btn-ghost text-xl">Schuberg Hub</a>
         </div>
@@ -96,11 +96,13 @@
     </div>
 {/if}
 
-<slot/>
+<div class="{isMobile ? '-mb-16' : '-mt-24'}">
+    <slot/>
+</div>
 
 <!-- Mobile Navbar -->
 {#if isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
-    <div class="btm-nav">
+    <div class="btm-nav static">
         <button class:active={currentPage === '/home'} on:click={() => navigateTo('/home')}>
             <span class="btm-nav-label">Home</span>
         </button>

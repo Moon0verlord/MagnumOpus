@@ -59,9 +59,9 @@
                 </div>
                 <div class="form-control">
                     <label class="label cursor-pointer gap-4">
-                        <span class="label-text">Valentine</span>
-                        <input type="radio" name="theme-radios" class="radio theme-controller" value="valentine"
-                               bind:group={selectedTheme} on:change={() => changeTheme('valentine')}/>
+                        <span class="label-text">Forest</span>
+                        <input type="radio" name="theme-radios" class="radio theme-controller" value="forest"
+                               bind:group={selectedTheme} on:change={() => changeTheme('forest')}/>
                     </label>
                 </div>
                 <div class="card-actions justify-end">

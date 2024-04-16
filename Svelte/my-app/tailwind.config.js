@@ -6,7 +6,7 @@ module.exports = {
             "dark",
             "black",
             "retro",
-            "valentine",
+            "forest",
         ],
     },
     content: ['./src/routes/**/*.{html,svelte,js,ts}', './src/lib/components/**/*.{html,svelte,js,ts}'],
