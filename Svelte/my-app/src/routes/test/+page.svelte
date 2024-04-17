@@ -26,20 +26,19 @@
         start = (currentPage - 1) * itemsPerPage;
         end = start + itemsPerPage;
         currentPageData = data.props.stations.slice(start, end);
+        selectedStationId = "";
     };
 </script>
-
-
 <!-- Ports -->
 {#if !isMobile}
     <div class="flex items-center justify-center h-screen">
-        <div class="flex-grow flex w-full items-center h-screen">
+        <div class="flex-grow flex items-center h-screen w-screen">
             <div class="card bg-base-100 shadow-xl mx-auto">
                 <div class="w-full card-body">
-                    <h2 class="card-title">Stations</h2>
-                    <div class="overflow-x-auto">
-                        <table id="stations-table" class="table">
-                            <thead class="bg-base-200">
+                    <h2 class="card-title w-full">Stations</h2>
+                    <div class="overflow-x-auto w-full">
+                        <table id="stations-table" class="table w-full">
+                            <thead class="bg-base-200 w-full">
                             <tr>
                                 <th>Station</th>
                                 <th>Power</th>
@@ -48,7 +47,7 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody class="">
+                            <tbody class="w-full">
                             {#each currentPageData as station}
                                 <tr class="">
                                     <td>{station.address ? JSON.parse(station.address.toString()).streetName : ''}</td>
@@ -68,8 +67,8 @@
                                     </td>
                                 </tr>
                                 {#if selectedStationId === station.stationId}
-                                    <div transition:slide={{duration: 200}} class=" w-full">
-                                        <table class="table">
+                                    <div transition:slide={{duration: 200}} class="min-w-full">
+                                        <table class="table w-full">
                                             <thead class="bg-base-200 p-1">
                                             <tr>
                                                 <th class="p-1">Port</th>
@@ -79,11 +78,11 @@
                                             </thead>
                                             <tbody class="bg-base-300">
                                             {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
-                                                <tr class="w-full max-h-min p-1">
+                                                <tr class="w-full p-1">
                                                     <td class="p-2">{port.displayName}</td>
                                                     <td class="p-2">{port.status}</td>
                                                     <td class="p-2">
-                                                        <button class="badge p-3 badge-success">
+                                                        <button class="badge badge-success">
                                                             button
                                                         </button>
                                                     </td>
