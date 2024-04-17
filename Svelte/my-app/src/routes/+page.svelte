@@ -134,7 +134,7 @@
 
 {:else}
 
-<div class="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[100vh]">
+<div class="w-full grid min-h-screen grid-cols-2 xl:min-h-[100vh]">
   <!-- Blank section with logo and quote on the left -->
   <div class="flex flex-col justify-between p-12 bg-base-200 text-base-content">
     <div class="relative z-20 flex items-center text-lg font-medium">
