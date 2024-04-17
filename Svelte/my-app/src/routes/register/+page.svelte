@@ -1,12 +1,9 @@
 <script lang="ts">
-    import { db } from '$lib/server/db/db.server';
-    import {Users} from '$lib/server/db/schema';
-    import { v4 as uuidv4 } from 'uuid';
+  
     import {mobile} from '../mobile/mobile';
 
     $: isMobile = $mobile;
-    
-    const userId = 1;
+    let isSuccess = false;
     let isLoading = false;
     let name = '';
     let email = '';
@@ -50,7 +47,11 @@
             alertMessageDisplay = true;
             alertMessage = 'Please fill in all fields';
             isLoading = false;
+
+            setTimeout(() => {
+            alertMessageDisplay = false;}, 5000);
             return;
+
         }
 
         if (password !== confirmPassword) {
@@ -59,21 +60,36 @@
             isLoading = false;
             return;
         }
-        
         isLoading = true;
 
-
-        await db.insert(Users).values({
-            userId: uuidv4(),
+        const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
             name: name,
             email: email,
             password: password
-        }).execute();
+        })
+      });
 
-        alertMessageDisplay = true;
-        alertMessage = 'Registration successful';
+      console.log(response.status);
 
-        isLoading = false;
+      if (response.status === 201) {
+          isSuccess = true;
+          alertMessageDisplay = true;
+          alertMessage = 'Registration successful';
+      } else {
+          alertMessageDisplay = true;
+          alertMessage = 'Registration failed';
+      }
+      isLoading = false;
+
+      setTimeout(() => {
+            alertMessageDisplay = false;
+        }, 5000);
+
     }
 
     function handleInput() {
@@ -102,7 +118,7 @@
 
 {#if alertMessageDisplay}
     <div role="alert"
-         class="alert alert-error animate-slide-down flex w-1/2 mt-2.5 lg:mt-2.5 mx-auto absolute top-0 left-0 right-0">
+    class={`alert animate-slide-down flex w-1/2 mt-2.5 lg:mt-2.5 mx-auto absolute top-0 left-0 right-0 ${isSuccess ? 'alert-success' : 'alert-error'}`}>
         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
