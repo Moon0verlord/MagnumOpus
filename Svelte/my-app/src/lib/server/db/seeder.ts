@@ -3,6 +3,7 @@ import type {Address, Port, Station, StationData, Status} from "$lib/server/db/t
 import {eq, sql} from "drizzle-orm";
 import {Ports, Stations} from "$lib/server/db/schema";
 import { API_URL } from '$env/static/private';
+import {list} from "postcss";
 
 export const getData = async (json?: any) => {
     let stationData: StationData[] = [];
@@ -41,13 +42,26 @@ export const getData = async (json?: any) => {
     return stationData;
 };
 
-const getPortIds = (data : StationData) : string => {
+// use but one of these parameters.
+const getPortIds = (data? : StationData, portArr?: string[]) : string => {
     let portIds = "";
-    for (const [i, value] of data.evses.entries()) {
-        if (i === data.evses.length - 1)
-            portIds += `${value.id}`
-        else
-            portIds += `${value.id},`
+    if (data != null)
+    {
+        for (const [i, value] of data.evses.entries()) {
+            if (i === data.evses.length - 1)
+                portIds += `${value.id}`
+            else
+                portIds += `${value.id},`
+        }
+    }
+    else if (portArr != null)
+    {
+        for (const [i, value] of portArr.entries()) {
+            if (i === portArr.length - 1)
+                portIds += `${value}`
+            else
+                portIds += `${value},`
+        }
     }
     return portIds
 }
@@ -96,4 +110,22 @@ export const allStationsAvailable = async () => {
             .where(eq(Stations.stationId, station.stationId))
             .execute();
     }
+}
+
+export const StationPortBalancer = async () => {
+    const allStations = await db.select().from(Stations).execute();
+    let portsToRemove: string[] = [];
+    const portsPerStation = 4;
+    for (const station of allStations) {
+        if (station.portIds != null && station.portIds.split(",").length > portsPerStation)
+        {
+            let allPortsofStation = station.portIds.split(",");
+            portsToRemove = portsToRemove.concat(allPortsofStation.slice(portsPerStation));
+            let newPortsofStation = getPortIds(undefined, allPortsofStation.slice(0, portsPerStation));
+            await db.update(Stations).set({portIds: newPortsofStation}).where(eq(Stations.stationId, station.stationId)).execute();
+        }
+    }
+    for (const port of portsToRemove) {
+        await db.delete(Ports).where(eq(Ports.portId, port)).execute();
+    } 
 }

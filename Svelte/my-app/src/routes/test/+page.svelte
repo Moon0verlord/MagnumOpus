@@ -83,7 +83,7 @@
                                                     <td class="p-2">{port.portId}</td>
                                                     <td class="p-2">{port.status}</td>
                                                     <td class="p-2">
-                                                        <button class="btn p-2">
+                                                        <button class="badge p-3 badge-success">
                                                             button
                                                         </button>
                                                     </td>

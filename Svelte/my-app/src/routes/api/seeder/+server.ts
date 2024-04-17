@@ -1,5 +1,5 @@
 ﻿// src/routes/api/seeder.ts
-import {getData, allPortsAvailable, allStationsAvailable, Seeder} from "$lib/server/db/seeder";
+import {getData, allPortsAvailable, allStationsAvailable, Seeder, StationPortBalancer} from "$lib/server/db/seeder";
 import fs from 'fs';
 import path from 'path';
 
@@ -11,11 +11,13 @@ export const GET = async () => {
         const stationData = await getData(jsonData);
         console.log("Station data fetched.");
         await Seeder(stationData);
-        console.log("Seeder completed.");
+        console.log("Database seeding completed.");
         await allPortsAvailable();
         console.log("All ports set to available.");
         await allStationsAvailable();
         console.log("All stations set to available.");
+        await StationPortBalancer();
+        console.log("All station ports are balanced to a maximum, unneeded ports removed from DB.")
         return new Response(JSON.stringify(
                 { message: "OK" }),
             { status: 200 });
