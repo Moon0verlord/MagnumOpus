@@ -35,6 +35,8 @@
             alertMessageDisplay = true;
             alertMessage = 'Please fill in all fields';
             isLoading = false;
+            setTimeout(() => {
+            alertMessageDisplay = false;}, 5000);
             return;
         }
 
@@ -56,6 +58,8 @@
         } else {
             alertMessageDisplay = true;
             alertMessage = 'Invalid email or password';
+            setTimeout(() => {
+            alertMessageDisplay = false;}, 5000);
             email = '';
             password = '';
         }
@@ -154,7 +158,7 @@
   
   <!-- Login section on the right -->
   <div class="flex items-center justify-center bg-base-100 py-12 lg:min-h-[600px] xl:min-h-[100vh]">
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md px-4">
       <div class="mb-6">
         <h1 class="text-3xl font-bold text-center mb-4">Login</h1>
         <form on:submit|preventDefault={handleLogin}>
@@ -218,6 +222,3 @@
   </div>
   </div>
   {/if}
-
-
-<!-- TODO tweak the dark theme colors - rewrite backend -->

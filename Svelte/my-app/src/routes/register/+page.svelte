@@ -58,6 +58,8 @@
             alertMessageDisplay = true;
             alertMessage = 'Password does not match';
             isLoading = false;
+            setTimeout(() => {
+            alertMessageDisplay = false;}, 5000);
             return;
         }
         isLoading = true;
@@ -190,7 +192,7 @@
 
 {:else}
 
-<div class="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[100vh]">
+<div class="w-full grid min-h-screen grid-cols-2 xl:min-h-[100vh]">
     <!-- Blank section with logo and quote on the left -->
     <div class="flex flex-col justify-between p-12 bg-base-200 text-base-content">
       <div class="relative z-20 flex items-center text-lg font-medium">
@@ -209,7 +211,7 @@
     
     <!-- Registration section on the right -->
     <div class="flex items-center justify-center bg-base-100 py-12 lg:min-h-[600px] xl:min-h-[100vh]">
-      <div class="w-full max-w-md">
+      <div class="w-full max-w-md px-4">
         <div class="mb-6">
           <h1 class="text-3xl font-bold text-center mb-4">Register</h1>
           <form on:submit|preventDefault={handleRegister}>
