@@ -18,7 +18,7 @@ $: isMobile = $mobile;
     <div>
         <div class="flex pl-16 items-center h-screen">
             <div class="h-4/6">
-                <div class="card bg-base-100 pr-16 align-center justify-center shadow-xl card-body flex border-2 ">
+                <div class="card bg-base-100 pr-16 align-center justify-center shadow-xl card-body flex border-2 mb-5">
                     <p class="text-3xl font-bold">Currently used port</p>
                     <div class="flex float-left flex-col ">
                         <div class="stat gap-6">
@@ -63,7 +63,7 @@ $: isMobile = $mobile;
                     <p>No current requests</p>
                 </div>
             </div>
-            <div class="card card-body flex w-auto flex-col bg-base-100 shadow-xl h-4/6 ml-4 gap-12  border-2" >
+            <div class="card card-body flex w-auto flex-col mx-12 bg-base-100 shadow-xl h-4/6 ml-4  border-2" >
                 <h2 class="text-2xl font-bold mb-4">Information</h2>
             </div>
         </div>
