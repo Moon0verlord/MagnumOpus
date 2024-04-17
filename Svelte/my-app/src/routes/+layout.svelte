@@ -4,7 +4,7 @@
     import {theme} from './theme/theme';
     import {mobile} from './mobile/mobile';
     import {onMount, onDestroy} from 'svelte';
-    
+
 
     export let isMobile = false;
 
@@ -82,7 +82,7 @@
 <!-- Desktop Navbar -->
 
 {#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
-    <div class="navbar bg-base-100 fixed h-24">
+    <div class="navbar bg-base-100 h-24">
         <div class="flex-1 items-center h-20 ">
             <a href="/home" class="btn btn-ghost text-xl">Schuberg Hub</a>
         </div>
@@ -96,11 +96,13 @@
     </div>
 {/if}
 
-<slot/>
+<div class="{isMobile ? (currentPage === '/' || currentPage === '/register' ? '' : '-mb-16') : (currentPage === '/' || currentPage === '/register' ? '' : '-mt-24')}">
+    <slot/>
+</div>
 
 <!-- Mobile Navbar -->
 {#if isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
-    <div class="btm-nav">
+    <div class="btm-nav static">
         <button class:active={currentPage === '/home'} on:click={() => navigateTo('/home')}>
             <span class="btm-nav-label">Home</span>
         </button>
