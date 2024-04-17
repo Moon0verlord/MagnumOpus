@@ -1,7 +1,7 @@
 <script lang="ts">
     import type {PageData} from './$types';
     import {mobile} from '../mobile/mobile';
-    import { slide } from 'svelte/transition';
+    import {slide} from 'svelte/transition';
     import charger from "$lib/assets/MaterialSymbolsEvCharger.svg";
     import charge from "$lib/assets/SolarBatteryChargeBold.svg";
     import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg";
@@ -26,19 +26,20 @@
         start = (currentPage - 1) * itemsPerPage;
         end = start + itemsPerPage;
         currentPageData = data.props.stations.slice(start, end);
-        selectedStationId = "";
     };
 </script>
+
+
 <!-- Ports -->
 {#if !isMobile}
     <div class="flex items-center justify-center h-screen">
-        <div class="flex-grow flex items-center h-screen w-screen">
+        <div class="flex-grow flex w-full items-center h-screen">
             <div class="card bg-base-100 shadow-xl mx-auto">
                 <div class="w-full card-body">
-                    <h2 class="card-title w-full">Stations</h2>
-                    <div class="overflow-x-auto w-full">
-                        <table id="stations-table" class="table w-full">
-                            <thead class="bg-base-200 w-full">
+                    <h2 class="card-title">Stations</h2>
+                    <div class="overflow-x-auto">
+                        <table id="stations-table" class="table">
+                            <thead class="bg-base-200">
                             <tr>
                                 <th>Station</th>
                                 <th>Power</th>
@@ -47,7 +48,7 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody class="w-full">
+                            <tbody class="">
                             {#each currentPageData as station}
                                 <tr class="">
                                     <td>{station.address ? JSON.parse(station.address.toString()).streetName : ''}</td>
@@ -63,34 +64,40 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <input type="checkbox" class="checkbox" checked={selectedStationId === station.stationId} on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)} />
+                                        <input type="checkbox" class="checkbox"
+                                               checked={selectedStationId === station.stationId}
+                                               on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)}/>
                                     </td>
                                 </tr>
                                 {#if selectedStationId === station.stationId}
-                                    <div transition:slide={{duration: 200}} class="min-w-full">
-                                        <table class="table w-full">
-                                            <thead class="bg-base-200 p-1">
-                                            <tr>
-                                                <th class="p-1">Port</th>
-                                                <th class="p-1">Status</th>
-                                                <th class="p-1"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody class="bg-base-300">
-                                            {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
-                                                <tr class="w-full p-1">
-                                                    <td class="p-2">{port.displayName}</td>
-                                                    <td class="p-2">{port.status}</td>
-                                                    <td class="p-2">
-                                                        <button class="badge badge-success">
-                                                            button
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            {/each}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <tr>
+                                        <td colspan="5">
+                                            <div transition:slide={{duration: 200}}>
+                                                <table class="table">
+                                                    <thead class="bg-base-200 p-1">
+                                                    <tr>
+                                                        <th class="p-1">Port</th>
+                                                        <th class="p-1">Status</th>
+                                                        <th class="p-1"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="bg-base-300">
+                                                    {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
+                                                        <tr class="w-full max-h-min p-1">
+                                                            <td class="p-2">{port.portId}</td>
+                                                            <td class="p-2">{port.status}</td>
+                                                            <td class="p-2">
+                                                                <button class="badge p-3 badge-success">
+                                                                    button
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {/each}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 {/if}
                             {/each}
                             </tbody>
@@ -98,7 +105,12 @@
                     </div>
                     <div class="join flex justify-center">
                         {#each Array(Math.ceil(data.props.stations.length / itemsPerPage)) as _, i (i)}
-                                <button class="{i + 1 === currentPage ? 'join-item btn bg-base-300' : 'join-item btn'}" on:click={() => goToPage(i + 1)}>{i + 1}</button>
+                            {#if i === 0 || i === Math.ceil(data.props.stations.length / itemsPerPage) - 1 || i === currentPage || (i >= currentPage - 3 && i <= currentPage + 1)}
+                                <button class="{i + 1 === currentPage ? 'join-item btn bg-base-300' : 'join-item btn'}"
+                                        on:click={() => goToPage(i + 1)}>{i + 1}</button>
+                            {:else if i === currentPage - 4 || i === currentPage + 2}
+                                <button class="join-item btn btn-disabled">...</button>
+                            {/if}
                         {/each}
                     </div>
                 </div>
