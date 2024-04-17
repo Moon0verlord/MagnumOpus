@@ -39,11 +39,11 @@
                     <h2 class="card-title">Stations</h2>
                     <div class="overflow-x-auto">
                         <table id="stations-table" class="table">
-                            <thead>
+                            <thead class="bg-base-200">
                             <tr>
                                 <th>Station</th>
                                 <th>Power</th>
-                                <th>Amount of Ports</th>
+                                <th>No. of Ports</th>
                                 <th>Status</th>
                                 <th></th>
                             </tr>
@@ -51,11 +51,11 @@
                             <tbody class="">
                             {#each currentPageData as station}
                                 <tr class="">
-                                    <td>{JSON.parse(station.address).streetName}</td>
+                                    <td>{station.address ? JSON.parse(station.address.toString()).streetName : ''}</td>
                                     <td>{station.maxPower}</td>
                                     <td class="">
                                         <div class="">
-                                            {station.portIds?.split(",").length}
+                                            {station.portIds?.split(",").length} ports
                                         </div>
                                     </td>
                                     <td class="">
@@ -68,24 +68,24 @@
                                     </td>
                                 </tr>
                                 {#if selectedStationId === station.stationId}
-                                    <div transition:slide={{duration: 200}} class="flex flex-col flex-1 w-full">
+                                    <div transition:slide={{duration: 200}} class=" w-full">
                                         <table class="table">
-                                            <thead>
+                                            <thead class="bg-base-200 p-1">
                                             <tr>
-                                                <th>Port</th>
-                                                <th>Status</th>
-                                                <th></th>
+                                                <th class="p-1">Port</th>
+                                                <th class="p-1">Status</th>
+                                                <th class="p-1"></th>
                                             </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody class="bg-base-300">
                                             {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
-                                                <tr class="w-full">
-                                                    <td class="">{port.portId}</td>
-                                                    <td>{port.status}</td>
-                                                    <td>
-                                                        <button class="btn">
-                                                        button
-                                                    </button>
+                                                <tr class="w-full max-h-min p-1">
+                                                    <td class="p-2">{port.portId}</td>
+                                                    <td class="p-2">{port.status}</td>
+                                                    <td class="p-2">
+                                                        <button class="btn p-2">
+                                                            button
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             {/each}

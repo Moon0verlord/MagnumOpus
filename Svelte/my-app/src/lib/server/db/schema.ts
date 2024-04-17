@@ -10,6 +10,8 @@ export const Users  = pg.pgTable("Users", {
     isAdmin: pg.boolean('isAdmin')
 });
 
+export type User = InferSelectModel<typeof Users>;
+
 export type InsertUserSchuberg = InferInsertModel<typeof Users>;
 
 export const Stations = pg.pgTable("Stations", {
