@@ -31,7 +31,8 @@ export const Ports = pg.pgTable("Ports", {
     stationId: pg.text("station_id").references(() => Stations.stationId),
     usedBy: pg.text("used_by").references(() => Users.userId),
     emi3Id: pg.text("emi3_id"),
-    status: pg.text("status")
+    status: pg.text("status"),
+    displayName: pg.text("display_name"),
 });
 
 export type Port = InferSelectModel<typeof Ports>;
