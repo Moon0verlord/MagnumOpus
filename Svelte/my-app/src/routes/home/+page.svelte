@@ -49,6 +49,7 @@ $: isMobile = $mobile;
                                 </span>
                             </span>
                         </div>
+                        <!--Comment-->
                         <div class = "stat">
                             <span class="flex">
                                 <p class="space-x-100 font-bold text-xl">Charging </p>
