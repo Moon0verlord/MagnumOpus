@@ -64,9 +64,11 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <input type="checkbox" class="checkbox"
-                                               checked={selectedStationId === station.stationId}
-                                               on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)}/>
+                                        <div class="collapse collapse-arrow">
+                                            <input type="checkbox" checked={selectedStationId === station.stationId}
+                                                   on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)}/>
+                                            <div class="collapse-title"/>
+                                        </div>
                                     </td>
                                 </tr>
                                 {#if selectedStationId === station.stationId}
