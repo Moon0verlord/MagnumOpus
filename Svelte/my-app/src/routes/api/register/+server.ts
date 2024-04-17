@@ -1,5 +1,6 @@
 import { postUser } from "$lib/server/db";
 
+// @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();
 
