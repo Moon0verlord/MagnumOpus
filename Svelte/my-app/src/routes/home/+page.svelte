@@ -1,10 +1,27 @@
 <script lang="ts">
 import {mobile} from '../mobile/mobile';
+import {onDestroy, onMount} from 'svelte';
+import {userId} from "../../store";
 import charge from "$lib/assets/SolarBatteryChargeBold.svg"
 import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
 import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
 import logo from "$lib/assets/Schuberg.jpeg";
 $: isMobile = $mobile;
+
+let currentUserId: string | null;
+let unsubscribe: () => void;
+
+onMount(() => {
+    unsubscribe = userId.subscribe(value => {
+        currentUserId = value;
+    });
+});
+
+onDestroy(() => {
+    if (unsubscribe) {
+        unsubscribe();
+    }
+});
 </script>
 <style>
     .card-body{
@@ -61,7 +78,7 @@ $: isMobile = $mobile;
                 </div>
             </div>
             <div class="flex mx-[30px] flex-col bg-base-100 shadow-xl h-4/6 ml-4 flex-grow">
-                <h2 class="text-2xl font-bold mb-4">Charging Stations</h2>
+                <h2 class="text-2xl font-bold mb-4 p-3">User ID: {currentUserId}</h2>
                 <p>List of available charging stations, their status, etc.</p>
             </div>
         </div>

@@ -1,11 +1,19 @@
 <script>
     import SettingsModal from "$lib/components/dialogs/settingsModal.svelte";
+    import {userId} from "../../store";
 
     let showModal = false;
 
     const openSettings = () => {
         showModal = true;
     };
+    
+    function logout() {
+        userId.set(null);
+        sessionStorage.removeItem('userId');
+        window.location.href = '/';
+    }
+    
 </script>
 
 <!-- Menu -->
@@ -28,7 +36,7 @@
 
     <!-- Logout -->
     <ul class="menu bg-base-200 shadow-xl rounded-box ml-2.5 mr-2.5 mt-2.5">
-        <li><a href="/">Logout</a></li>
+        <li><a href="/" on:click|preventDefault={logout}>Logout</a></li>
     </ul>
     </div>
 

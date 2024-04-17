@@ -7,7 +7,7 @@ export const POST = async ({ request }) => {
     const user = await loginUser(body.email, body.password);
 
     if (user) {
-        return new Response(JSON.stringify({ message: "Success"}), { status: 201 })
+        return new Response(JSON.stringify({ message: "Success", uuid: `${user.userId}`}), { status: 201 })
     }
 
     return new Response(JSON.stringify({ message: "Failed"}), { status: 400 })
