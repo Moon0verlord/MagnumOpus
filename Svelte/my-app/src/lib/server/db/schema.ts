@@ -10,6 +10,8 @@ export const Users  = pg.pgTable("Users", {
     isAdmin: pg.boolean('isAdmin')
 });
 
+export type User = InferSelectModel<typeof Users>;
+
 export type InsertUserSchuberg = InferInsertModel<typeof Users>;
 
 export const Stations = pg.pgTable("Stations", {
@@ -21,6 +23,8 @@ export const Stations = pg.pgTable("Stations", {
     maxPower: pg.real("max_power"),
     portIds: pg.text("port_ids") // needs to be parsed into an array on leaving
 });
+
+export type Station = InferSelectModel<typeof Stations>;
 
 export const Ports = pg.pgTable("Ports", {
     portId: pg.text("port_id").primaryKey(),
