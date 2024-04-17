@@ -1,5 +1,4 @@
 <script lang="ts">
-    import {tick} from 'svelte';
     import type {PageData} from './$types';
     import {mobile} from '../mobile/mobile';
     import { slide } from 'svelte/transition';
@@ -28,8 +27,6 @@
         end = start + itemsPerPage;
         currentPageData = data.props.stations.slice(start, end);
     };
-    let paginationFlag = false;
-    let setFlag = () => paginationFlag = true;
 </script>
 
 
@@ -37,11 +34,11 @@
 {#if !isMobile}
     <div class="flex items-center justify-center h-screen">
         <div class="flex-grow flex w-full items-center h-screen">
-            <div class="card bg-base-100 shadow-xl mx-auto mt-2.5">
-                <div class=" w-auto card-body">
+            <div class="card bg-base-100 shadow-xl mx-auto">
+                <div class="w-full card-body">
                     <h2 class="card-title">Stations</h2>
                     <div class="overflow-x-auto">
-                        <table class="table">
+                        <table id="stations-table" class="table">
                             <thead>
                             <tr>
                                 <th>Station</th>
@@ -51,24 +48,49 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="">
                             {#each currentPageData as station}
-                                <tr>
+                                <tr class="">
                                     <td>{JSON.parse(station.address).streetName}</td>
                                     <td>{station.maxPower}</td>
-                                    <td>{station.portIds?.split(",").length}</td>
-                                    <td class="badge badge-secondary">{station.overallStatus}</td>
+                                    <td class="">
+                                        <div class="">
+                                            {station.portIds?.split(",").length}
+                                        </div>
+                                    </td>
+                                    <td class="">
+                                        <div class="badge p-3 {station.overallStatus === 'available' ? 'badge-success' : station.overallStatus === 'occupied' ? 'badge-error' : 'badge-ghost'}">
+                                            {station.overallStatus}
+                                        </div>
+                                    </td>
                                     <td>
                                         <input type="checkbox" class="checkbox" checked={selectedStationId === station.stationId} on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)} />
                                     </td>
                                 </tr>
                                 {#if selectedStationId === station.stationId}
-                                    <div transition:slide={{duration: 200}}>
-                                        {#each station.portIds.split(",") as port}
+                                    <div transition:slide={{duration: 200}} class="flex flex-col flex-1 w-full">
+                                        <table class="table">
+                                            <thead>
                                             <tr>
-                                                <td class="badge badge-accent">Port: {port}</td>
+                                                <th>Port</th>
+                                                <th>Status</th>
+                                                <th></th>
                                             </tr>
-                                        {/each}
+                                            </thead>
+                                            <tbody>
+                                            {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
+                                                <tr class="w-full">
+                                                    <td class="">{port.portId}</td>
+                                                    <td>{port.status}</td>
+                                                    <td>
+                                                        <button class="btn">
+                                                        button
+                                                    </button>
+                                                    </td>
+                                                </tr>
+                                            {/each}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 {/if}
                             {/each}
