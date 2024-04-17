@@ -22,6 +22,8 @@ export const Stations = pg.pgTable("Stations", {
     portIds: pg.text("port_ids") // needs to be parsed into an array on leaving
 });
 
+export type Station = InferSelectModel<typeof Stations>;
+
 export const Ports = pg.pgTable("Ports", {
     portId: pg.text("port_id").primaryKey(),
     stationId: pg.text("station_id").references(() => Stations.stationId),
