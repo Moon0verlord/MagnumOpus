@@ -80,7 +80,7 @@
                                             <tbody class="bg-base-300">
                                             {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
                                                 <tr class="w-full max-h-min p-1">
-                                                    <td class="p-2">{port.portId}</td>
+                                                    <td class="p-2">{port.displayName}</td>
                                                     <td class="p-2">{port.status}</td>
                                                     <td class="p-2">
                                                         <button class="badge p-3 badge-success">

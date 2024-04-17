@@ -1,5 +1,6 @@
 ﻿import {db} from "$lib/server/db/db.server"
-import type {Address, Port, Station, StationData, Status} from "$lib/server/db/types";
+import type {StationData, Status} from "$lib/server/db/types";
+import type {Port, Station} from "$lib/server/db/schema";
 import {eq, sql} from "drizzle-orm";
 import {Ports, Stations} from "$lib/server/db/schema";
 import { API_URL } from '$env/static/private';
@@ -113,7 +114,7 @@ export const allStationsAvailable = async () => {
 }
 
 export const StationPortBalancer = async () => {
-    const allStations = await db.select().from(Stations).execute();
+    const allStations: Station[] = await db.select().from(Stations).execute();
     let portsToRemove: string[] = [];
     const portsPerStation = 4;
     for (const station of allStations) {
@@ -128,4 +129,22 @@ export const StationPortBalancer = async () => {
     for (const port of portsToRemove) {
         await db.delete(Ports).where(eq(Ports.portId, port)).execute();
     } 
+}
+
+export const PortDisplayNameGenerator = async () => {
+    const allStations: Station[] = await db.select().from(Stations).execute();
+    for (const station of allStations)
+    {
+        const portsOfStation = await db.select().from(Ports).where(eq(Ports.stationId, station.stationId));
+        for (const [i, value] of portsOfStation.entries())
+        {
+            // @ts-ignore
+            let nameParts = JSON.parse(station.address.toString()).streetName.split(' ');
+            if (!isNaN(Number(nameParts[nameParts.length - 1]))) {
+                nameParts.pop();
+            }
+            let name = nameParts.join(' ') + `: Port ${i + 1}`;
+            await db.update(Ports).set({displayName: name}).where(eq(Ports.portId, value.portId)).execute();
+        }
+    }
 }
