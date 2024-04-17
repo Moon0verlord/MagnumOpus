@@ -4,14 +4,7 @@ import {mobile} from '../mobile/mobile';
 $: isMobile = $mobile;
 </script>
 <style>
-    
-    .stat {
-        margin-top: -10px; /* Adjust the value to your preference */
-    }
-    .test{
-        background-color: white;
-    }
-    
+   
 </style>
 
 {#if !isMobile}
