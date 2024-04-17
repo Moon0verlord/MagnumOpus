@@ -2,6 +2,7 @@
     import {tick} from 'svelte';
     import type {PageData} from './$types';
     import {mobile} from '../mobile/mobile';
+    import { slide } from 'svelte/transition';
     import charger from "$lib/assets/MaterialSymbolsEvCharger.svg";
     import charge from "$lib/assets/SolarBatteryChargeBold.svg";
     import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg";
@@ -38,12 +39,12 @@
         <div class="flex-grow flex w-full items-center h-screen">
             <div class="card bg-base-100 shadow-xl mx-auto mt-2.5">
                 <div class=" w-auto card-body">
-                    <h2 class="card-title">Ports</h2>
+                    <h2 class="card-title">Stations</h2>
                     <div class="overflow-x-auto">
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Station ID</th>
+                                <th>Station</th>
                                 <th>Power</th>
                                 <th>Amount of Ports</th>
                                 <th>Status</th>
@@ -53,7 +54,7 @@
                             <tbody>
                             {#each currentPageData as station}
                                 <tr>
-                                    <td>{station.stationId}</td>
+                                    <td>{JSON.parse(station.address).streetName}</td>
                                     <td>{station.maxPower}</td>
                                     <td>{station.portIds?.split(",").length}</td>
                                     <td class="badge badge-secondary">{station.overallStatus}</td>
@@ -62,11 +63,13 @@
                                     </td>
                                 </tr>
                                 {#if selectedStationId === station.stationId}
-                                    {#each station.portIds.split(",") as port}
-                                        <tr>
-                                            <td class="badge badge-accent">Port: {port}</td>
-                                        </tr>
-                                    {/each}
+                                    <div transition:slide={{duration: 200}}>
+                                        {#each station.portIds.split(",") as port}
+                                            <tr>
+                                                <td class="badge badge-accent">Port: {port}</td>
+                                            </tr>
+                                        {/each}
+                                    </div>
                                 {/if}
                             {/each}
                             </tbody>
