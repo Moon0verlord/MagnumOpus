@@ -37,4 +37,12 @@ export const Ports = pg.pgTable("Ports", {
 
 export type Port = InferSelectModel<typeof Ports>;
 
+export const Requests = pg.pgTable("Requests", {
+    requestId: pg.serial("request_id").primaryKey(),
+    priority: pg.text("priority"),
+    fromUserId: pg.text("from_userid").references(() => Users.userId),
+    requestedPortId: pg.text("requested_portid").references(() => Ports.portId),
+    message: pg.text("message")
+});
+export type Request = InferSelectModel<typeof Requests>;
 
