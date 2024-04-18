@@ -1,8 +1,9 @@
 <script lang="ts">
 
   import {mobile} from './mobile/mobile';
+  import { userId} from "../store";
 
-    let isLoading = false;
+  let isLoading = false;
     let email = '';
     let password = '';
     let isEmailError = false;
@@ -54,6 +55,8 @@
         isLoading = false;
 
         if (response.status === 201) {
+            const data = await response.json();
+            userId.set(data.uuid);
             window.location.href = '/home';
         } else {
             alertMessageDisplay = true;
