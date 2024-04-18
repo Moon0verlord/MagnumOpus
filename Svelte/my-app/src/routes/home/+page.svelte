@@ -505,26 +505,47 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                             
                         </div>
                         <div class="carousel-item h-full">
-                            <div class="p-6">
-                                <div class="flex flex-col gap-2">
-                                    <a href="#" class="block max-w-2xl p-6 border bg-green-800 border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-green-800
+                            <div class="rounded-lg border bg-card text-card-foreground overflow-auto shadow-sm" data-v0-t="card">
+                                <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
+                                    <h3 class="whitespace-nowrap tracking-tight text-sm font-medium">Charging Requests</h3>
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            class="w-4 h-4 text-gray-500 dark:text-gray-400">
+                                        <path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"></path>
+                                        <path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"></path>
+                                        <path d="m11 7-3 5h4l-3 5"></path>
+                                        <line x1="22" x2="22" y1="11" y2="13"></line>
+                                    </svg>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex flex-col gap-2">
+                                        <a href="#" class="block max-w-2xl p-6 border bg-green-800 border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-green-800
                        dark:border-gray-700 dark:hover:bg-green-900">
-                                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request : Urgent</h5>
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">From : Bertha</p>
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 4 of Station Oostlaan</p>
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Need it over 5 hours for full charge" </p>
-                                    </a>
+                                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request : Urgent</h5>
+                                            <p class="font-normal text-gray-700 dark:text-gray-400">From : Bertha</p>
+                                            <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 4 of Station Oostlaan</p>
+                                            <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Need it over 5 hours for full charge" </p>
+                                        </a>
 
-                                    <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200 
+                                        <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200
                                     rounded-lg shadow hover:bg-gray-100 dark:bg-red-800 dark:border-gray-700 dark:hover:bg-red-900">
-                                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request</h5>
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">From : Donald</p>
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 3 of Station Oostlaan</p>
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Court case on 5" </p>
-                                    </a>
+                                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request</h5>
+                                            <p class="font-normal text-gray-700 dark:text-gray-400">From : Donald</p>
+                                            <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 3 of Station Oostlaan</p>
+                                            <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Court case on 5" </p>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            </div>
                         <div class="carousel-item h-full">
                             <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
                                 <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
