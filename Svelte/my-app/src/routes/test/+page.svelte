@@ -78,7 +78,7 @@
                                                 <table class="table">
                                                     <thead class="bg-base-200 p-1">
                                                     <tr>
-                                                        <th class="p-1">Port</th>
+                                                        <th class="p-1 min-w-60 w-60 break-words">Port</th>
                                                         <th class="p-1">Status</th>
                                                         <th class="p-1"></th>
                                                     </tr>
@@ -88,9 +88,9 @@
                                                         <tr class="w-full max-h-min p-1">
                                                             <td class="p-2">{port.displayName}</td>
                                                             <td class="p-2">{port.status}</td>
-                                                            <td class="p-2">
-                                                                <button class="badge p-3 badge-success">
-                                                                    button
+                                                            <td class="p-2 flex justify-end">
+                                                                <button class={port.status === 'available' ? 'btn btn-info' : port.status === 'charging' ? 'btn' : 'btn btn-error'}>
+                                                                    {port.status === 'available' ? 'Reserve' : port.status === 'charging' ? 'Request' : 'Report'}
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -107,8 +107,8 @@
                     </div>
                     <div class="join flex justify-center">
                         {#each Array(Math.ceil(data.props.stations.length / itemsPerPage)) as _, i (i)}
-                                <button class="{i + 1 === currentPage ? 'join-item btn bg-base-300' : 'join-item btn'}"
-                                        on:click={() => goToPage(i + 1)}>{i + 1}</button>
+                            <button class="{i + 1 === currentPage ? 'join-item btn bg-base-300' : 'join-item btn'}"
+                                    on:click={() => goToPage(i + 1)}>{i + 1}</button>
                         {/each}
                     </div>
                 </div>
