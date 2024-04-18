@@ -1,7 +1,8 @@
 <script lang="ts">
 
   import {mobile} from './mobile/mobile';
-  import { userId} from "../store";
+  import {userId} from "../store";
+  import oktaAuth from '../oktaAuth';
 
   let isLoading = false;
     let email = '';
@@ -12,6 +13,16 @@
     let alertMessage = ''
 
     $: isMobile = $mobile;
+
+
+    // Okta Login function. works fine
+  async function handleOktaLogin() {
+    try {
+      await oktaAuth.signInWithRedirect();
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
+  }
 
 
     async function handleLoginKey(event: KeyboardEvent) {
@@ -190,7 +201,7 @@
         <a href="/register" class="link link-hover">Sign up</a>
       </p>
       <div class="divider">OR</div>
-      <button class="btn btn-neutral w-full" style="display: flex; align-items: center; justify-content: center;">
+      <button on:click={handleOktaLogin} class="btn btn-neutral w-full" style="display: flex; align-items: center; justify-content: center;">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 63 63" fill="currentColor" style="margin-right: 8px;">
           <path d="M34.6,0.4l-1.3,16c-0.6-0.1-1.2-0.1-1.9-0.1c-0.8,0-1.6,0.1-2.3,0.2l-0.7-7.7c0-0.2,0.2-0.5,0.4-0.5h1.3
           l-0.6-7.8c0-0.2,0.2-0.5,0.4-0.5h4.3C34.5,0,34.7,0.2,34.6,0.4L34.6,0.4L34.6,0.4z M23.8,1.2c-0.1-0.2-0.3-0.4-0.5-0.3l-4,1.5

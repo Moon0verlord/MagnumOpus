@@ -1,6 +1,7 @@
 <script>
     import SettingsModal from "$lib/components/dialogs/settingsModal.svelte";
     import {userId} from "../../store";
+    import oktaAuth from '../../oktaAuth';
 
     let showModal = false;
 
@@ -8,11 +9,24 @@
         showModal = true;
     };
     
+ // Adjust the path as necessary
+
     function logout() {
         userId.set(null);
         sessionStorage.removeItem('userId');
-        window.location.href = '/';
+
+        // Attempt to log out from Okta
+        oktaAuth.signOut({
+            postLogoutRedirectUri: window.location.origin
+        })
+        // @ts-ignore
+        .catch((error) => {
+            console.error('Logout failed:', error);
+            // Optionally handle failed logout attempts here
+            window.location.href = '/'; // Fallback redirect if logout fails
+        });
     }
+
     
 </script>
 
