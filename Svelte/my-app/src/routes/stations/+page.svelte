@@ -2,10 +2,66 @@
     import type {PageData} from './$types';
     import {mobile} from '../mobile/mobile';
     import {slide} from 'svelte/transition';
+    import {onDestroy, onMount} from 'svelte';
+    import {userId} from "../../store";
+    import type {Port} from "$lib/server/db/schema";
     import PortsModal from "$lib/components/dialogs/portsModal.svelte";
 
     let showModal = false;
     let portData: any;
+
+    let currentUserId: string | null;
+    let unsubscribe: () => void;
+
+    onMount(() => {
+        unsubscribe = userId.subscribe(value => {
+            currentUserId = value;
+        });
+    });
+
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+
+    async function reservePort(port: any) {
+        if (currentUserId === null) {
+            return;
+        }
+
+        const response = await fetch('/api/stations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUserId,
+                portId: port.portId,
+                stationId: port.stationId
+            })
+        });
+
+        if (response.status === 201) {
+            const resData = await response.json();
+            console.log(resData);
+
+            // Update the port status
+            const index = data.props.chargingPorts.findIndex((x: Port) => x.portId === port.portId);
+            data.props.chargingPorts[index].status = 'occupied';
+            data.props.chargingPorts[index].usedBy = currentUserId;
+
+            // Update the station status
+            if (data.props.chargingPorts.filter(x => x.stationId === port.stationId).every(x => x.status === 'occupied')) {
+                const stationIndex = data.props.stations.findIndex(x => x.stationId === port.stationId);
+                data.props.stations[stationIndex].overallStatus = 'occupied';
+            }
+
+        } else if (response.status === 202) {
+            const resData = await response.json();
+            console.log(resData);
+        }
+    }
 
     const openPort = (data: any) => {
         portData = data; // Update portData with the data you want to pass to the modal
@@ -24,7 +80,7 @@
     let end = start + itemsPerPage;
 
     // Get the data for the current page
-    let currentPageData = data.props.stations.slice(start, end);
+    $: currentPageData = data.props.stations.slice(start, end);
 
     // Function to go to a specific page
     const goToPage = (page: any) => {
@@ -95,17 +151,18 @@
                                                             <td class="p-2">{port.displayName}</td>
                                                             <td class="p-2">{port.status}</td>
                                                             <td class="p-2 flex justify-end">
-                                                                {#if port.status === 'charging'}
-                                                                    <button class="btn btn-info"
+                                                                {#if port.status === 'occupied'}
+                                                                    <button class="btn w-4/6 {port.usedBy === currentUserId ? 'btn-disabled' : 'btn-info'}"
                                                                             on:click={() => openPort(port)}>Request
                                                                     </button>
                                                                 {/if}
                                                                 {#if port.status === 'available'}
-                                                                    <button class="btn btn-success">Request
+                                                                    <button class="btn w-4/6 btn-success"
+                                                                            on:click={() => reservePort(port)}>Rerserve
                                                                     </button>
                                                                 {/if}
-                                                                {#if port.status === 'charging'}
-                                                                    <button class="btn btn-error">Report
+                                                                {#if port.status === 'unavailable'}
+                                                                    <button class="btn w-4/6 btn-error">Report
                                                                     </button>
                                                                 {/if}
                                                                 <PortsModal show={showModal} data={portData}

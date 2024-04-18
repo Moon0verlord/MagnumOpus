@@ -1,4 +1,3 @@
-import {getInitialPorts} from "$lib/server/db";
 import type {PageServerLoad} from "./$types";
 import {GetAllPorts, GetAllStations} from "$lib/server/db/dbComposables";
 import type {Port, Station} from "$lib/server/db/schema";

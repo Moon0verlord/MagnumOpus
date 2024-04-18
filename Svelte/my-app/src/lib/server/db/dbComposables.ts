@@ -1,21 +1,21 @@
 ﻿import {type Port, Ports, type Station, Stations} from "$lib/server/db/schema";
 import {db} from "$lib/server/db/db.server";
 import {eq} from "drizzle-orm";
-import { uuid } from "drizzle-orm/pg-core";
-import { v4 as uuidv4 } from 'uuid';
+import {uuid} from "drizzle-orm/pg-core";
+import {v4 as uuidv4} from 'uuid';
 import {Users} from '$lib/server/db/schema';
-import { Result } from "postcss";
+import {Result} from "postcss";
 import bcrypt from 'bcryptjs';
 
-export const GetAllPorts = async () : Promise<Port[]> => {
+export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
 };
 
-export const GetAllStations = async () : Promise<Station[]> => {
+export const GetAllStations = async (): Promise<Station[]> => {
     return await db.select().from(Stations).execute();
 };
 
-export const GetAllPortsFromStation = async (stationId: string) : Promise<Port[]> => {
+export const GetAllPortsFromStation = async (stationId: string): Promise<Port[]> => {
     return await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
 }
 
@@ -43,6 +43,62 @@ export async function loginUser(email: string, password: string) {
             }
         }
         return null;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function reserverPort(userId: string, portId: string, stationId: string) {
+    try {
+        const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
+        if (existingPort.length > 0) {
+            return "User has already reserved a port";
+        }
+
+        await db.update(Ports)
+            .set({usedBy: userId, status: 'occupied'})
+            .where(eq(Ports.portId, portId))
+            .execute();
+
+        const ports = await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
+
+        if (ports.every(port => port.status === 'occupied')) {
+            await db.update(Stations)
+                .set({overallStatus: 'occupied'})
+                .where(eq(Stations.stationId, stationId))
+                .execute();
+        }
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function myPorts(userId: string) {
+    try {
+        return await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function releasePort(portId: string, stationId: string) {
+    try {
+        await db.update(Ports)
+            .set({usedBy: null, status: 'available'})
+            .where(eq(Ports.portId, portId))
+            .execute();
+
+        await db.update(Stations)
+            .set({overallStatus: 'available'})
+            .where(eq(Stations.stationId, stationId))
+            .execute();
+
+        return true;
     } catch (error) {
         console.error(error);
         return null;
