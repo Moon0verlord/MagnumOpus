@@ -1,10 +1,9 @@
-﻿import {type Port, Ports, type Station, Stations} from "$lib/server/db/schema";
+﻿import {type Port, Ports, type Station, Stations, type User, Users} from "$lib/server/db/schema";
 import {db} from "$lib/server/db/db.server";
 import {eq} from "drizzle-orm";
-import {uuid} from "drizzle-orm/pg-core";
-import {v4 as uuidv4} from 'uuid';
-import {Users} from '$lib/server/db/schema';
-import {Result} from "postcss";
+import { uuid } from "drizzle-orm/pg-core";
+import { v4 as uuidv4 } from 'uuid';
+import { Result } from "postcss";
 import bcrypt from 'bcryptjs';
 
 export const GetAllPorts = async (): Promise<Port[]> => {
@@ -17,6 +16,10 @@ export const GetAllStations = async (): Promise<Station[]> => {
 
 export const GetAllPortsFromStation = async (stationId: string): Promise<Port[]> => {
     return await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
+}
+
+export const GetUserAdminStatus = async (userId: string) : Promise<User[]> => {
+    return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
 }
 
 export async function PostUser(name: string, email: string, password: string) {
