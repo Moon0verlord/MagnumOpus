@@ -6,6 +6,8 @@ import {v4 as uuidv4} from 'uuid';
 import {Users} from '$lib/server/db/schema';
 import {Result} from "postcss";
 import bcrypt from 'bcryptjs';
+import {USER} from "$env/static/private";
+import type {User} from "$lib/server/db/types";
 
 export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
@@ -46,6 +48,15 @@ export async function loginUser(email: string, password: string) {
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+export async function getCurUser(id:string|null){
+    if (id !== null) {
+        var NewId = id.replace(/"/g, '');
+        
+        return await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
+    } else {
+        throw new Error("User ID cannot be null");
     }
 }
 

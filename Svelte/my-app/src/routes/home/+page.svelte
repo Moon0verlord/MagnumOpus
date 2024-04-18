@@ -1,7 +1,29 @@
 <script lang="ts">
 import {mobile} from '../mobile/mobile';
+import {onMount} from "svelte";
+import type {User} from "$lib/server/db/types";
+import {userId} from "../../store";
+let response;
+let curId;
+let user:User;
+onMount(async () => {
+    var id = userId.subscribe(value=>
+    {
+        curId = value;
+    });
+    response = await fetch(`/api/getuser?id=${id}`)
+        .then((response) => {
+            console.log(response.json())
+        return  response.json();
+    }).then((data:User) => {
+        user = data;
+    }).catch((error) => {
+        console.error('Error:', error);
+    });
+});
 
 $: isMobile = $mobile;
+
 </script>
 <style>h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
 body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
@@ -14,7 +36,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                         <div class="rounded-lg bg-card text-card-foreground shadow-sm " data-v0-t="card" style="display: flex; flex-direction: column; justify-content: space-between;">
                             <div class="rounded-lg border bg-card text-card-foreground pb-16 shadow-sm" data-v0-t="card">
                                 <div class="p-6 flex flex-row items-center justify-between space-y-0 h-44" >
-                                    <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome User</h3>
+                                    <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome {user}</h3>
                                 </div>
                                 <!--Greeting User-->
                                 <div class="pl-6 font-medium">
