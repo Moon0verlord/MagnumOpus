@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body{
+    background-color: #001E23;
+}
+.h1{
+    color: blue;
+}
+@media only screen and (max-width: 1200px) {
+    .schimg {
+        width: 7rem;
+        height: 5rem;
+    }
+}
