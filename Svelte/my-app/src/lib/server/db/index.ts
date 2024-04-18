@@ -26,12 +26,12 @@ export function getInitialUsers(): User[] {
     return rows as User[];
 }
 
-export function postUser(name: string, email: string, password: string): boolean {
-    const userId = uuidv4();
-    const query = `INSERT INTO Users (userId, name, email, password, isAdmin) VALUES (?, ?, ?, ?, ?)`;
-    const info = db.prepare(query).run(userId, name, email, password, 0);
-    return info.changes === 1;
-}
+// export function postUser(name: string, email: string, password: string): boolean {
+//     const userId = uuidv4();
+//     const query = `INSERT INTO Users (userId, name, email, password, isAdmin) VALUES (?, ?, ?, ?, ?)`;
+//     const info = db.prepare(query).run(userId, name, email, password, 0);
+//     return info.changes === 1;
+// }
 
 export function loginUser(email: string, password: string): User | null {
     const query = `SELECT userId AS userId, name AS userName, email AS userEmail, password AS userPassword FROM Users WHERE LOWER(email) = LOWER(?) AND password = ?`;
