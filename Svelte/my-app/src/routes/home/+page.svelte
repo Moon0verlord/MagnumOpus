@@ -34,7 +34,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                             stroke-width="2"
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
-                                            class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                            class="w-4 h-4 text-base-200/30  dark:text-gray-400"
                                     >
                                         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                                         <path d="M3 3v5h5"></path>
@@ -211,17 +211,17 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                     <a href="#" class="block max-w-2xl p-6 border bg-green-800 border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-green-800
                        dark:border-gray-700 dark:hover:bg-green-900">
                                                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request : Urgent</h5>
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">From : Bertha</p>
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 4 of Station Oostlaan</p>
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Need it over 5 hours for full charge" </p>
+                                                <p class="font-normal text-base-200/30  dark:text-gray-400">From : Bertha</p>
+                                                <p class="font-normal text-base-200/30  dark:text-gray-400">For : Port 4 of Station Oostlaan</p>
+                                                <p class="font-normal text-base-200/30  dark:text-gray-400">Reason : "Need it over 5 hours for full charge" </p>
                                             </a>
 
                                     <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200
                                     rounded-lg shadow hover:bg-gray-100 dark:bg-red-800 dark:border-gray-700 dark:hover:bg-red-900">
                                                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request</h5>
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">From : Donald</p>
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 3 of Station Oostlaan</p>
-                                                <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Court case on 5" </p>
+                                                <p class="font-normal text-base-200/30  dark:text-gray-400">From : Donald</p>
+                                                <p class="font-normal text-base-200/30  dark:text-gray-400">For : Port 3 of Station Oostlaan</p>
+                                                <p class="font-normal text-base-200/30  dark:text-gray-400">Reason : "Court case on 5" </p>
                                             </a>
                                 </div>
                             </div>
@@ -252,7 +252,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                 <div class="flex flex-col gap-2">
                                     <div class="flex items-center justify-between">
                                         <div class="font-medium">Port 4</div>
-                                        <div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                                        <div class="flex items-center gap-1 text-base-200/30  dark:text-gray-400">
                                             <svg
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     width="24"
@@ -538,9 +538,9 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                         <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200
                                     rounded-lg shadow hover:bg-gray-100 dark:bg-red-800 dark:border-gray-700 dark:hover:bg-red-900">
                                             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request</h5>
-                                            <p class="font-normal text-gray-700 dark:text-gray-400">From : Donald</p>
-                                            <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 3 of Station Oostlaan</p>
-                                            <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Court case on 5" </p>
+                                            <p class="font-normal text-base-200/30  dark:text-gray-400">From : Donald</p>
+                                            <p class="font-normal text-base-200/30  dark:text-gray-400">For : Port 3 of Station Oostlaan</p>
+                                            <p class="font-normal text-base-200/30  dark:text-gray-400">Reason : "Court case on 5" </p>
                                         </a>
                                     </div>
                                 </div>
@@ -572,7 +572,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                     <div class="flex flex-col gap-2">
                                         <div class="flex items-center justify-between">
                                             <div class="font-medium">Port 4</div>
-                                            <div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                                            <div class="flex items-center gap-1 text-base-200/30  dark:text-gray-400">
                                                 <svg
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         width="24"
@@ -594,7 +594,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <div class="font-medium">Estimated Time Remaining</div>
-                                            <div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                                            <div class="flex items-center gap-1 text-base-200/30 dark:text-gray-400">
                                                 <svg
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         width="24"
