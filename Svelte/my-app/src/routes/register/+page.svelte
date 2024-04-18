@@ -240,7 +240,7 @@
         </div>
         <p class="text-center text-sm">
           Already have an account?
-          <a href="/" class="link link-hover">Login here</a>
+          <a href="/" class="link link-hover">Login</a>
         </p>
       </div>
     </div>

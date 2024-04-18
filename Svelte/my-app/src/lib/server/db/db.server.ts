@@ -1,4 +1,4 @@
-﻿// db/db.server.ts
+﻿// db/db.+server.ts
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 // if this gives an error, run 'npm run dev' first to create your environment variables.
