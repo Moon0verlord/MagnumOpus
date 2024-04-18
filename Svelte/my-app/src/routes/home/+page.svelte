@@ -327,7 +327,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
         <div class="flex items-center justify-center h-screen">
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
-                    <div class="h-96 carousel carousel-vertical rounded-box">
+                    <div class="h-[500px] carousel carousel-vertical rounded-box">
                         <div class="carousel-item h-full">
                             <div class="rounded-lg border bg-card text-card-foreground pb-16 shadow-sm" data-v0-t="card">
                                 <div class="p-6 flex flex-row items-center justify-between space-y-0 h-44" >
