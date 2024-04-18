@@ -17,6 +17,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                 <div class="p-6 flex flex-row items-center justify-between space-y-0 h-44" >
                                     <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome User</h3>
                                 </div>
+                                <!--Greeting User-->
                                 <div class="pl-6 font-medium">
                                     So glad to see you again! Let's get started with your charging session.
                                 </div>
