@@ -84,7 +84,7 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody class="bg-base-300">
-                                                    {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
+                                                    {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId).sort((a, b) => Number(a.displayName.split(' ').slice(-1) - Number(b.displayName.split(' ').slice(-1)))) as port}
                                                         <tr class="w-full max-h-min p-1">
                                                             <td class="p-2">{port.displayName}</td>
                                                             <td class="p-2">{port.status}</td>
