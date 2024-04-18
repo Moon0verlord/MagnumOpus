@@ -31,9 +31,18 @@ export const Ports = pg.pgTable("Ports", {
     stationId: pg.text("station_id").references(() => Stations.stationId),
     usedBy: pg.text("used_by").references(() => Users.userId),
     emi3Id: pg.text("emi3_id"),
-    status: pg.text("status")
+    status: pg.text("status"),
+    displayName: pg.text("display_name"),
 });
 
 export type Port = InferSelectModel<typeof Ports>;
 
+export const Requests = pg.pgTable("Requests", {
+    requestId: pg.serial("request_id").primaryKey(),
+    priority: pg.text("priority"),
+    fromUserId: pg.text("from_userid").references(() => Users.userId),
+    requestedPortId: pg.text("requested_portid").references(() => Ports.portId),
+    message: pg.text("message")
+});
+export type Request = InferSelectModel<typeof Requests>;
 

@@ -26,7 +26,7 @@
 
 {#if show}
     <div class="fixed inset-0 flex items-center justify-center">
-        <div class="card w-80 glass text-primary-content lg:w-96">
+        <div class="card w-80 glass lg:w-96">
             <div class="card-body">
                 <h2 class="card-title">Appearance</h2>
                 <div class="form-control">

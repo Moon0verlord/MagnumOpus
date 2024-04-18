@@ -1,32 +1,65 @@
 <script lang="ts">
-    import type {PageData} from './$types';
     import {mobile} from '../mobile/mobile';
-    import { slide } from 'svelte/transition';
-    import charger from "$lib/assets/MaterialSymbolsEvCharger.svg";
-    import charge from "$lib/assets/SolarBatteryChargeBold.svg";
-    import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg";
+    import {onDestroy, onMount} from 'svelte';
+    import {userId} from "../../store";
 
     $: isMobile = $mobile;
-    let selectedStationId: string = "";
-    export let data: PageData;
 
-    let currentPage = 1; // Current page number
-    const itemsPerPage = 5; // Number of items per page
+    let currentUserId: string | null;
+    let unsubscribe: () => void;
+    let pageData: any[] = [];
 
-    // Calculate start and end indices for slicing the data array
-    let start = (currentPage - 1) * itemsPerPage;
-    let end = start + itemsPerPage;
+    onMount(() => {
+        unsubscribe = userId.subscribe(value => {
+            currentUserId = value;
+        });
 
-    // Get the data for the current page
-    let currentPageData = data.props.stations.slice(start, end);
+        if (currentUserId !== null) {
+            getPorts();
+        }
+    });
 
-    // Function to go to a specific page
-    const goToPage = (page: any) => {
-        currentPage = page;
-        start = (currentPage - 1) * itemsPerPage;
-        end = start + itemsPerPage;
-        currentPageData = data.props.stations.slice(start, end);
-    };
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+
+    async function getPorts() {
+        const response = await fetch('/api/ports', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUserId,
+            })
+        });
+
+        if (response.status === 201) {
+            const data = await response.json();
+            pageData = data;
+        }
+    }
+
+    async function disconnectPort(portId: string, stationId: string) {
+        const response = await fetch('/api/ports/disconnect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                portId: portId,
+                stationId: stationId,
+            })
+        });
+
+        if (response.status === 201) {
+            const data = await response.json();
+            console.log(data);
+            pageData = pageData.filter(port => port.portId !== portId);
+        }
+    }
 </script>
 
 
@@ -34,78 +67,40 @@
 {#if !isMobile}
     <div class="flex items-center justify-center h-screen">
         <div class="flex-grow flex w-full items-center h-screen">
-            <div class="card bg-base-100 shadow-xl mx-auto">
+            <div class="card bg-base-100 h-60 w-2/5 shadow-xl mx-auto">
                 <div class="w-full card-body">
-                    <h2 class="card-title">Stations</h2>
-                    <div class="overflow-x-auto">
-                        <table id="stations-table" class="table">
+                    <h2 class="card-title">My Port</h2>
+                    {#if pageData.length === 0}
+                        <div class="chat chat-start">
+                            <div class="chat-bubble">It's kind of empty</div>
+                        </div>
+                        <div class="chat chat-end">
+                            <div class="chat-bubble">Yes it is</div>
+                        </div>
+                    {:else}
+                        <table id="ports-table" class="table">
                             <thead class="bg-base-200">
                             <tr>
-                                <th>Station</th>
-                                <th>Power</th>
-                                <th>No. of Ports</th>
-                                <th>Status</th>
+                                <th>Port</th>
+                                <th>Station ID</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody class="">
-                            {#each currentPageData as station}
-                                <tr class="">
-                                    <td>{station.address ? JSON.parse(station.address.toString()).streetName : ''}</td>
-                                    <td>{station.maxPower}</td>
-                                    <td class="">
-                                        <div class="">
-                                            {station.portIds?.split(",").length} ports
-                                        </div>
-                                    </td>
-                                    <td class="">
-                                        <div class="badge p-3 {station.overallStatus === 'available' ? 'badge-success' : station.overallStatus === 'occupied' ? 'badge-error' : 'badge-ghost'}">
-                                            {station.overallStatus}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" class="checkbox" checked={selectedStationId === station.stationId} on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)} />
+                            {#each pageData as port}
+                                <tr class="w-full max-h-min p-1">
+                                    <td class="p-2">{port.displayName}</td>
+                                    <td class="p-2">{port.stationId}</td>
+                                    <td class="p-2 flex justify-end">
+                                        <button class="btn w-24 btn-error"
+                                                on:click={() => disconnectPort(port.portId, port.stationId)}>Disconnect
+                                        </button>
                                     </td>
                                 </tr>
-                                {#if selectedStationId === station.stationId}
-                                    <div transition:slide={{duration: 200}} class=" w-full">
-                                        <table class="table">
-                                            <thead class="bg-base-200 p-1">
-                                            <tr>
-                                                <th class="p-1">Port</th>
-                                                <th class="p-1">Status</th>
-                                                <th class="p-1"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody class="bg-base-300">
-                                            {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
-                                                <tr class="w-full max-h-min p-1">
-                                                    <td class="p-2">{port.portId}</td>
-                                                    <td class="p-2">{port.status}</td>
-                                                    <td class="p-2">
-                                                        <button class="btn p-2">
-                                                            button
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            {/each}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                {/if}
                             {/each}
                             </tbody>
                         </table>
-                    </div>
-                    <div class="join flex justify-center">
-                        {#each Array(Math.ceil(data.props.stations.length / itemsPerPage)) as _, i (i)}
-                            {#if i === 0 || i === Math.ceil(data.props.stations.length / itemsPerPage) - 1 || i === currentPage || (i >= currentPage - 3 && i <= currentPage + 1)}
-                                <button class="{i + 1 === currentPage ? 'join-item btn bg-base-300' : 'join-item btn'}" on:click={() => goToPage(i + 1)}>{i + 1}</button>
-                            {:else if i === currentPage - 4 || i === currentPage + 2}
-                                <button class="join-item btn btn-disabled">...</button>
-                            {/if}
-                        {/each}
-                    </div>
+                    {/if}
                 </div>
             </div>
         </div>

@@ -1,13 +1,13 @@
-import { loginUser } from "$lib/server/db";
+import { loginUser } from "$lib/server/db/dbComposables";
 
 // @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();
 
-    const response = loginUser(body.email, body.password);
+    const user = await loginUser(body.email, body.password);
 
-    if (response) {
-        return new Response(JSON.stringify({ message: "Success"}), { status: 201 })
+    if (user) {
+        return new Response(JSON.stringify({ message: "Success", uuid: `${user.userId}`}), { status: 201 })
     }
 
     return new Response(JSON.stringify({ message: "Failed"}), { status: 400 })

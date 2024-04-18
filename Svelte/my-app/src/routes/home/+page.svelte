@@ -215,8 +215,8 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                                 <p class="font-normal text-gray-700 dark:text-gray-400">For : Port 4 of Station Oostlaan</p>
                                                 <p class="font-normal text-gray-700 dark:text-gray-400">Reason : "Need it over 5 hours for full charge" </p>
                                             </a>
-    
-                                    <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200 
+
+                                    <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200
                                     rounded-lg shadow hover:bg-gray-100 dark:bg-red-800 dark:border-gray-700 dark:hover:bg-red-900">
                                                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request</h5>
                                                 <p class="font-normal text-gray-700 dark:text-gray-400">From : Donald</p>
@@ -225,7 +225,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                             </a>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
                             <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
@@ -318,7 +318,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </main>
         </div>
