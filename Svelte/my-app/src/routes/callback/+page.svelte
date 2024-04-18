@@ -9,23 +9,23 @@
   // });
 
 
+
 // This function should be triggered upon loading the callback URL
 onMount(async () => {
-  
-    // This function will execute if there's a "code" parameter in the URL, indicating an Okta redirect
-
-    //make this !oktaAuth.isLoginRedirect() to make it work!!!!!
+    console.log('onMount called, checking if it is a login redirect...');
     if (oktaAuth.isLoginRedirect()) {
-      try {
-        // Parses tokens from the URL, automatically handles exchange of the code for tokens
-        await oktaAuth.handleRedirect(); // This method should handle everything related to redirect
-        window.location.href = '/home'; // Navigate to home after successful login
-      } catch (error) {
-        console.error('Error during redirect handling:', error);
-        window.location.href = '/error'; // Navigate to an error page on failure
-      }
+        console.log('It is a login redirect, handling the redirect...');
+        try {
+            await oktaAuth.handleRedirect(); // comment this line to make it work ig
+            console.log('Redirect handled, navigating to /home...');
+            window.location.href = '/home';
+        } catch (error) {
+            console.error('Error during redirect handling:', error);
+            window.location.href = '/error';
+        }
+    } else {
+        console.log('It is not a login redirect.');
     }
-  });
-
+});
 
 </script>
