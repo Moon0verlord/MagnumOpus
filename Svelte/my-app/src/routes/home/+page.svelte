@@ -1,21 +1,23 @@
 <script lang="ts">
-import {mobile} from '../mobile/mobile';
-import {onDestroy, onMount} from 'svelte';
-import {userId} from "../../store";
-import charge from "$lib/assets/SolarBatteryChargeBold.svg"
-import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
-import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
-import logo from "$lib/assets/Schuberg.jpeg";
-import {goto} from "$app/navigation";
-$: isMobile = $mobile;
+    import {mobile} from '../mobile/mobile';
+    import {onDestroy, onMount} from 'svelte';
+    import {userId} from "../../store";
+    import charge from "$lib/assets/SolarBatteryChargeBold.svg"
+    import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
+    import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
+    import type {User} from "$lib/server/db/schema";
+
+    $: isMobile = $mobile;
 
 let currentUserId: string | null;
 let currentUserIsAdmin: boolean | null = null;
+let currentUserInfo: User | null;
 let unsubscribe: () => void;
 
 onMount(() => {
     unsubscribe = userId.subscribe(value => {
         currentUserId = value;
+        
     });
 });
 
@@ -27,6 +29,21 @@ onDestroy(() => {
 
 $: if (currentUserId) {
     UserAdminCheck(currentUserId).then(isAdmin => currentUserIsAdmin = isAdmin);
+    PopulateUser(currentUserId).then(user => currentUserInfo = user);
+}
+
+async function PopulateUser(id: string) {
+    const response = await fetch('/api/user', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: id
+        })
+    });
+    const data = await response.json();
+    return data.user;
 }
 
 async function UserAdminCheck(id: string) {
@@ -99,7 +116,7 @@ async function UserAdminCheck(id: string) {
                     </div>
                 </div>
                 <div class="flex mx-[30px] flex-col bg-base-100 shadow-xl h-4/6 ml-4 flex-grow">
-                    <h2 class="text-2xl font-bold mb-4 p-3">User ID: {currentUserId}/<br>Is Admin?: {currentUserIsAdmin}</h2>
+                    <h2 class="text-2xl font-bold mb-4 p-3">User Name: {currentUserInfo?.name}<br>User ID: {currentUserId}<br>Is Admin?: {currentUserIsAdmin}</h2>
                     <p>List of available charging stations, their status, etc.</p>
                 </div>
             </div>
