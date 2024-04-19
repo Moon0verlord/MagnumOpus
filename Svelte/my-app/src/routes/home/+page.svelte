@@ -1,25 +1,41 @@
 <script lang="ts">
 import {mobile} from '../mobile/mobile';
 import {onMount} from "svelte";
-import type {User} from "$lib/server/db/types";
-import {userId} from "../../store";
+import type {Port, User} from "$lib/server/db/types";
 let response;
-let curId;
+let curPort:Port;
 let user:User;
 onMount(async () => {
-    var id = userId.subscribe(value=>
-    {
-        curId = value;
-    });
-    response = await fetch(`/api/getuser?id=${id}`)
+    
+    var currentUserId = sessionStorage.getItem('userId')
+    console.log()
+    response = await fetch(`/api/getuser?id=${currentUserId}`)
         .then((response) => {
-            console.log(response.json())
         return  response.json();
     }).then((data:User) => {
         user = data;
+     
     }).catch((error) => {
         console.error('Error:', error);
     });
+    async function getPorts() {
+        const response = await fetch('/api/ports', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUserId,
+            })
+        });
+
+        if (response.status === 201) {
+            const data = await response.json();
+            curPort = data[0];
+            
+        }
+    }
+    await getPorts()
 });
 
 $: isMobile = $mobile;
@@ -36,7 +52,11 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                         <div class="rounded-lg bg-card text-card-foreground shadow-sm " data-v0-t="card" style="display: flex; flex-direction: column; justify-content: space-between;">
                             <div class="rounded-lg border bg-card text-card-foreground pb-16 shadow-sm" data-v0-t="card">
                                 <div class="p-6 flex flex-row items-center justify-between space-y-0 h-44" >
-                                    <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome {user}</h3>
+                                    {#if user}
+                                        <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome {user.name}</h3>
+                                    {:else}
+                                        <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome guest</h3>
+                                    {/if}
                                 </div>
                                 <!--Greeting User-->
                                 <div class="pl-6 font-medium">
@@ -270,6 +290,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                     <line x1="22" x2="22" y1="11" y2="13"></line>
                                 </svg>
                             </div>
+                            {#if curPort}
                             <div class="p-6">
                                 <div class="flex flex-col gap-2">
                                     <div class="flex items-center justify-between">
@@ -338,6 +359,15 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                     </div>
                                 </div>
                             </div>
+                                {:else}
+                                <div class="p-6">
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex items-center justify-between">
+                                            <p>No current charging</p>
+                                        </div>
+                                    </div>
+                                </div>  
+                                {/if}
                         </div>
                     </div>
 
@@ -353,7 +383,11 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                         <div class="carousel-item h-full">
                             <div class="rounded-lg border bg-card text-card-foreground pb-16 shadow-sm" data-v0-t="card">
                                 <div class="p-6 flex flex-row items-center justify-between space-y-0 h-44" >
-                                    <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome User</h3>
+                                    {#if user}
+                                        <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome {user.name}</h3>
+                                    {:else}
+                                        <h3 class="whitespace-nowrap tracking-tight text-5xl font-extrabold">Welcome guest</h3>
+                                    {/if}
                                 </div>
                                 <div class="pl-6 font-medium">
                                     So glad to see you again! Let's get started with your charging session.

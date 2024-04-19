@@ -1,4 +1,4 @@
-import {myPorts} from "$lib/server/db/dbComposables";
+import {myPorts, releasePort} from "$lib/server/db/dbComposables";
 
 export const POST = async ({request}) => {
     const body = await request.json();

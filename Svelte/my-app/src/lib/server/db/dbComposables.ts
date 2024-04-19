@@ -53,8 +53,9 @@ export async function loginUser(email: string, password: string) {
 export async function getCurUser(id:string|null){
     if (id !== null) {
         var NewId = id.replace(/"/g, '');
-        
-        return await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
+        console.log("Url:"+NewId);
+        var users = await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
+        return await users[0];
     } else {
         throw new Error("User ID cannot be null");
     }
