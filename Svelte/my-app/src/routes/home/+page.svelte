@@ -1,18 +1,93 @@
 <script lang="ts">
-    import {mobile} from '../mobile/mobile';
-    import {onDestroy, onMount} from 'svelte';
-    import {userId} from "../../store";
-    import charge from "$lib/assets/SolarBatteryChargeBold.svg"
-    import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
-    import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
-    import type {User} from "$lib/server/db/schema";
+import {mobile} from '../mobile/mobile';
+import {onDestroy, onMount} from 'svelte';
+import {userId} from "../../store";
+import charge from "$lib/assets/SolarBatteryChargeBold.svg"
+import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
+import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
+import logo from "$lib/assets/Schuberg.jpeg";
+import oktaAuth from '../../oktaAuth';
+import type { OktaAuth, AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
+import type {User} from "$lib/server/db/types";
 
-    $: isMobile = $mobile;
-
+$: isMobile = $mobile;
+let userInfo: UserClaims | null = null;
 let currentUserId: string | null;
 let currentUserIsAdmin: boolean | null = null;
 let currentUserInfo: User | null;
 let unsubscribe: () => void;
+
+
+async function getOktaUserInfo() {
+  try {
+    const accessToken = await oktaAuth.tokenManager.get('accessToken') as AccessToken;
+    const idToken = await oktaAuth.tokenManager.get('idToken') as IDToken;
+    userInfo = await oktaAuth.token.getUserInfo(accessToken, idToken);
+  } catch (error) {
+    console.error('Error getting user info:', error);
+  }
+}
+
+async function CheckUserExists() {
+  if (userInfo && userInfo.email)
+  {
+    const response = await fetch(`/api/home`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'email': (userInfo ? userInfo.email : '')
+      },
+    });
+    console.log(response);
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.email === (userInfo ? userInfo.email : null)) {
+        return true;
+      } else {
+        console.error('Email does not match');
+        return false;
+      }
+    }
+  }
+}
+
+async function PostOktaToDB() {
+  let userExists = await CheckUserExists();
+
+  if(userExists) {
+    console.log('User already exists in DB');
+    return;
+  }
+
+  if (userInfo) {
+    const response = await fetch('/api/home', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: userInfo.name,
+        email: userInfo.email,
+        oktaId: userInfo.sub
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message); // "Success"
+      console.log(data.uuid); // user's UUID
+    } else {
+      console.error('Failed to post user to DB');
+    }
+  } else {
+    console.error('User info is null');
+  }
+}
+
+onMount(async () => {
+    await getOktaUserInfo();
+    await PostOktaToDB();
+  });
 
 onMount(() => {
     unsubscribe = userId.subscribe(value => {

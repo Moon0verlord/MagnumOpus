@@ -1,4 +1,4 @@
-﻿import {type Port, Ports, Requests, type Station, Stations,type User, Users} from "$lib/server/db/schema";
+﻿import {type Port, Ports, Requests, type Station, Stations,type User, Users, type Request} from "$lib/server/db/schema";
 import {db} from "$lib/server/db/db.server";
 import {and, eq} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
@@ -200,6 +200,27 @@ export async function acceptRequest(fromId: string, requestedPortId: string) {
         await db.delete(Requests).where(eq(Requests.fromUserId, fromId)).execute();
 
         return true;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function GetUserByEmail(email: string) {
+    try {
+        const user = await db.select().from(Users).where(eq(Users.email, email)).execute();
+        return user;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function PostOktauser(name: string, email: string, oktaId: string) {
+    try {
+        const userId = uuidv4();
+        const result = await db.insert(Users).values({userId, name, email, oktaId}).execute();
+        return {userId, result};
     } catch (error) {
         console.error(error);
         return null;
