@@ -2,14 +2,12 @@
 import {mobile} from '../mobile/mobile';
 import {onDestroy, onMount} from 'svelte';
 import {userId} from "../../store";
-import charge from "$lib/assets/SolarBatteryChargeBold.svg"
-import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
-import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
-import logo from "$lib/assets/Schuberg.jpeg";
+
 import oktaAuth from '../../oktaAuth';
 import type { OktaAuth, AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
-import type {User} from "$lib/server/db/types";
-
+import type {Port, User} from "$lib/server/db/types";
+let requestPageData: any[] = [];
+let incomingRequests: any[] = [];
 let response;
 let curPort:Port;
 let user:User;
@@ -147,6 +145,9 @@ onMount(async () => {
     }
     if (currentUserId !== null) {
         getPorts();
+        myRequests();
+        getIncomingRequests();
+        
     }
   });
 
@@ -227,7 +228,77 @@ async function disconnectPort(portId: string, stationId: string) {
     }
 }
 
+async function myRequests() {
+    const response = await fetch('/api/requests/myRequests', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: currentUserId,
+        })
+    });
 
+    if (response.status === 201) {
+        requestPageData = await response.json();
+    }
+}
+
+async function cancelRequest(requestId: number) {
+    const response = await fetch('/api/requests/cancelRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            requestId: requestId,
+        })
+    });
+
+    if (response.status === 201) {
+        const data = await response.json();
+        console.log(data);
+        requestPageData = requestPageData.filter(request => request.requestId !== requestId);
+    }
+}
+
+async function getIncomingRequests() {
+    const response = await fetch('/api/requests/incomingRequests', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: currentUserId,
+        })
+    });
+
+    if (response.status === 201) {
+        incomingRequests = await response.json();
+        
+    }
+}
+
+async function approveRequest(fromUserId: string, requestedPortId: number) {
+    const response = await fetch('/api/requests/acceptRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            fromUserId: fromUserId,
+            requestedPortId: requestedPortId,
+        })
+    });
+
+    if (response.status === 201) {
+        const data = await response.json();
+        console.log(data);
+        // clear page data and incoming data
+        incomingRequests = incomingRequests.filter(request => request.requestedPortId !== requestedPortId);
+        pageData = pageData.filter(port => port.portId !== requestedPortId);
+    }
+}
 
 </script>
 <style>h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
@@ -415,155 +486,256 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <div class="rounded-lg bg-card text-card-foreground shadow-sm" data-v0-t="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div class="rounded-lg border bg-card text-card-foreground overflow-auto shadow-sm" data-v0-t="card">
-                            <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
-                                <h3 class="whitespace-nowrap tracking-tight text-sm font-medium">Charging Requests</h3>
-                                <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="w-4 h-4 text-gray-500 dark:text-gray-400">
-                                    <path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"></path>
-                                    <path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"></path>
-                                    <path d="m11 7-3 5h4l-3 5"></path>
-                                    <line x1="22" x2="22" y1="11" y2="13"></line>
-                                </svg>
-                            </div>
-                            <div class="p-6">
-                                <div class="flex flex-col gap-2">
-                                    <a href="#" class="block max-w-2xl p-6 border bg-green-800 border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-green-800
-                       dark:border-gray-700 dark:hover:bg-green-900">
-                                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request : Urgent</h5>
-                                                <p class="font-normal text-base-200/30  dark:text-gray-400">From : Bertha</p>
-                                                <p class="font-normal text-base-200/30  dark:text-gray-400">For : Port 4 of Station Oostlaan</p>
-                                                <p class="font-normal text-base-200/30  dark:text-gray-400">Reason : "Need it over 5 hours for full charge" </p>
-                                            </a>
-
-                                    <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200
-                                    rounded-lg shadow hover:bg-gray-100 dark:bg-red-800 dark:border-gray-700 dark:hover:bg-red-900">
-                                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request</h5>
-                                                <p class="font-normal text-base-200/30  dark:text-gray-400">From : Donald</p>
-                                                <p class="font-normal text-base-200/30  dark:text-gray-400">For : Port 3 of Station Oostlaan</p>
-                                                <p class="font-normal text-base-200/30  dark:text-gray-400">Reason : "Court case on 5" </p>
-                                            </a>
+                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
+                                <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
+                                    <h3 class="whitespace-nowrap tracking-tight text-sm font-medium">Your Current Charging Session</h3>
+                                    <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                    >
+                                        <path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"></path>
+                                        <path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"></path>
+                                        <path d="m11 7-3 5h4l-3 5"></path>
+                                        <line x1="22" x2="22" y1="11" y2="13"></line>
+                                    </svg>
                                 </div>
-                            </div>
+                                {#if pageData.length > 0}
+                                    <div class="p-6">
+                                        {#each pageData as port}
+                                            <div class="flex flex-col gap-2">
+                                                <div class="flex items-center justify-between">
 
-                        </div>
-                        <div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-                            <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">
-                                <h3 class="whitespace-nowrap tracking-tight text-sm font-medium">Your Current Charging Session</h3>
-                                <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                                >
-                                    <path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"></path>
-                                    <path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"></path>
-                                    <path d="m11 7-3 5h4l-3 5"></path>
-                                    <line x1="22" x2="22" y1="11" y2="13"></line>
-                                </svg>
-                            </div>
-                            {#if pageData.length > 0}
-                            <div class="p-6">
-                                {#each pageData as port}
-                                <div class="flex flex-col gap-2">
-                                    <div class="flex items-center justify-between">
-                                        
-                                            <div class="font-medium">{port.displayName}</div>
-                                                <div class="flex items-center gap-1 text-base-200/30  dark:text-gray-400">
-                                                    <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="24"
-                                                            height="24"
-                                                            viewBox="0 0 24 24"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            stroke-width="2"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="w-4 h-4"
-                                                    >
-                                                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
-                                                        <path d="M9 18h6"></path>
-                                                        <path d="M10 22h4"></path>
-                                                    </svg>
-                                                    45 kWh
+                                                    <div class="font-medium">{port.displayName}</div>
+                                                    <div class="flex items-center gap-1 text-base-200/30  dark:text-gray-400">
+                                                        <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="24"
+                                                                height="24"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                stroke-width="2"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                class="w-4 h-4"
+                                                        >
+                                                            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                                                            <path d="M9 18h6"></path>
+                                                            <path d="M10 22h4"></path>
+                                                        </svg>
+                                                        45 kWh
+                                                    </div>
                                                 </div>
+                                                <div class="flex items-center justify-between">
+                                                    <div class="font-medium">Estimated Time Remaining</div>
+                                                    <div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                                                        <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="24"
+                                                                height="24"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                stroke-width="2"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                class="w-4 h-4"
+                                                        >
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                                        </svg>
+                                                        30 mins
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center justify-between">
+                                                    <div class="font-medium">Charging Status</div>
+                                                    <div class="flex items-center gap-1 text-green-500 dark:text-green-400">
+                                                        <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="24"
+                                                                height="24"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                stroke-width="2"
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                class="w-4 h-4"
+                                                        >
+                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                                        </svg>
+                                                        Charging
+                                                    </div>
+                                                </div>
+                                                <button class="btn w-24 btn-error"
+                                                        on:click={() => disconnectPort(port.portId, port.stationId)}>Disconnect
+                                                </button>
+                                            </div>
+                                        {/each}
                                     </div>
-                                    <div class="flex items-center justify-between">
-                                        <div class="font-medium">Estimated Time Remaining</div>
-                                        <div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                                            <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    stroke-width="2"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    class="w-4 h-4"
-                                            >
-                                                <circle cx="12" cy="12" r="10"></circle>
-                                                <polyline points="12 6 12 12 16 14"></polyline>
-                                            </svg>
-                                            30 mins
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <div class="font-medium">Charging Status</div>
-                                        <div class="flex items-center gap-1 text-green-500 dark:text-green-400">
-                                            <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    stroke-width="2"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    class="w-4 h-4"
-                                            >
-                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                            </svg>
-                                            Charging
-                                        </div>
-                                    </div>
-                                    <button class="btn w-24 btn-error"
-                                            on:click={() => disconnectPort(port.portId, port.stationId)}>Disconnect
-                                    </button>
-                                </div>
-                                {/each}
-                            </div>
-                                           
+
                                 {:else}
-                                <div class="p-6">
-                                    <div class="flex flex-col gap-2">
-                                        <div class="flex items-center justify-between">
-                                            <p>No current charging</p>
+                                    <div class="p-6">
+                                        <div class="flex flex-col gap-2">
+                                            <div class="flex items-center justify-between">
+                                                <p>No current charging</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>  
                                 {/if}
+                            </div>
+                        </div>
+                    
+                    <div class="rounded-lg bg-card text-card-foreground shadow-sm" data-v0-t="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div class="card bg-base-100 w-5/6 shadow-xl pb-24 mx-auto mt-2.5">
+                            <div class="w-full card-body">
+                                <h2 class="card-title">My Requests</h2>
+                                {#if requestPageData.length === 0}
+                                    <div class="chat chat-start">
+                                        <div class="chat-bubble">No requests to be seen here</div>
+                                    </div>
+                                    <div class="chat chat-start">
+                                        <div class="chat-bubble">:)</div>
+                                    </div>
+                                {:else}
+                                    <table id="ports-table" class="table">
+                                        <thead class="bg-base-200">
+                                        <tr>
+                                            <th>Port</th>
+                                            <th>Priority</th>
+                                            <th>Message</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="">
+                                        {#each requestPageData as request}
+                                            <tr class="p-1">
+                                                <td class="p-2">{request.displayName}</td>
+                                                <td class="p-2">
+                                                    {#if request.priority === "high"}
+                                                        <span class="badge badge-error">High</span>
+                                                    {:else if request.priority === "medium"}
+                                                        <span class="badge badge-warning">Medium</span>
+                                                    {:else}
+                                                        <span class="badge badge-success">Low</span>
+                                                    {/if}
+                                                </td>
+                                                <td class="p-2 break-all">
+                                                    <div class={`${request.message.length >= 25 ? 'h-12' : ''} p-1 overflow-y-auto`}>
+                                                        {request.message}
+                                                    </div>
+                                                </td>
+                                                <td class="p-2 flex justify-end">
+                                                    <button class="btn w-24 btn-error"
+                                                            on:click={() => cancelRequest(request.requestId)}>Cancel
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {/each}
+                                        </tbody>
+                                    </table>
+                                {/if}
+                            </div>
+                        </div>
+<!--                        <div class="rounded-lg border bg-card text-card-foreground overflow-auto shadow-sm" data-v0-t="card">-->
+<!--                            <div class="p-6 flex flex-row items-center justify-between pb-2 space-y-0">-->
+<!--                                <h3 class="whitespace-nowrap tracking-tight text-sm font-medium">Charging Requests</h3>-->
+<!--                                <svg-->
+<!--                                        xmlns="http://www.w3.org/2000/svg"-->
+<!--                                        width="24"-->
+<!--                                        height="24"-->
+<!--                                        viewBox="0 0 24 24"-->
+<!--                                        fill="none"-->
+<!--                                        stroke="currentColor"-->
+<!--                                        stroke-width="2"-->
+<!--                                        stroke-linecap="round"-->
+<!--                                        stroke-linejoin="round"-->
+<!--                                        class="w-4 h-4 text-gray-500 dark:text-gray-400">-->
+<!--                                    <path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"></path>-->
+<!--                                    <path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"></path>-->
+<!--                                    <path d="m11 7-3 5h4l-3 5"></path>-->
+<!--                                    <line x1="22" x2="22" y1="11" y2="13"></line>-->
+<!--                                </svg>-->
+<!--                            </div>-->
+<!--                            <div class="p-6">-->
+<!--                                <div class="flex flex-col gap-2">-->
+<!--                                    <a href="#" class="block max-w-2xl p-6 border bg-green-800 border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-green-800-->
+<!--                       dark:border-gray-700 dark:hover:bg-green-900">-->
+<!--                                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request : Urgent</h5>-->
+<!--                                                <p class="font-normal text-base-200/30  dark:text-gray-400">From : Bertha</p>-->
+<!--                                                <p class="font-normal text-base-200/30  dark:text-gray-400">For : Port 4 of Station Oostlaan</p>-->
+<!--                                                <p class="font-normal text-base-200/30  dark:text-gray-400">Reason : "Need it over 5 hours for full charge" </p>-->
+<!--                                            </a>-->
+
+<!--                                    <a href="#" class="block max-w-2xl p-6 bg-red-900 border border-gray-200-->
+<!--                                    rounded-lg shadow hover:bg-gray-100 dark:bg-red-800 dark:border-gray-700 dark:hover:bg-red-900">-->
+<!--                                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Request</h5>-->
+<!--                                                <p class="font-normal text-base-200/30  dark:text-gray-400">From : Donald</p>-->
+<!--                                                <p class="font-normal text-base-200/30  dark:text-gray-400">For : Port 3 of Station Oostlaan</p>-->
+<!--                                                <p class="font-normal text-base-200/30  dark:text-gray-400">Reason : "Court case on 5" </p>-->
+<!--                                            </a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                        </div>-->
+                        <div class="card bg-base-100 w-5/6 shadow-xl pt-24 mx-auto mt-2.5">
+                            <div class="w-full card-body">
+                                <h2 class="card-title">Incoming Requests</h2>
+                                {#if incomingRequests.length === 0}
+                                    <div class="chat chat-start">
+                                        <div class="chat-bubble">No incoming requests to be seen here</div>
+                                    </div>
+                                    <div class="chat chat-start">
+                                        <div class="chat-bubble">:(</div>
+                                    </div>
+                                {:else}
+                                    <table id="ports-table" class="table">
+                                        <thead class="bg-base-200">
+                                        <tr>
+                                            <th>Port</th>
+                                            <th>Priority</th>
+                                            <th>Message</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="">
+                                        {#each incomingRequests as request}
+                                            <tr class="p-1">
+                                                <td class="p-2">{request.displayName}</td>
+                                                <td class="p-2">
+                                                    {#if request.priority === "high"}
+                                                        <span class="badge badge-error">High</span>
+                                                    {:else if request.priority === "medium"}
+                                                        <span class="badge badge-warning">Medium</span>
+                                                    {:else}
+                                                        <span class="badge badge-success">Low</span>
+                                                    {/if}
+                                                </td>
+                                                <td class="p-2 break-all">
+                                                    <div class={`${request.message.length >= 25 ? 'h-12' : ''} p-1 overflow-y-auto`}>
+                                                        {request.message}
+                                                    </div>
+                                                </td>
+                                                <td class="p-2 flex justify-end">
+                                                    <button class="btn w-24 btn-success"
+                                                            on:click={() => approveRequest(request.fromUserId ,request.requestedPortId)}>Approve
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {/each}
+                                        </tbody>
+                                    </table>
+                                {/if}
+                            </div>
                         </div>
                     </div>
 
@@ -900,6 +1072,7 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                             </div>
                         {/if}
                     </div>
+                    
                 </div>
 
             </div>
@@ -1225,6 +1398,109 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                 </div>
                             </div>
                         </div>
+                        <div class="carousel-item h-full">
+                            <div class="card bg-base-100 w-5/6 shadow-xl pt-24 mx-auto mt-2.5">
+                                <div class="w-full card-body">
+                                    <h2 class="card-title">Incoming Requests</h2>
+                                    {#if incomingRequests.length === 0}
+                                        <div class="chat chat-start">
+                                            <div class="chat-bubble">No incoming requests to be seen here</div>
+                                        </div>
+                                        <div class="chat chat-start">
+                                            <div class="chat-bubble">:(</div>
+                                        </div>
+                                    {:else}
+                                        <table id="ports-table" class="table">
+                                            <thead class="bg-base-200">
+                                            <tr>
+                                                <th>Port</th>
+                                                <th>Priority</th>
+                                                <th>Message</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="">
+                                            {#each incomingRequests as request}
+                                                <tr class="p-1">
+                                                    <td class="p-2">{request.displayName}</td>
+                                                    <td class="p-2">
+                                                        {#if request.priority === "high"}
+                                                            <span class="badge badge-error">High</span>
+                                                        {:else if request.priority === "medium"}
+                                                            <span class="badge badge-warning">Medium</span>
+                                                        {:else}
+                                                            <span class="badge badge-success">Low</span>
+                                                        {/if}
+                                                    </td>
+                                                    <td class="p-2 break-all">
+                                                        <div class={`${request.message.length >= 25 ? 'h-12' : ''} p-1 overflow-y-auto`}>
+                                                            {request.message}
+                                                        </div>
+                                                    </td>
+                                                    <td class="p-2 flex justify-end">
+                                                        <button class="btn w-24 btn-success"
+                                                                on:click={() => approveRequest(request.fromUserId ,request.requestedPortId)}>Approve
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            {/each}
+                                            </tbody>
+                                        </table>
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item h-full">
+                            <div class="w-full card-body">
+                                <h2 class="card-title">My Requests</h2>
+                                {#if requestPageData.length === 0}
+                                    <div class="chat chat-start">
+                                        <div class="chat-bubble">No requests to be seen here</div>
+                                    </div>
+                                    <div class="chat chat-start">
+                                        <div class="chat-bubble">:)</div>
+                                    </div>
+                                {:else}
+                                    <table id="ports-table" class="table">
+                                        <thead class="bg-base-200">
+                                        <tr>
+                                            <th>Port</th>
+                                            <th>Priority</th>
+                                            <th>Message</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="">
+                                        {#each requestPageData as request}
+                                            <tr class="p-1">
+                                                <td class="p-2">{request.displayName}</td>
+                                                <td class="p-2">
+                                                    {#if request.priority === "high"}
+                                                        <span class="badge badge-error">High</span>
+                                                    {:else if request.priority === "medium"}
+                                                        <span class="badge badge-warning">Medium</span>
+                                                    {:else}
+                                                        <span class="badge badge-success">Low</span>
+                                                    {/if}
+                                                </td>
+                                                <td class="p-2 break-all">
+                                                    <div class={`${request.message.length >= 25 ? 'h-12' : ''} p-1 overflow-y-auto`}>
+                                                        {request.message}
+                                                    </div>
+                                                </td>
+                                                <td class="p-2 flex justify-end">
+                                                    <button class="btn w-24 btn-error"
+                                                            on:click={() => cancelRequest(request.requestId)}>Cancel
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {/each}
+                                        </tbody>
+                                    </table>
+                                {/if}
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
