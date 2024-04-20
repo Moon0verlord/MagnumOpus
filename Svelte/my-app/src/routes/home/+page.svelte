@@ -23,22 +23,26 @@ async function getOktaUserInfo() {
 }
 
 async function CheckUserExists() {
-  const response = await fetch(`/api/home?email=${userInfo ? userInfo.email : ''}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-  });
-
-  if (response.ok) {
-    const data = await response.json();
-    if (data && data.email === (userInfo ? userInfo.email : null)) {
-      return true;
-    } else {
-      console.error('Email does not match');
-      return false;
+  if (userInfo && userInfo.email)
+  {
+    const response = await fetch(`/api/home`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'email': (userInfo ? userInfo.email : '')
+      },
+    });
+    console.log(response);
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.email === (userInfo ? userInfo.email : null)) {
+        return true;
+      } else {
+        console.error('Email does not match');
+        return false;
+      }
     }
-  } 
+  }
 }
 
 async function PostOktaToDB() {
