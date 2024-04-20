@@ -6,6 +6,9 @@ import {Ports, Stations} from "$lib/server/db/schema";
 import { API_URL } from '$env/static/private';
 import {list} from "postcss";
 
+export const ClearPorts = async () => await db.delete(Ports);
+export const ClearStations = async () => await db.delete(Stations);
+
 export const getData = async (json?: any) => {
     let stationData: StationData[] = [];
     try {

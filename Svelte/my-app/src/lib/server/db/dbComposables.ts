@@ -1,10 +1,7 @@
-﻿import {type Port, Ports, type Station, Stations} from "$lib/server/db/schema";
+﻿import {type Port, Ports, Requests, type Station, Stations,type User, Users, type Request} from "$lib/server/db/schema";
 import {db} from "$lib/server/db/db.server";
-import {eq} from "drizzle-orm";
-import {uuid} from "drizzle-orm/pg-core";
+import {and, eq} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
-import {Users} from '$lib/server/db/schema';
-import {Result} from "postcss";
 import bcrypt from 'bcryptjs';
 import {USER} from "$env/static/private";
 import type {User} from "$lib/server/db/types";
@@ -19,6 +16,10 @@ export const GetAllStations = async (): Promise<Station[]> => {
 
 export const GetAllPortsFromStation = async (stationId: string): Promise<Port[]> => {
     return await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
+}
+
+export const GetUserAdminStatus = async (userId: string) : Promise<User[]> => {
+    return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
 }
 
 export async function PostUser(name: string, email: string, password: string) {
@@ -61,7 +62,7 @@ export async function getCurUser(id:string|null){
     }
 }
 
-export async function reserverPort(userId: string, portId: string, stationId: string) {
+export async function reservePort(userId: string, portId: string, stationId: string) {
     try {
         const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
         if (existingPort.length > 0) {
@@ -111,6 +112,127 @@ export async function releasePort(portId: string, stationId: string) {
             .execute();
 
         return true;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function requestPort(fromUserId: string, priority: string, requestedPortId: string, message: string) {
+    try {
+        const existingRequest = await db.select().from(Requests).where(and(eq(Requests.fromUserId, fromUserId), eq(Requests.requestedPortId, requestedPortId))).execute();
+        if (existingRequest.length > 0) {
+            return 2;
+        }
+
+        await db.insert(Requests).values({fromUserId, priority, requestedPortId, message}).execute();
+
+        return 1;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function myRequests(userId: string) {
+    try {
+        const result = await db.select()
+            .from(Requests)
+            .innerJoin(Ports, and(eq(Requests.requestedPortId, Ports.portId)))
+            .where(eq(Requests.fromUserId, userId))
+            .execute();
+
+        return result.map(item => {
+            return {
+                requestId: item["Requests"].requestId,
+                priority: item["Requests"].priority,
+                fromUserId: item["Requests"].fromUserId,
+                requestedPortId: item["Requests"].requestedPortId,
+                message: item["Requests"].message,
+                displayName: item["Ports"].displayName
+            };
+        });
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function cancelRequest(requestId: number) {
+    try {
+        await db.delete(Requests).where(eq(Requests.requestId, requestId)).execute();
+        return true;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function incomingRequests(userId: string) {
+    try {
+        // send back requests that are meant for the port of the user
+        const result = await db.select()
+            .from(Requests)
+            .innerJoin(Ports, and(eq(Requests.requestedPortId, Ports.portId)))
+            .where(eq(Ports.usedBy, userId))
+            .execute();
+
+        return result.map(item => {
+            return {
+                requestId: item["Requests"].requestId,
+                priority: item["Requests"].priority,
+                fromUserId: item["Requests"].fromUserId,
+                requestedPortId: item["Requests"].requestedPortId,
+                message: item["Requests"].message,
+                displayName: item["Ports"].displayName
+            };
+        });
+
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function acceptRequest(fromId: string, requestedPortId: string) {
+    try {
+        // remove user from any ports they are currently using then give them the requested port and remove the all requests
+        const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, fromId)).execute();
+        if (existingPort.length > 0) {
+            // call releasePort
+            const stationId = existingPort[0].stationId;
+            await releasePort(existingPort[0].portId, stationId!);
+        }
+
+        await db.update(Ports)
+            .set({usedBy: fromId, status: 'occupied'})
+            .where(eq(Ports.portId, requestedPortId))
+            .execute();
+
+        await db.delete(Requests).where(eq(Requests.fromUserId, fromId)).execute();
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function GetUserByEmail(email: string) {
+    try {
+        const user = await db.select().from(Users).where(eq(Users.email, email)).execute();
+        return user;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function PostOktauser(name: string, email: string, oktaId: string) {
+    try {
+        const userId = uuidv4();
+        const result = await db.insert(Users).values({userId, name, email, oktaId}).execute();
+        return {userId, result};
     } catch (error) {
         console.error(error);
         return null;
