@@ -127,8 +127,8 @@
                                     </td>
                                     <td>
                                         <div class="collapse collapse-arrow">
-                                            <input type="checkbox" checked={selectedStationId === station.stationId}
-                                                   on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)}/>
+                                            <input type="checkbox" disabled={showModal}
+                                                   on:change={() => { if (!showModal) selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId) }}/>
                                             <div class="collapse-title"/>
                                         </div>
                                     </td>
@@ -165,7 +165,7 @@
                                                                     <button class="btn w-4/6 btn-error">Report
                                                                     </button>
                                                                 {/if}
-                                                                <PortsModal show={showModal} data={portData}
+                                                                <PortsModal show={showModal} data={portData} user={currentUserId}
                                                                             on:close={() => showModal = false}/>
                                                             </td>
                                                         </tr>
