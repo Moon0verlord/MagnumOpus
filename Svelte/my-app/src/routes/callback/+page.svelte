@@ -3,30 +3,21 @@
   import oktaAuth from '../../oktaAuth';
 
 
-  //UNCOMMENT THIS TO MAKE IT WORK WIHTOUT OKTA!!
-  // onMount(async () => {
-  //   window.location.href = '/home';
-  // });
-
-
-  
 // This function should be triggered upon loading the callback URL
-onMount(async () => {
-    console.log('onMount called, checking if it is a login redirect...');
-    if (oktaAuth.isLoginRedirect()) {
-        console.log('It is a login redirect, handling the redirect...');
-        try {
-            await oktaAuth.handleRedirect();
-            console.log('Redirect handled, navigating to /home...');
-            window.location.href = '/home';
-        } catch (error) {
-            console.error('Error during redirect handling:', error);
-            localStorage.setItem('error', 'Error during redirect handling: ' + error);
-            window.location.href = '/error';
-        }
-    } else {
-        console.log('It is not a login redirect.');
+  async function handleCallback() {
+    try {
+      const { tokens } = await oktaAuth.token.parseFromUrl();
+      oktaAuth.tokenManager.setTokens(tokens);
+      window.location.href = '/home';
+    } catch (error) {
+      console.error('Error handling callback:', error);
+      localStorage.setItem('error', 'Error during redirect handling: ' + error);
+      window.location.href = '/error';
     }
-});
+  }
+
+  if (oktaAuth.isLoginRedirect()) {
+    handleCallback();
+  }
 
 </script>

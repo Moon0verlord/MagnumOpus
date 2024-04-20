@@ -48,3 +48,24 @@ export async function loginUser(email: string, password: string) {
         return null;
     }
 }
+
+export async function GetUserByEmail(email: string) {
+    try {
+        const user = await db.select().from(Users).where(eq(Users.email, email)).execute();
+        return user;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function PostOktauser(name: string, email: string, oktaId: string) {
+    try {
+        const userId = uuidv4();
+        const result = await db.insert(Users).values({userId, name, email, oktaId}).execute();
+        return {userId, result};
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}

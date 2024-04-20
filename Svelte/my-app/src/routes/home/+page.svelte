@@ -6,7 +6,81 @@ import charge from "$lib/assets/SolarBatteryChargeBold.svg"
 import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
 import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
 import logo from "$lib/assets/Schuberg.jpeg";
+import oktaAuth from '../../oktaAuth';
+import type { OktaAuth, AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
+
 $: isMobile = $mobile;
+let userInfo: UserClaims | null = null;
+
+async function getOktaUserInfo() {
+  try {
+    const accessToken = await oktaAuth.tokenManager.get('accessToken') as AccessToken;
+    const idToken = await oktaAuth.tokenManager.get('idToken') as IDToken;
+    userInfo = await oktaAuth.token.getUserInfo(accessToken, idToken);
+  } catch (error) {
+    console.error('Error getting user info:', error);
+  }
+}
+
+async function CheckUserExists() {
+  const response = await fetch('/api/home', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email: userInfo ? userInfo.email : null
+    })
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    if (data && data.email === (userInfo ? userInfo.email : null)) {
+      return true;
+    } else {
+      console.error('Email does not match');
+      return false;
+    }
+  } 
+}
+
+async function PostOktaToDB() {
+  let userExists = await CheckUserExists();
+
+  if(userExists) {
+    console.log('User already exists in DB');
+    return;
+  }
+
+  if (userInfo) {
+    const response = await fetch('/api/home', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: userInfo.name,
+        email: userInfo.email,
+        oktaId: userInfo.sub
+      })
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      console.log(data.message); // "Success"
+      console.log(data.uuid); // user's UUID
+    } else {
+      console.error('Failed to post user to DB');
+    }
+  } else {
+    console.error('User info is null');
+  }
+}
+
+onMount(async () => {
+    await getOktaUserInfo();
+    await PostOktaToDB();
+  });
 
 let currentUserId: string | null;
 let unsubscribe: () => void;
@@ -193,7 +267,11 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
           <div class="flex flex-col space-y-1.5 p-6 pb-4">
             <h3 class="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Upgrade to Pro</h3>
             <p class="text-sm text-muted-foreground">
-              Unlock all features and get unlimited access to our support team
+              {#if userInfo}
+              <p>Welcome, {userInfo.name},{userInfo.sub},{userInfo.email}!</p>
+            {:else}
+              <p>Loading...</p>
+            {/if}
             </p>
           </div>
           <div class="p-6">
