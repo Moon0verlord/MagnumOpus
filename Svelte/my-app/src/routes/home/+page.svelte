@@ -23,14 +23,11 @@ async function getOktaUserInfo() {
 }
 
 async function CheckUserExists() {
-  const response = await fetch('/api/home', {
-    method: 'POST',
+  const response = await fetch(`/api/home?email=${userInfo ? userInfo.email : ''}`, {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      email: userInfo ? userInfo.email : null
-    })
   });
 
   if (response.ok) {
@@ -65,7 +62,7 @@ async function PostOktaToDB() {
       })
     });
 
-    if (response.status === 200) {
+    if (response.ok) {
       const data = await response.json();
       console.log(data.message); // "Success"
       console.log(data.uuid); // user's UUID
