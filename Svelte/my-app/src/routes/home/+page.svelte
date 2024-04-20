@@ -8,9 +8,15 @@ import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
 import logo from "$lib/assets/Schuberg.jpeg";
 import oktaAuth from '../../oktaAuth';
 import type { OktaAuth, AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
+import type {User} from "$lib/server/db/types";
 
 $: isMobile = $mobile;
 let userInfo: UserClaims | null = null;
+let currentUserId: string | null;
+let currentUserIsAdmin: boolean | null = null;
+let currentUserInfo: User | null;
+let unsubscribe: () => void;
+
 
 async function getOktaUserInfo() {
   try {
@@ -82,20 +88,6 @@ onMount(async () => {
     await getOktaUserInfo();
     await PostOktaToDB();
   });
-    import {mobile} from '../mobile/mobile';
-    import {onDestroy, onMount} from 'svelte';
-    import {userId} from "../../store";
-    import charge from "$lib/assets/SolarBatteryChargeBold.svg"
-    import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg"
-    import charger from "$lib/assets/MaterialSymbolsEvCharger.svg"
-    import type {User} from "$lib/server/db/schema";
-
-    $: isMobile = $mobile;
-
-let currentUserId: string | null;
-let currentUserIsAdmin: boolean | null = null;
-let currentUserInfo: User | null;
-let unsubscribe: () => void;
 
 onMount(() => {
     unsubscribe = userId.subscribe(value => {
