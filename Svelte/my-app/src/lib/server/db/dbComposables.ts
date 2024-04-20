@@ -1,4 +1,4 @@
-﻿import {type Port, Ports, Requests, type Station, Stations, Users} from "$lib/server/db/schema";
+﻿import {type Port, Ports, Requests, type Station, Stations,type User, Users} from "$lib/server/db/schema";
 import {db} from "$lib/server/db/db.server";
 import {and, eq} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
@@ -14,6 +14,10 @@ export const GetAllStations = async (): Promise<Station[]> => {
 
 export const GetAllPortsFromStation = async (stationId: string): Promise<Port[]> => {
     return await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
+}
+
+export const GetUserAdminStatus = async (userId: string) : Promise<User[]> => {
+    return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
 }
 
 export async function PostUser(name: string, email: string, password: string) {
@@ -46,7 +50,7 @@ export async function loginUser(email: string, password: string) {
     }
 }
 
-export async function reserverPort(userId: string, portId: string, stationId: string) {
+export async function reservePort(userId: string, portId: string, stationId: string) {
     try {
         const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
         if (existingPort.length > 0) {

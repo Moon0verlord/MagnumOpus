@@ -1,10 +1,10 @@
-import { reserverPort } from "$lib/server/db/dbComposables";
+import { reservePort } from "$lib/server/db/dbComposables";
 
 // @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();
 
-    const port = await reserverPort(body.userId, body.portId, body.stationId);
+    const port = await reservePort(body.userId, body.portId, body.stationId);
 
     if (port) {
         if (port === "User has already reserved a port") {
