@@ -1,7 +1,8 @@
 <script lang="ts">
 import {mobile} from '../mobile/mobile';
-import {onMount} from "svelte";
+import {onDestroy, onMount} from "svelte";
 import type {Port, User} from "$lib/server/db/types";
+import {userId} from "../../store";
 let response;
 let curPort:Port;
 let user:User;
@@ -38,7 +39,66 @@ onMount(async () => {
     await getPorts()
 });
 
+
 $: isMobile = $mobile;
+
+let currentUserId: string | null;
+let unsubscribe: () => void;
+let pageData: any[] = [];
+
+onMount(() => {
+    unsubscribe = userId.subscribe(value => {
+        currentUserId = value;
+    });
+
+    if (currentUserId !== null) {
+        getPorts();
+    }
+});
+
+onDestroy(() => {
+    if (unsubscribe) {
+        unsubscribe();
+    }
+});
+
+async function getPorts() {
+    const response = await fetch('/api/ports', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: currentUserId,
+        })
+    });
+
+    if (response.status === 201) {
+        const data = await response.json();
+        pageData = data;
+    }
+}
+
+async function disconnectPort(portId: string, stationId: string) {
+    const response = await fetch('/api/ports/disconnect', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            portId: portId,
+            stationId: stationId,
+        })
+    });
+
+    if (response.status === 201) {
+        const data = await response.json();
+        console.log(data);
+        pageData = pageData.filter(port => port.portId !== portId);
+    }
+}
+
+
 
 </script>
 <style>h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
@@ -290,30 +350,32 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                     <line x1="22" x2="22" y1="11" y2="13"></line>
                                 </svg>
                             </div>
-                            {#if curPort}
+                            {#if pageData.length > 0}
                             <div class="p-6">
+                                {#each pageData as port}
                                 <div class="flex flex-col gap-2">
                                     <div class="flex items-center justify-between">
-                                        <div class="font-medium">Port 4</div>
-                                        <div class="flex items-center gap-1 text-base-200/30  dark:text-gray-400">
-                                            <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="24"
-                                                    height="24"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    stroke-width="2"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    class="w-4 h-4"
-                                            >
-                                                <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
-                                                <path d="M9 18h6"></path>
-                                                <path d="M10 22h4"></path>
-                                            </svg>
-                                            45 kWh
-                                        </div>
+                                        
+                                            <div class="font-medium">{port.displayName}</div>
+                                                <div class="flex items-center gap-1 text-base-200/30  dark:text-gray-400">
+                                                    <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="24"
+                                                            height="24"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="w-4 h-4"
+                                                    >
+                                                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                                                        <path d="M9 18h6"></path>
+                                                        <path d="M10 22h4"></path>
+                                                    </svg>
+                                                    45 kWh
+                                                </div>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <div class="font-medium">Estimated Time Remaining</div>
@@ -357,8 +419,13 @@ body { font-family: 'Inter', sans-serif; --font-sans: 'Inter'; }
                                             Charging
                                         </div>
                                     </div>
+                                    <button class="btn w-24 btn-error"
+                                            on:click={() => disconnectPort(port.portId, port.stationId)}>Disconnect
+                                    </button>
                                 </div>
+                                {/each}
                             </div>
+                                           
                                 {:else}
                                 <div class="p-6">
                                     <div class="flex flex-col gap-2">
