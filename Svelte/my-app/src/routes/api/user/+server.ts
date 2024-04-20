@@ -1,5 +1,5 @@
 ﻿import type {User} from "$lib/server/db/schema";
-import {GetUserAdminStatus} from "$lib/server/db/dbComposables";
+import {GetUserAdminStatus, GetUserByEmail} from "$lib/server/db/dbComposables";
 
 // @ts-ignore
 export const POST = async ({ request }) => {
@@ -9,3 +9,13 @@ export const POST = async ({ request }) => {
     const user: User = users.pop()!
     return new Response(JSON.stringify({ message: "Success", user: user}), { status: 201 })
 };
+
+// @ts-ignore
+export const GET = async ({ request }) => {
+    const email = request.headers.get('email');
+    const user = await GetUserByEmail(email);
+    if (user && user[0]) {
+        return new Response(JSON.stringify({ message: "Success", uuid: `${user[0].userId}`}), { status: 201 })
+    }
+    return new Response(JSON.stringify({ message: "Failed"}), { status: 400 })
+}

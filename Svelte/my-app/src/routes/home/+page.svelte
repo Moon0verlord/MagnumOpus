@@ -12,7 +12,7 @@ import type {User} from "$lib/server/db/types";
 
 $: isMobile = $mobile;
 let userInfo: UserClaims | null = null;
-let currentUserId: string | null;
+let currentUserId: string | null = null;
 let currentUserIsAdmin: boolean | null = null;
 let currentUserInfo: User | null;
 let unsubscribe: () => void;
@@ -38,7 +38,6 @@ async function CheckUserExists() {
         'email': (userInfo ? userInfo.email : '')
       },
     });
-    console.log(response);
     if (response.ok) {
       const data = await response.json();
       if (data && data.email === (userInfo ? userInfo.email : null)) {
@@ -76,6 +75,7 @@ async function PostOktaToDB() {
       const data = await response.json();
       console.log(data.message); // "Success"
       console.log(data.uuid); // user's UUID
+        userId.set(data.uuid);
     } else {
       console.error('Failed to post user to DB');
     }
@@ -87,14 +87,27 @@ async function PostOktaToDB() {
 onMount(async () => {
     await getOktaUserInfo();
     await PostOktaToDB();
-  });
-
-onMount(() => {
     unsubscribe = userId.subscribe(value => {
         currentUserId = value;
-        
     });
-});
+    if (!currentUserId)
+    {
+        if (userInfo && userInfo.email) {
+            const response = await fetch(`/api/user`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'email': (userInfo ? userInfo.email : '')
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                userId.set(data.uuid);
+            }
+        }
+    }
+  });
+
 
 onDestroy(() => {
     if (unsubscribe) {
