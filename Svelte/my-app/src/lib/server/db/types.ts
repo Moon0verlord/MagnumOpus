@@ -1,7 +1,7 @@
 export type Station = {
     stationId: string;
     locationId: string;
-    overallStatus: 'available' | 'charging' | 'out_of_order';
+    overallStatus: 'available' | 'occupied' | 'unavailable';
     coordinates: number[];
     address: string;
     maxPower: number;
@@ -13,7 +13,7 @@ export type Port = {
     stationId: string;
     usedByUser: string | null ;
     emi3Id: string;
-    status: 'available' | 'charging' | 'out_of_order';
+    status: 'available' | 'occupied' | 'unavailable';
 }
 
 export type Request = {
@@ -47,9 +47,9 @@ export type Address = {
 }
 
 export enum Status {
-    Available = "AVAILABLE",
-    Charging = "CHARGING",
-    Out_of_Order = "OUT_OF_ORDER"
+    Available = "available",
+    Occupied = "occupied",
+    Unavailabe = "unavailable"
 }
 
 export interface StationData {

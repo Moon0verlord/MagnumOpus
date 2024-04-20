@@ -5,13 +5,17 @@ import {
     allStationsAvailable,
     Seeder,
     StationPortBalancer,
-    PortDisplayNameGenerator
+    PortDisplayNameGenerator, ClearPorts, ClearStations
 } from "$lib/server/db/seeder";
 import fs from 'fs';
 import path from 'path';
 
 export const GET = async () => {
     try {
+        await ClearPorts();
+        console.log("All port entries deleted.");
+        await ClearStations();
+        console.log("All station entries deleted.");
         const data = fs.readFileSync("src/lib/server/data/apidata.json", 'utf-8');
         const jsonData = await JSON.parse(data);
         console.log("JSON Data loaded.");

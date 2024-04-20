@@ -1,117 +1,279 @@
 <script lang="ts">
-    import type {PageData} from './$types';
     import {mobile} from '../mobile/mobile';
-    import {slide} from 'svelte/transition';
-    import charger from "$lib/assets/MaterialSymbolsEvCharger.svg";
-    import charge from "$lib/assets/SolarBatteryChargeBold.svg";
-    import lock from "$lib/assets/MaterialSymbolsLockOpenRight.svg";
+    import {onDestroy, onMount} from 'svelte';
+    import {userId} from "../../store";
 
     $: isMobile = $mobile;
-    let selectedStationId: string = "";
-    export let data: PageData;
 
-    let currentPage = 1; // Current page number
-    const itemsPerPage = 5; // Number of items per page
+    let currentUserId: string | null;
+    let unsubscribe: () => void;
+    let pageData: any[] = [];
+    let requestPageData: any[] = [];
+    let incomingRequests: any[] = [];
 
-    // Calculate start and end indices for slicing the data array
-    let start = (currentPage - 1) * itemsPerPage;
-    let end = start + itemsPerPage;
+    onMount(() => {
+        unsubscribe = userId.subscribe(value => {
+            currentUserId = value;
+        });
 
-    // Get the data for the current page
-    let currentPageData = data.props.stations.slice(start, end);
+        if (currentUserId !== null) {
+            getPorts();
+            myRequests();
+            getIncomingRequests();
+        }
+    });
 
-    // Function to go to a specific page
-    const goToPage = (page: any) => {
-        currentPage = page;
-        start = (currentPage - 1) * itemsPerPage;
-        end = start + itemsPerPage;
-        currentPageData = data.props.stations.slice(start, end);
-    };
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+
+    async function getPorts() {
+        const response = await fetch('/api/ports', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUserId,
+            })
+        });
+
+        if (response.status === 201) {
+            pageData = await response.json();
+        }
+    }
+
+    async function disconnectPort(portId: string, stationId: string) {
+        const response = await fetch('/api/ports/disconnect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                portId: portId,
+                stationId: stationId,
+            })
+        });
+
+        if (response.status === 201) {
+            const data = await response.json();
+            console.log(data);
+            pageData = pageData.filter(port => port.portId !== portId);
+        }
+    }
+
+    async function myRequests() {
+        const response = await fetch('/api/requests/myRequests', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUserId,
+            })
+        });
+
+        if (response.status === 201) {
+            requestPageData = await response.json();
+        }
+    }
+
+    async function cancelRequest(requestId: number) {
+        const response = await fetch('/api/requests/cancelRequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                requestId: requestId,
+            })
+        });
+
+        if (response.status === 201) {
+            const data = await response.json();
+            console.log(data);
+            requestPageData = requestPageData.filter(request => request.requestId !== requestId);
+        }
+    }
+
+    async function getIncomingRequests() {
+        const response = await fetch('/api/requests/incomingRequests', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUserId,
+            })
+        });
+
+        if (response.status === 201) {
+            incomingRequests = await response.json();
+        }
+    }
+
+    async function approveRequest(fromUserId: string, requestedPortId: number) {
+        const response = await fetch('/api/requests/acceptRequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fromUserId: fromUserId,
+                requestedPortId: requestedPortId,
+            })
+        });
+
+        if (response.status === 201) {
+            const data = await response.json();
+            console.log(data);
+            // clear page data and incoming data
+            incomingRequests = incomingRequests.filter(request => request.requestedPortId !== requestedPortId);
+            pageData = pageData.filter(port => port.portId !== requestedPortId);
+        }
+    }
 </script>
 
 
 <!-- Ports -->
 {#if !isMobile}
-    <div class="flex items-center justify-center h-screen">
-        <div class="flex-grow flex w-full items-center h-screen">
-            <div class="card bg-base-100 shadow-xl mx-auto">
-                <div class="w-full card-body">
-                    <h2 class="card-title">Stations</h2>
-                    <div class="overflow-x-auto">
-                        <table id="stations-table" class="table">
-                            <thead class="bg-base-200">
-                            <tr>
-                                <th>Station</th>
-                                <th>Power</th>
-                                <th>No. of Ports</th>
-                                <th>Status</th>
-                                <th></th>
+    <div class="flex flex-col items-center justify-center h-screen">
+        <div class="card bg-base-100 w-3/6 shadow-xl mx-auto">
+            <div class="w-full card-body">
+                <h2 class="card-title">My Port</h2>
+                {#if pageData.length === 0}
+                    <div class="chat chat-start">
+                        <div class="chat-bubble">It's kind of empty</div>
+                    </div>
+                    <div class="chat chat-end">
+                        <div class="chat-bubble">Yes it is</div>
+                    </div>
+                {:else}
+                    <table id="ports-table" class="table">
+                        <thead class="bg-base-200">
+                        <tr>
+                            <th>Port</th>
+                            <th>Station ID</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+                        {#each pageData as port}
+                            <tr class="w-full max-h-min p-1">
+                                <td class="p-2">{port.displayName}</td>
+                                <td class="p-2">{port.stationId}</td>
+                                <td class="p-2 flex justify-end">
+                                    <button class="btn w-24 btn-error"
+                                            on:click={() => disconnectPort(port.portId, port.stationId)}>Disconnect
+                                    </button>
+                                </td>
                             </tr>
-                            </thead>
-                            <tbody class="">
-                            {#each currentPageData as station}
-                                <tr class="">
-                                    <td>{station.address ? JSON.parse(station.address.toString()).streetName : ''}</td>
-                                    <td>{station.maxPower}</td>
-                                    <td class="">
-                                        <div class="">
-                                            {station.portIds?.split(",").length} ports
-                                        </div>
-                                    </td>
-                                    <td class="">
-                                        <div class="badge p-3 {station.overallStatus === 'available' ? 'badge-success' : station.overallStatus === 'occupied' ? 'badge-error' : 'badge-ghost'}">
-                                            {station.overallStatus}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="collapse collapse-arrow">
-                                            <input type="checkbox" checked={selectedStationId === station.stationId}
-                                                   on:change={() => selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId)}/>
-                                            <div class="collapse-title"/>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {#if selectedStationId === station.stationId}
-                                    <tr>
-                                        <td colspan="5">
-                                            <div transition:slide={{duration: 200}}>
-                                                <table class="table">
-                                                    <thead class="bg-base-200 p-1">
-                                                    <tr>
-                                                        <th class="p-1">Port</th>
-                                                        <th class="p-1">Status</th>
-                                                        <th class="p-1"></th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody class="bg-base-300">
-                                                    {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
-                                                        <tr class="w-full max-h-min p-1">
-                                                            <td class="p-2">{port.displayName}</td>
-                                                            <td class="p-2">{port.status}</td>
-                                                            <td class="p-2">
-                                                                <button class="badge p-3 badge-success">
-                                                                    button
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    {/each}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {/if}
-                            {/each}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="join flex justify-center">
-                        {#each Array(Math.ceil(data.props.stations.length / itemsPerPage)) as _, i (i)}
-                                <button class="{i + 1 === currentPage ? 'join-item btn bg-base-300' : 'join-item btn'}"
-                                        on:click={() => goToPage(i + 1)}>{i + 1}</button>
                         {/each}
+                        </tbody>
+                    </table>
+                {/if}
+            </div>
+        </div>
+        <div class="card bg-base-100 w-3/6 shadow-xl mx-auto mt-2.5">
+            <div class="w-full card-body">
+                <h2 class="card-title">My Requests</h2>
+                {#if requestPageData.length === 0}
+                    <div class="chat chat-start">
+                        <div class="chat-bubble">No requests to be seen here</div>
                     </div>
-                </div>
+                    <div class="chat chat-start">
+                        <div class="chat-bubble">:)</div>
+                    </div>
+                {:else}
+                    <table id="ports-table" class="table">
+                        <thead class="bg-base-200">
+                        <tr>
+                            <th>Port</th>
+                            <th>Priority</th>
+                            <th>Message</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+                        {#each requestPageData as request}
+                            <tr class="p-1">
+                                <td class="p-2">{request.displayName}</td>
+                                <td class="p-2">
+                                    {#if request.priority === "high"}
+                                        <span class="badge badge-error">High</span>
+                                    {:else if request.priority === "medium"}
+                                        <span class="badge badge-warning">Medium</span>
+                                    {:else}
+                                        <span class="badge badge-success">Low</span>
+                                    {/if}
+                                </td>
+                                <td class="p-2 break-all">
+                                    <div class={`${request.message.length >= 25 ? 'h-12' : ''} p-1 overflow-y-auto`}>
+                                        {request.message}
+                                    </div>
+                                </td>
+                                <td class="p-2 flex justify-end">
+                                    <button class="btn w-24 btn-error"
+                                            on:click={() => cancelRequest(request.requestId)}>Cancel
+                                    </button>
+                                </td>
+                            </tr>
+                        {/each}
+                        </tbody>
+                    </table>
+                {/if}
+            </div>
+        </div>
+        <div class="card bg-base-100 w-3/6 shadow-xl mx-auto mt-2.5">
+            <div class="w-full card-body">
+                <h2 class="card-title">Incoming Requests</h2>
+                {#if incomingRequests.length === 0}
+                    <div class="chat chat-start">
+                        <div class="chat-bubble">No incoming requests to be seen here</div>
+                    </div>
+                    <div class="chat chat-start">
+                        <div class="chat-bubble">:(</div>
+                    </div>
+                {:else}
+                    <table id="ports-table" class="table">
+                        <thead class="bg-base-200">
+                        <tr>
+                            <th>Port</th>
+                            <th>Priority</th>
+                            <th>Message</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+                        {#each incomingRequests as request}
+                            <tr class="p-1">
+                                <td class="p-2">{request.displayName}</td>
+                                <td class="p-2">
+                                    {#if request.priority === "high"}
+                                        <span class="badge badge-error">High</span>
+                                    {:else if request.priority === "medium"}
+                                        <span class="badge badge-warning">Medium</span>
+                                    {:else}
+                                        <span class="badge badge-success">Low</span>
+                                    {/if}
+                                </td>
+                                <td class="p-2 break-all">
+                                    <div class={`${request.message.length >= 25 ? 'h-12' : ''} p-1 overflow-y-auto`}>
+                                        {request.message}
+                                    </div>
+                                </td>
+                                <td class="p-2 flex justify-end">
+                                    <button class="btn w-24 btn-success"
+                                            on:click={() => approveRequest(request.fromUserId ,request.requestedPortId)}>Approve
+                                    </button>
+                                </td>
+                            </tr>
+                        {/each}
+                        </tbody>
+                    </table>
+                {/if}
             </div>
         </div>
     </div>
