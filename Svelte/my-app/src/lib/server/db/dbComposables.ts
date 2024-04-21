@@ -1,4 +1,4 @@
-﻿import {type Port, Ports, Requests, type Station, Stations, type User, Users, type Request} from "$lib/server/db/schema";
+﻿import {type Port, Ports, Requests, type Station, Stations, type User, Users} from "$lib/server/db/schema";
 import {db} from "$lib/server/db/db.server";
 import {and, eq} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
@@ -88,6 +88,15 @@ export async function reservePort(userId: string, portId: string, stationId: str
     }
 }
 
+export async function allOccupiedPorts() {
+    try {
+        return await db.select().from(Ports).where(eq(Ports.status, 'occupied')).execute();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 export async function myPorts(userId: string) {
     try {
         return await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
@@ -166,6 +175,32 @@ export async function cancelRequest(requestId: number) {
     }
 }
 
+export async function allRequests() {
+    try {
+        const result = await db.select()
+            .from(Requests)
+            .innerJoin(Users, and(eq(Requests.fromUserId, Users.userId)))
+            .innerJoin(Ports, and(eq(Requests.requestedPortId, Ports.portId)))
+            .execute();
+
+        return result.map(item => {
+            return {
+                requestId: item["Requests"].requestId,
+                priority: item["Requests"].priority,
+                fromUserId: item["Requests"].fromUserId,
+                requestedPortId: item["Requests"].requestedPortId,
+                message: item["Requests"].message,
+                displayName: item["Ports"].displayName,
+                name: item["Users"].name,
+                email: item["Users"].email
+            };
+        });
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 export async function incomingRequests(userId: string) {
     try {
         // send back requests that are meant for the port of the user
@@ -218,8 +253,7 @@ export async function acceptRequest(fromId: string, requestedPortId: string) {
 
 export async function GetUserByEmail(email: string) {
     try {
-        const user = await db.select().from(Users).where(eq(Users.email, email)).execute();
-        return user;
+        return await db.select().from(Users).where(eq(Users.email, email)).execute();
     } catch (error) {
         console.error(error);
         return null;

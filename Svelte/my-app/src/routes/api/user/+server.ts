@@ -13,9 +13,11 @@ export const POST = async ({ request }) => {
 // @ts-ignore
 export const GET = async ({ request }) => {
     const email = request.headers.get('email');
-    const user = await GetUserByEmail(email);
-    if (user && user[0]) {
-        return new Response(JSON.stringify({ message: "Success", uuid: `${user[0].userId}`}), { status: 201 })
+    if (email) {
+        const user = await GetUserByEmail(email);
+        if (user && user[0]) {
+            return new Response(JSON.stringify({ message: "Success", uuid: `${user[0].userId}`}), { status: 201 })
+        }
     }
     return new Response(JSON.stringify({ message: "Failed"}), { status: 400 })
 }

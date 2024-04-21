@@ -8,5 +8,5 @@ export const POST = async ({ request }) => {
     const body = await request.json();
     let userIsAdmin: User[] = await GetUserAdminStatus(body.userId)
     const status = userIsAdmin.pop()?.isAdmin
-    return new Response(JSON.stringify({ message: "Success", isAdmin: `${(status == null || false ? false : status )}`}), { status: 201 })
+    return new Response(JSON.stringify({ message: "Success", isAdmin: (status == null || false ? false : status )}), { status: 201 })
 };

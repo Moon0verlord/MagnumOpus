@@ -1,12 +1,14 @@
-import { incomingRequests } from '$lib/server/db/dbComposables';
+import {incomingRequests} from '$lib/server/db/dbComposables';
 
-export const POST = async ({request}) => {
-    const body = await request.json();
+export const GET = async ({request}) => {
+    const id = new URL(request.url).searchParams.get("id");
 
-    const requests = await incomingRequests(body.userId);
+    if (id) {
+        const requests = await incomingRequests(id);
 
-    if (requests) {
-        return new Response(JSON.stringify(requests), {status: 201})
+        if (requests) {
+            return new Response(JSON.stringify(requests), {status: 201})
+        }
     }
 
     return new Response(JSON.stringify({message: "Failed"}), {status: 400})
