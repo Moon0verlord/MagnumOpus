@@ -1,10 +1,8 @@
-﻿import {type Port, Ports, Requests, type Station, Stations,type User, Users, type Request} from "$lib/server/db/schema";
+﻿import {type Port, Ports, Requests, type Station, Stations, type User, Users, type Request} from "$lib/server/db/schema";
 import {db} from "$lib/server/db/db.server";
 import {and, eq} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
 import bcrypt from 'bcryptjs';
-import {USER} from "$env/static/private";
-import type {User} from "$lib/server/db/types";
 
 export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();

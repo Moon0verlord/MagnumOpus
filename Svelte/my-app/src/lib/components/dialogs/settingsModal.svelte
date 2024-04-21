@@ -1,5 +1,6 @@
 <script lang="ts">
     import {createEventDispatcher} from "svelte";
+    import {fly} from 'svelte/transition';
     import {theme} from '../../../routes/theme/theme'; // Import the theme store
 
     const dispatch = createEventDispatcher();
@@ -25,7 +26,7 @@
 </script>
 
 {#if show}
-    <div class="fixed inset-0 flex items-center justify-center">
+    <div class="fixed inset-0 flex items-center justify-center" transition:fly={{duration: 200}}>
         <div class="card w-80 glass lg:w-96">
             <div class="card-body">
                 <h2 class="card-title">Appearance</h2>

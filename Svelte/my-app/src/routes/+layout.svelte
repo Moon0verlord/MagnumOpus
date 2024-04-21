@@ -41,12 +41,6 @@
         isMobile = value;
     });
 
-    function navigateTo(url: string) {
-        if (typeof window !== 'undefined') {
-            window.location.href = url;
-        }
-    }
-
     // Add a storage event listener
     if (typeof window !== 'undefined') {
         window.addEventListener('storage', (event) => {
@@ -81,7 +75,7 @@
 
 <!-- Desktop Navbar -->
 
-{#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test','/notifications','/about','/account'].includes(currentPage)}
+{#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test', '/notifications', '/about', '/account'].includes(currentPage)}
     <div class="navbar bg-base-100 h-24">
         <div class="flex-1 items-center h-20 ">
             <a href="/home" class="btn btn-ghost text-xl">Schuberg Hub</a>
@@ -102,16 +96,22 @@
 
 <!-- Mobile Navbar -->
 {#if isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
-    <div class="btm-nav static">
-        <button class:active={currentPage === '/home'} on:click={() => navigateTo('/home')}>
-            <span class="btm-nav-label">Home</span>
-        </button>
-        <button class:active={currentPage === '/stations'} on:click={() => navigateTo('/stations')}>
-            <span class="btm-nav-label">Stations</span>
-        </button>
-        <button class:active={currentPage === '/settings'} on:click={() => navigateTo('/settings')}>
-            <span class="btm-nav-label">Settings</span>
-        </button>
+    <div class="btm-nav">
+        <a href="/home" class:active={currentPage === '/home'}>
+            <button>
+                <span class="btm-nav-label">Home</span>
+            </button>
+        </a>
+        <a href="/stations" class:active={currentPage === '/stations'}>
+            <button>
+                <span class="btm-nav-label">Stations</span>
+            </button>
+        </a>
+        <a href="/settings" class:active={currentPage === '/settings'}>
+            <button>
+                <span class="btm-nav-label">Settings</span>
+            </button>
+        </a>
     </div>
 {/if}
 </html>
