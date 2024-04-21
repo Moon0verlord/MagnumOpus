@@ -22,6 +22,20 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
+    
+    async function SendSlackMsg() {
+        console.log('inside slack msg');
+        const response = await fetch('/api/slack', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: 'Quadringus was here.',
+            }),
+        });
+        console.log(response);
+    }
 
 
     async function getOktaUserInfo() {
@@ -557,6 +571,7 @@
                                     <h1 class="card-title text-5xl">Welcome Guest</h1>
                                 {/if}
                                 <p>So glad to see you! Let's get started with managing your session.</p>
+                                <button class="btn bg-base-300" on:click={() => SendSlackMsg()}>Send Slack Message</button>
                             </div>
                         </div>
                     </div>
