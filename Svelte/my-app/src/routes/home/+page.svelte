@@ -14,21 +14,6 @@
     let response;
     let curPort: Port;
     let user: User;
-    onMount(async () => {
-        var currentUserId = sessionStorage.getItem('userId')
-
-        response = await fetch(`/api/getuser?id=${currentUserId}`)
-            .then((response) => {
-                return response.json();
-            }).then((data: User) => {
-                user = data;
-            }).catch((error) => {
-                console.error('Error:', error);
-            });
-
-        await getPorts()
-    });
-
 
     $: isMobile = $mobile;
     let userInfo: UserClaims | null = null;
@@ -142,13 +127,11 @@
 
     $: if (currentUserId) {
         UserAdminCheck(currentUserId).then(isAdmin => currentUserIsAdmin = isAdmin);
-
+        PopulateUser(currentUserId).then(user => currentUserInfo = user);
         if (currentUserIsAdmin) {
             adminAllRequests();
             adminAllOccupiedPorts()
         }
-
-        PopulateUser(currentUserId).then(user => currentUserInfo = user);
     }
 
     async function PopulateUser(id: string) {
@@ -314,8 +297,8 @@
                     <div class="card bg-base-100 h-full min-h-52 shadow-xl">
                         <div class="w-full card-body">
                             <div class="m-auto">
-                                {#if user}
-                                    <h1 class="card-title text-5xl">Welcome {user.name}</h1>
+                                {#if currentUserInfo}
+                                    <h1 class="card-title text-5xl">Welcome {currentUserInfo.name}</h1>
                                 {:else}
                                     <h1 class="card-title text-5xl">Welcome Guest</h1>
                                 {/if}
@@ -443,8 +426,8 @@
                     <div class="card w-full bg-base-100">
                         <div class="card-body">
                             <div class="m-auto">
-                                {#if user}
-                                    <h1 class="card-title">Welcome {user.name}</h1>
+                                {#if currentUserInfo}
+                                    <h1 class="card-title">Welcome {currentUserInfo.name}</h1>
                                 {:else}
                                     <h1 class="card-title">Welcome Guest</h1>
                                 {/if}
@@ -568,8 +551,8 @@
                     <div class="card bg-base-100 h-full min-h-52 shadow-xl">
                         <div class="w-full card-body">
                             <div class="m-auto">
-                                {#if user}
-                                    <h1 class="card-title text-5xl">Welcome {user.name}</h1>
+                                {#if currentUserInfo}
+                                    <h1 class="card-title text-5xl">Welcome {currentUserInfo.name}</h1>
                                 {:else}
                                     <h1 class="card-title text-5xl">Welcome Guest</h1>
                                 {/if}
@@ -751,8 +734,8 @@
                     <div class="card w-full bg-base-100">
                         <div class="card-body">
                             <div class="m-auto">
-                                {#if user}
-                                    <h1 class="card-title">Welcome {user.name}</h1>
+                                {#if currentUserInfo}
+                                    <h1 class="card-title">Welcome {currentUserInfo.name}</h1>
                                 {:else}
                                     <h1 class="card-title">Welcome Guest</h1>
                                 {/if}
