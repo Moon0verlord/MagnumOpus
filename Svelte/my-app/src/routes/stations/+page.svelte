@@ -273,14 +273,14 @@
                                                 <table class="table">
                                                     <thead class="bg-base-200 p-1">
                                                     <tr>
-                                                        <th class="p-1 break-words">Port</th>
+                                                        <th class="p-1">Port</th>
                                                         <th class="p-1">Status</th>
                                                         <th class="p-1"></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody class="bg-base-300">
                                                     {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
-                                                        <tr class="w-full p-1">
+                                                        <tr class="p-1">
                                                             <td class="p-1">{port.displayName}</td>
                                                             <td class="p-1">{port.status}</td>
                                                             <td class="p-1 flex justify-end">
