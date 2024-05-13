@@ -1,5 +1,6 @@
-<script>
-    import { createEventDispatcher } from 'svelte';
+<script lang="ts">
+    import {createEventDispatcher, onDestroy, onMount} from 'svelte';
+    import {userId} from "../../../store.js";
 
 export let show = false;
 const dispatch = createEventDispatcher();
@@ -8,6 +9,8 @@ let currentPassword = '';
 let newPassword = '';
 let confirmPassword = '';
 let errorMessage = '';
+let currentUserId: string | null = null;
+let unsubscribe: () => void;
 
 async function checkCurrentPassword() {
     const response = await fetch('/api/checkPassword', {
@@ -15,7 +18,11 @@ async function checkCurrentPassword() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ currentPassword })
+        body: JSON.stringify(
+            { 
+                currentPassword: currentPassword,
+                userId: currentUserId
+            })
     });
 
     const data = await response.json();
@@ -38,7 +45,11 @@ async function changePassword() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ newPassword })
+        body: JSON.stringify(
+            { 
+                newPassword: newPassword,
+                userId: currentUserId
+            })
     });
 
     const data = await response.json();
@@ -55,6 +66,18 @@ async function changePassword() {
         show = false;
         dispatch('close');
     }
+
+    onMount(async () => {
+        unsubscribe = userId.subscribe(value => {
+            currentUserId = value;
+        });
+    });
+    
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
 </script>
 
 {#if show}

@@ -1,18 +1,16 @@
 import { json } from '@sveltejs/kit';
 import { checkPassword } from '$lib/server/db/dbComposables';
-import {userId} from "../../../store";
-import { get } from 'svelte/store';
 
+// @ts-ignore
 export const POST = async ({ request }) => {
-  const { currentPassword } = await request.json();
+  const { currentPassword, userId } = await request.json();
 
   try {
-    const storedUserId = get(userId);
-    if (!storedUserId) {
+    if (!userId) {
       return json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const isPasswordValid = await checkPassword(currentPassword, storedUserId);
+    const isPasswordValid = await checkPassword(currentPassword, userId);
     if (isPasswordValid) {
       return json({ success: true });
     } else {
