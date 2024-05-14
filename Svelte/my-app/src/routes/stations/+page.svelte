@@ -89,6 +89,21 @@
         end = start + itemsPerPage;
         currentPageData = data.props.stations.slice(start, end);
     };
+
+    let itemsPerPageMobile = 5; // Number of items per page for mobile
+
+    let totalPage = Math.ceil(data.props.stations.length / itemsPerPageMobile); // Total number of pages
+
+    const goToPageMobile = (direction: string) => {
+        if (direction === '«' && currentPage > 1) {
+            currentPage--;
+        } else if (direction === '»' && currentPage < totalPage) {
+            currentPage++;
+        }
+        start = (currentPage - 1) * itemsPerPageMobile;
+        end = start + itemsPerPageMobile;
+        currentPageData = data.props.stations.slice(start, end);
+    };
 </script>
 
 
@@ -165,7 +180,8 @@
                                                                     <button class="btn w-4/6 btn-error">Report
                                                                     </button>
                                                                 {/if}
-                                                                <PortsModal show={showModal} data={portData} user={currentUserId}
+                                                                <PortsModal show={showModal} data={portData}
+                                                                            user={currentUserId}
                                                                             on:close={() => showModal = false}/>
                                                             </td>
                                                         </tr>
@@ -191,4 +207,123 @@
         </div>
     </div>
 {:else}
+    <div class="flex items-center justify-center h-screen">
+        <div class="flex-grow flex w-full">
+            <div class="card bg-base-100 mx-auto">
+                <div class="card-body">
+                    <h2 class="card-title">Stations</h2>
+                    <div class="">
+                        <table id="stations-table" class="table">
+                            <thead class="bg-base-200">
+                            <tr>
+                                <th>Station</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody class="">
+                            {#each currentPageData as station}
+                                <tr class="p-1">
+                                    <td class="p-1">
+                                        <label for="my_modal_{station.stationId}" class="btn btn-ghost">
+                                            {station.address ? JSON.parse(station.address.toString()).streetName : ''}
+                                        </label>
+                                        <input type="checkbox" id="my_modal_{station.stationId}" class="modal-toggle"/>
+                                        <div class="modal" role="dialog">
+                                            <div class="modal-box">
+                                                <h3 class="font-bold text-lg">Info</h3>
+                                                <table class="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Power</th>
+                                                        <th>No. of Ports</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>{station.maxPower}</td>
+                                                        <td>{station.portIds?.split(",").length} ports</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                                <div class="modal-action">
+                                                    <label for="my_modal_{station.stationId}" class="btn">Close</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="p-1">
+                                        <div class="badge p-3 {station.overallStatus === 'available' ? 'badge-success' : station.overallStatus === 'occupied' ? 'badge-error' : 'badge-ghost'}">
+                                            {station.overallStatus}
+                                        </div>
+                                    </td>
+                                    <td class="p-1">
+                                        <div class="collapse collapse-arrow">
+                                            <input type="checkbox" disabled={showModal}
+                                                   on:change={() => { if (!showModal) selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId) }}/>
+                                            <div class="collapse-title"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {#if selectedStationId === station.stationId}
+                                    <tr>
+                                        <td colspan="5">
+                                            <div transition:slide={{duration: 200}}>
+                                                <div class="max-h-40 overflow-y-auto">
+                                                <table class="table">
+                                                    <thead class="bg-base-200 p-1">
+                                                    <tr>
+                                                        <th class="p-1">Port</th>
+                                                        <th class="p-1">Status</th>
+                                                        <th class="p-1"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="bg-base-300">
+                                                    {#each data.props.chargingPorts.filter(x => station.stationId === x.stationId) as port}
+                                                        <tr class="p-1">
+                                                            <td class="p-1">{port.displayName}</td>
+                                                            <td class="p-1">{port.status}</td>
+                                                            <td class="p-1 flex justify-end">
+                                                                {#if port.status === 'occupied'}
+                                                                    <button class="btn w-4/6 {port.usedBy === currentUserId ? 'btn-disabled' : 'btn-info'}"
+                                                                            on:click={() => openPort(port)}>Request
+                                                                    </button>
+                                                                {/if}
+                                                                {#if port.status === 'available'}
+                                                                    <button class="btn w-4/6 btn-success"
+                                                                            on:click={() => reservePort(port)}>Rerserve
+                                                                    </button>
+                                                                {/if}
+                                                                {#if port.status === 'unavailable'}
+                                                                    <button class="btn w-4/6 btn-error">Report
+                                                                    </button>
+                                                                {/if}
+                                                                <PortsModal show={showModal} data={portData}
+                                                                            user={currentUserId}
+                                                                            on:close={() => showModal = false}/>
+                                                            </td>
+                                                        </tr>
+                                                    {/each}
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {/if}
+                            {/each}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="join flex justify-center">
+                        <div class="join">
+                            <button class="join-item btn" on:click={() => goToPageMobile("«")}>«</button>
+                            <button class="join-item btn">{currentPage}</button>
+                            <button class="join-item btn" on:click={() => goToPageMobile("»")}>»</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {/if}

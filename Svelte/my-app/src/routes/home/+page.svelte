@@ -541,8 +541,8 @@
                                                     <button class="btn w-20 text-xs btn-success"
                                                             on:click={() => approveRequest(request.fromUserId ,request.requestedPortId)}>Approve
                                                     </button>
-                                                    <button class="btn w-20 text-xs btn-error"
-                                                            on:click={() =>  cancelRequest(request.requestId)}>Approve
+                                                    <button class="btn w-20 text-xs btn-error mt-1"
+                                                            on:click={() =>  cancelRequest(request.requestId)}>Disapprove
                                                     </button>
                                                 </td>
                                             </tr>
