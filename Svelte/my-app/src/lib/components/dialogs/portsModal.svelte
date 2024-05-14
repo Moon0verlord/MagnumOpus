@@ -30,9 +30,19 @@
             })
         });
         if (response.status === 201) {
-            data = await response.json();
-            console.log(data);
             close();
+            const responseSlack = await fetch('/api/slack', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: 'Port Request',
+                    userId: user,
+                    portId: data.portId,
+                    priority: priority,
+                }),
+            });
         } else if (response.status === 202) {
             console.log('Port is already requested');
             close();

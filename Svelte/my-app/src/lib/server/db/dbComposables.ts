@@ -8,6 +8,10 @@ export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
 };
 
+export const GetPort = async (portId: string) : Promise<Port[]> => {
+    return await db.select().from(Ports).where(eq(Ports.portId, portId)).execute()
+}
+
 export const GetAllStations = async (): Promise<Station[]> => {
     return await db.select().from(Stations).execute();
 };
@@ -16,7 +20,12 @@ export const GetAllPortsFromStation = async (stationId: string): Promise<Port[]>
     return await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
 }
 
+// maybe change this one bit unclear that it returns the whole user when method name says status
 export const GetUserAdminStatus = async (userId: string) : Promise<User[]> => {
+    return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+}
+
+export const GetUser = async (userId: string) : Promise<User[]> => {
     return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
 }
 

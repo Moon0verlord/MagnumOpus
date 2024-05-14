@@ -24,7 +24,6 @@
     let pageData: any[] = [];
     
     async function SendSlackMsg() {
-        console.log('inside slack msg');
         const response = await fetch('/api/slack', {
             method: 'POST',
             headers: {
@@ -34,7 +33,6 @@
                 message: 'Quadringus was here.',
             }),
         });
-        console.log(response);
     }
 
 

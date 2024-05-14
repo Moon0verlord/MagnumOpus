@@ -80,7 +80,8 @@ export const Seeder = async (data : StationData[]) => {
             address: JSON.stringify(station.address),
             maxPower: station.maxPower,
             portIds: getPortIds(station),
-        });
+        })
+
 
         for (const port of station.evses) {
             await db.insert(Ports).values({
