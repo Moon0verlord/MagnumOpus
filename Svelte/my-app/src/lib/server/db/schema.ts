@@ -3,6 +3,8 @@ import * as pg from "drizzle-orm/pg-core"
 
 export const Users  = pg.pgTable("Users", {
     userId: pg.text("user_id").primaryKey(),
+    level: pg.integer("level"),
+    totalXp: pg.integer("total_xp"),
     name: pg.text("name"),
     email: pg.text("email").unique(),
     password: pg.text("password"),

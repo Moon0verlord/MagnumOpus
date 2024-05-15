@@ -52,11 +52,23 @@ export async function loginUser(email: string, password: string) {
 export async function getCurUser(id:string|null){
     if (id !== null) {
         var NewId = id.replace(/"/g, '');
-        console.log("Url:"+NewId);
         var users = await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
         return await users[0];
     } else {
         throw new Error("User ID cannot be null");
+    }
+}
+export async function ChangeUserLevel(email:string,level:number,xp:number){
+    try {
+        let user =  await db.select().from(Users).where(eq(Users.email, email)).execute();
+        user[0].level=level;
+        user[0].totalXp=xp;
+        await db.update(Users).set(user[0]).where(eq(Users.email, email)).execute();
+        console.log(`User level changed to ${level}`);
+    }
+    catch (error) {
+        console.error(error);
+        return null;
     }
 }
 

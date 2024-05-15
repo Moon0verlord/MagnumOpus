@@ -10,12 +10,12 @@
 
     onMount(() => {
         // Initial check
-        isMobile = window.innerWidth < 768;
+        isMobile = window.innerWidth < 768  
         mobile.set(isMobile);
 
         // Listen for resize events
         window.addEventListener('resize', () => {
-            isMobile = window.innerWidth < 768;
+            isMobile = window.innerWidth < 768  
             mobile.set(isMobile);
         });
     });

@@ -36,7 +36,7 @@
     <!-- Settings Menu -->
     <ul class="menu bg-base-200 shadow-xl rounded-box ml-2.5 mr-2.5 mt-2.5">
         <li class="menu-title">Settings</li>
-        <li><a href="/settings">Account</a></li>
+        <li><a href="/account">Account</a></li>
         <li><a href="/settings">Notifications</a></li>
         <li>
             <button on:click={openSettings}>Appearance</button>

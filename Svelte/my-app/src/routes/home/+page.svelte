@@ -23,7 +23,11 @@
     let unsubscribe: () => void;
     let pageData: any[] = [];
 
+   
 
+   
+   
+    
     async function getOktaUserInfo() {
         try {
             const accessToken = await oktaAuth.tokenManager.get('accessToken') as AccessToken;
@@ -128,6 +132,7 @@
     $: if (currentUserId) {
         UserAdminCheck(currentUserId).then(isAdmin => currentUserIsAdmin = isAdmin);
         PopulateUser(currentUserId).then(user => currentUserInfo = user);
+        
         if (currentUserIsAdmin) {
             adminAllRequests();
             adminAllOccupiedPorts()
@@ -144,6 +149,7 @@
                 userId: id
             })
         });
+       
         const data = await response.json();
         return data.user;
     }
@@ -427,7 +433,7 @@
                         <div class="card-body">
                             <div class="m-auto">
                                 {#if currentUserInfo}
-                                    <h1 class="card-title">Welcome {currentUserInfo.name}</h1>
+                                    <h1 class="card-title text-5xl">Welcome {currentUserInfo.name}</h1>
                                 {:else}
                                     <h1 class="card-title">Welcome Guest</h1>
                                 {/if}
@@ -548,11 +554,11 @@
         <div class="flex justify-center items-center h-screen mx-3">
             <div class="grid grid-rows-3 grid-flow-col gap-4">
                 <div class="">
-                    <div class="card bg-base-100 h-full min-h-52 shadow-xl">
+                    <div class="card bg-base-100 h-full min-h-52 shadow-xl ">
                         <div class="w-full card-body">
                             <div class="m-auto">
                                 {#if currentUserInfo}
-                                    <h1 class="card-title text-5xl">Welcome {currentUserInfo.name}</h1>
+                                    <h1 class="card-title text-5xl"> Welcome {currentUserInfo.name}</h1>
                                 {:else}
                                     <h1 class="card-title text-5xl">Welcome Guest</h1>
                                 {/if}
@@ -733,9 +739,9 @@
                 <div class="carousel-item h-full">
                     <div class="card w-full bg-base-100">
                         <div class="card-body">
-                            <div class="m-auto">
+                            <div class="m-auto overflow-auto">
                                 {#if currentUserInfo}
-                                    <h1 class="card-title">Welcome {currentUserInfo.name}</h1>
+                                    <h1 class="card-title text-5xl">Welcome {currentUserInfo.name}</h1>
                                 {:else}
                                     <h1 class="card-title">Welcome Guest</h1>
                                 {/if}

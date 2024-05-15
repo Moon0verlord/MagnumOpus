@@ -33,6 +33,8 @@ export type User = {
     userTheme: string | null;
     oktaId: string | null;
     isAdmin: boolean;
+    totalXp: number;
+    level: number;
 }
 
 export type Address = {
