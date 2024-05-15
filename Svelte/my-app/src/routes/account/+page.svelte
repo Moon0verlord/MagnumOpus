@@ -10,9 +10,11 @@
     let incomingRequests: any[] = [];
     let allRequestData: any[] = [];
     let allOccupiedPorts: any[] = [];
-    import {getLevel} from "./page.account";
+    import {getLevel, getMaxLevel} from "./page.account";
 
     $: isMobile = $mobile;
+    let maxLevel:number | string;
+    let nextExp:number | string;
     let userInfo: UserClaims | null = null;
     let currentUserId: string | null = null;
     let currentUserIsAdmin: boolean | null = null;
@@ -27,7 +29,7 @@
     {
         if (currentUserInfo) {
             let Level = await getLevel(user.totalXp);
-         
+            [maxLevel,nextExp] = await getMaxLevel(Level,user.totalXp)
             const response = await fetch('/api/getuser', {
                 method: 'POST',
                 headers: {
@@ -268,12 +270,24 @@
                         {#if currentUserInfo }
                             <p>Name : {currentUserInfo.name} </p>
                             <p>E-mail : {currentUserInfo.email} </p>
-                            <div>
-                                Level : {currentUserInfo.level}
-                                <div class="w-full max-w-lg mx-auto mt-10">
-                                    <progress value="30" max="100"></progress>
+                            <div class="mt-10">
+                                Current Level : {currentUserInfo.level}
+                                Next Level : {maxLevel}
+                                <div class="flex items-center">
+                                    <div class="w-72  bg-gray-200 rounded-full dark:bg-gray-700">
+                                        {#if typeof maxLevel !== 'string' && typeof nextExp !== 'string'}
+                                            {#if ((currentUserInfo.totalXp/nextExp)*100) <= 30 }
+                                                <div class="bg-blue-600  text-xs font-light text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: {(currentUserInfo.totalXp/nextExp)*100}%">{currentUserInfo.totalXp}</div>
+                                                {:else}
+                                                <div class="bg-blue-600  text-xs font-light text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: {(currentUserInfo.totalXp/nextExp)*100}%"> XP : {currentUserInfo.totalXp}</div>
+                                                {/if}
+                                            {:else}
+                                            <div></div>
+                                        {/if}
+                                    </div>
+                                    <span class="ml-2">XP: {nextExp}</span>
                                 </div>
-                                
+
 
                             </div>
                         {:else}
