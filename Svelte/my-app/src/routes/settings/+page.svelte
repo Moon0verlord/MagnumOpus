@@ -2,7 +2,9 @@
     import SettingsModal from "$lib/components/dialogs/settingsModal.svelte";
     import {userId} from "../../store";
     import oktaAuth from '../../oktaAuth';
+    import ChangePasswordModal from '$lib/components/dialogs/PasswordModal.svelte';
 
+    let showChangePasswordModal = false;
     let showModal = false;
 
     const openSettings = () => {
@@ -38,6 +40,7 @@
         <li class="menu-title">Settings</li>
         <li><a href="/settings">Account</a></li>
         <li><a href="/settings">Notifications</a></li>
+        <li><button on:click={() => showChangePasswordModal = true}>Change Password</button></li>
         <li>
             <button on:click={openSettings}>Appearance</button>
         </li>
@@ -61,4 +64,5 @@
 
     <!-- Appearance Modal -->
     <SettingsModal show={showModal} on:close={() => showModal = false}/>
+    <ChangePasswordModal bind:show={showChangePasswordModal} />
 </div>
