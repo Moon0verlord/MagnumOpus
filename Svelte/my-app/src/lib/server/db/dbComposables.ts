@@ -71,7 +71,18 @@ export async function ChangeUserLevel(email:string,level:number,xp:number){
         return null;
     }
 }
-
+export async function ChangeUserXp(email:string,xp:number) {
+    try {
+        let user =  await db.select().from(Users).where(eq(Users.email, email)).execute();
+        user[0].totalXp=xp;
+        await db.update(Users).set(user[0]).where(eq(Users.email, email)).execute();
+        console.log(`User xp changed to ${xp}`);
+    }
+    catch (error) {
+        console.error(error);
+        return null;
+    }
+}
 export async function reservePort(userId: string, portId: string, stationId: string) {
     try {
         const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();

@@ -20,5 +20,4 @@ export const POST = async ({ request }) => {
         console.error(error);
     }
     return new Response(JSON.stringify({ message: "Failed"}), { status: 400 })
-  
 }
