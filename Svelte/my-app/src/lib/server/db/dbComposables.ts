@@ -293,3 +293,4 @@ export async function PostOktauser(name: string, email: string, oktaId: string) 
         return null;
     }
 }
+// Calculate power per port 

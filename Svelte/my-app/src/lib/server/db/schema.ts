@@ -1,5 +1,7 @@
 ﻿import {type InferInsertModel, type InferSelectModel, sql} from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core"
+import postgres from "postgres";
+import from = postgres.toPascal.column.from;
 
 export const Users  = pg.pgTable("Users", {
     userId: pg.text("user_id").primaryKey(),
@@ -23,6 +25,7 @@ export const Stations = pg.pgTable("Stations", {
     coordinates: pg.text("coordinates"),
     address: pg.json("address"),
     maxPower: pg.real("max_power"),
+    actualPower: pg.real("actual_power"),
     portIds: pg.text("port_ids") // needs to be parsed into an array on leaving
 });
 
@@ -34,6 +37,7 @@ export const Ports = pg.pgTable("Ports", {
     usedBy: pg.text("used_by").references(() => Users.userId),
     emi3Id: pg.text("emi3_id"),
     status: pg.text("status"),
+    maxPower: pg.real("max_power"),
     displayName: pg.text("display_name"),
 });
 
