@@ -25,7 +25,7 @@ export const Stations = pg.pgTable("Stations", {
     coordinates: pg.text("coordinates"),
     address: pg.json("address"),
     maxPower: pg.real("max_power"),
-    actualPower: pg.real("actual_power"),
+   
     portIds: pg.text("port_ids") // needs to be parsed into an array on leaving
 });
 
@@ -38,6 +38,7 @@ export const Ports = pg.pgTable("Ports", {
     emi3Id: pg.text("emi3_id"),
     status: pg.text("status"),
     maxPower: pg.real("max_power"),
+    actualPower: pg.real("actual_power"),
     displayName: pg.text("display_name"),
 });
 
