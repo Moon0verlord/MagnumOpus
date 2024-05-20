@@ -279,3 +279,36 @@ export async function PostOktauser(name: string, email: string, oktaId: string) 
         return null;
     }
 }
+
+export async function checkPassword(currentPassword : string, userId: string) {
+    try {
+      const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+  
+      if (user && user.length > 0 && user[0].password) {
+        const match = await bcrypt.compare(currentPassword, user[0].password);
+        return match;
+      }
+  
+      return false;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  export async function changePassword(newPassword : string, userId : string) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      await db.update(Users)
+        .set({ password: hashedPassword })
+        .where(eq(Users.userId, userId))
+        .execute();
+  
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
