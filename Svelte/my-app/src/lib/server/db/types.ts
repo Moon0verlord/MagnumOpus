@@ -8,6 +8,16 @@ export type Station = {
     portIds: string[];
 }
 
+export type Car = {
+    make: string;
+    model: string;
+    battery: number;
+}
+
+export type CarData = {
+    [make: string]: Car[];
+}
+
 export type Port = {
     portId: string;
     stationId: string;
