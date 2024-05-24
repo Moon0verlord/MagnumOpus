@@ -1,4 +1,4 @@
-# Project D | ⚡️ EV Charging and Management Application ⚡️
+# ⚡️ EV Charging and Management Application ⚡️
 
 ## Description
 This repository contains the web application built using SvelteKit for Project D. Our application functions as an electric vehicle charging and management hub where users can reserve and request ports to charge their vehicle, which is meant to be used by employees internally working at our client Schuberg Philis.
