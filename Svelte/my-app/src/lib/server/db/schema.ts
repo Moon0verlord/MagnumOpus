@@ -13,6 +13,7 @@ export const Users  = pg.pgTable("Users", {
     oktaId: pg.text("okta_id"),
     isAdmin: pg.boolean('isAdmin'),
     BatteryMax: pg.decimal("battery_max"),
+    carModel: pg.text("car_model"),
 });
 
 export type User = InferSelectModel<typeof Users>;

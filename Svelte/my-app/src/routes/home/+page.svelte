@@ -5,7 +5,11 @@
     import oktaAuth from '../../oktaAuth';
     import type {AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
     import type {Port, User} from "$lib/server/db/types";
+    import type {Car, CarData} from "$lib/cars/Cars";
+    import carJson  from "$lib/cars/cars.json";
 
+
+    let cars: {[key: string]: CarData[]} = {};
     let requestPageData: any[] = [];
     let incomingRequests: any[] = [];
     let allRequestData: any[] = [];
@@ -29,10 +33,10 @@
             console.error('Error getting user info:', error);
         }
     }
-    async function GetIpCharge(){
-        
+   
+    async function getCarData(){
+        cars = carJson;
     }
- 
     async function CheckUserExists() {
         if (userInfo && userInfo.email) {
             const response = await fetch(`/api/home`, {
@@ -87,7 +91,13 @@
         }
     }
 
+    async function GetModal()
+    {
+        (document.getElementById('my_modal_1') as HTMLDialogElement).showModal();
+    };
     onMount(async () => {
+        getCarData();
+        (document.getElementById('my_modal_1') as HTMLDialogElement).showModal();
         await getOktaUserInfo();
         await PostOktaToDB();
         unsubscribe = userId.subscribe(value => {
@@ -548,11 +558,28 @@
         <div class="flex justify-center items-center h-screen mx-3">
             <div class="grid grid-rows-3 grid-flow-col gap-4">
                 <div class="">
+              
+            
+                    <dialog id="my_modal_1" class="modal">
+                        <div class="modal-box">
+                            <h3 class="font-bold text-lg">Hell!</h3>
+                            <p class="py-4">Press ESC key or click the button below to close</p>
+                            <div class="modal-action">
+                                <form method="dialog">
+                                    <button class="btn">Close</button>
+                                    #TODO add a button to close the modal
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
+                        
                     <div class="card bg-base-100 h-full min-h-52 shadow-xl ">
+                       
                         <div class="w-full card-body">
                             <div class="m-auto">
                                 {#if currentUserInfo}
                                     <h1 class="card-title text-5xl"> Welcome {currentUserInfo.name}</h1>
+                                    
                                 {:else}
                                     <h1 class="card-title text-5xl">Welcome Guest</h1>
                                 {/if}
