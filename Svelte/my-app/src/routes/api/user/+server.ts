@@ -1,5 +1,5 @@
 ﻿import type {User} from "$lib/server/db/schema";
-import {GetUserAdminStatus, GetUserByEmail} from "$lib/server/db/dbComposables";
+import {GetCars, GetUserAdminStatus, GetUserByEmail} from "$lib/server/db/dbComposables";
 
 // @ts-ignore
 export const POST = async ({ request }) => {

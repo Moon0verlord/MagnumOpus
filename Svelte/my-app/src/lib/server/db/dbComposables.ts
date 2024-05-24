@@ -3,6 +3,8 @@ import {db} from "$lib/server/db/db.server";
 import {and, eq} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
 import bcrypt from 'bcryptjs';
+import type {Car, CarData} from "$lib/server/db/types";
+import cars from "$lib/server/data/cars.json";
 
 export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
@@ -287,7 +289,6 @@ export async function GetUserByEmail(email: string) {
         return null;
     }
 }
-
 export async function PostOktauser(name: string, email: string, oktaId: string) {
     try {
         const userId = uuidv4();
@@ -298,4 +299,15 @@ export async function PostOktauser(name: string, email: string, oktaId: string) 
         return null;
     }
 }
-
+//Car selection functions and such 
+export async function GetCars() {
+    return cars as CarData;
+}
+export async function PostCar(car: string,userId: string) {
+    try {
+        await db.update(Users).set({carModel: car}).where(eq(Users.userId, userId)).execute();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}

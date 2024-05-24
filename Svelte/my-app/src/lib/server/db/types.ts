@@ -44,6 +44,7 @@ export type User = {
     isAdmin: boolean;
     totalXp: number;
     level: number;
+    carModel: string;
 }
 
 export type Address = {

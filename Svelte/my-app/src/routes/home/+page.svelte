@@ -5,11 +5,16 @@
     import oktaAuth from '../../oktaAuth';
     import type {AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
     import type {Port, User} from "$lib/server/db/types";
-    import carJson from '$lib/server/data/cars.json';
     import type { CarData } from '$lib/server/db/types';
 
+    //Car selection variables
+    let ChosenCars: CarData[] = [];
+    let cars: {[key: string]: CarData} = {};
+    let keys: string[] = [];
+    let CarOfChoice: string;
+    let isOpen =false;
 
-    let cars: CarData = {};
+    let isMobile: boolean;
     let requestPageData: any[] = [];
     let incomingRequests: any[] = [];
     let allRequestData: any[] = [];
@@ -24,7 +29,45 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
-
+    async function getBrandCars(event:Event) {
+        let selectedOption = (event.target as HTMLSelectElement).value;
+        for (let key in cars) {
+            if (key === selectedOption) {
+                ChosenCars = cars[key];
+            }
+        }
+    }
+    function handleKeyDown(event:KeyboardEvent) {
+        if (event.key === 'Escape' && isOpen) {
+            event.preventDefault();
+        }
+    }
+    async function ChooseCar(event:Event) {
+        CarOfChoice = (event.target as HTMLSelectElement).value;
+    }
+    async function DoneChoosingCar() 
+    {
+        if (CarOfChoice && currentUserId) 
+        {
+            console.log(CarOfChoice);
+            const response = await fetch('/api/cars', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    car: CarOfChoice,
+                    userId: currentUserId
+                })
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("WOw");
+                console.log(data);
+            }
+        }
+    }
+    
     async function getOktaUserInfo() {
         try {
             const accessToken = await oktaAuth.tokenManager.get('accessToken') as AccessToken;
@@ -33,10 +76,6 @@
         } catch (error) {
             console.error('Error getting user info:', error);
         }
-    }
-   
-    async function getCarData(){
-        cars = carJson as CarData;
     }
 
     async function CheckUserExists() {
@@ -51,12 +90,14 @@
             if (response.ok) {
                 const data = await response.json();
                 if (data && data.email === (userInfo ? userInfo.email : null)) {
+                    
                     return true;
                 } else {
                     console.error('Email does not match');
                     return false;
                 }
             }
+            
         }
     }
     async function PostOktaToDB() {
@@ -85,6 +126,7 @@
                 console.log(data.message); // "Success"
                 console.log(data.uuid); // user's UUID
                 userId.set(data.uuid);
+               
             } else {
                 console.error('Failed to post user to DB');
             }
@@ -92,14 +134,24 @@
             console.error('User info is null');
         }
     }
-
-    async function GetModal()
-    {
-        (document.getElementById('my_modal_1') as HTMLDialogElement).showModal();
-    };
+    
     onMount(async () => {
-        getCarData();
-        (document.getElementById('my_modal_1') as HTMLDialogElement).showModal();
+        
+        const response = await fetch('/api/cars', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) 
+        {
+             cars = (await response.json());
+             if(cars)
+             {
+                 keys = Object.keys(cars);
+             }
+        }
+        
         await getOktaUserInfo();
         await PostOktaToDB();
         unsubscribe = userId.subscribe(value => {
@@ -117,6 +169,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     userId.set(data.uuid);
+                    
                 }
             }
 
@@ -125,7 +178,10 @@
             await getPorts();
             await myRequests();
             await getIncomingRequests();
+            (document.getElementById('my_modal_1') as HTMLDialogElement).showModal();
+            
         }
+        
     });
 
 
@@ -157,6 +213,7 @@
         });
        
         const data = await response.json();
+        
         return data.user;
     }
 
@@ -560,20 +617,53 @@
         <div class="flex justify-center items-center h-screen mx-3">
             <div class="grid grid-rows-3 grid-flow-col gap-4">
                 <div class="">
-              
-            
-                    <dialog id="my_modal_1" class="modal">
-                        <div class="modal-box">
-                            <h3 class="font-bold text-lg">Hell!</h3>
-                            <p class="py-4">Press ESC key or click the button below to close</p>
-                            <div class="modal-action">
-                                <form method="dialog">
-                                    <button class="btn">Close</button>
-                                    #TODO add a button to close the modal
-                                </form>
-                            </div>
-                        </div>
-                    </dialog>
+                    {#if currentUserInfo}
+                        {#if currentUserInfo.carModel == null}
+                                <dialog id="my_modal_1" class="modal">
+                                    <div class="modal-box">
+                                        <h3 class="font-bold text-lg">Hello!</h3>
+                                        <p class="py-4">Please choose your car:</p>
+                                        {#if cars}
+                                            <select class="BrandBox select select-bordered w-full max-w-xs" on:change={getBrandCars}>
+                                                <option disabled selected>Choose a producer</option>
+                                                {#each keys as key}
+                                                    <option>{key}</option>
+                                                {/each}
+                                                {#if ChosenCars}
+                                                    <select class="select select-bordered w-full max-w-xs">
+                                                        <option disabled selected>Choose a car</option>
+                                                        {#each ChosenCars as car }
+                                                            <option>{car}</option>
+                                                        {/each}
+                                                    </select>
+                                                {:else}
+                                                    <p>no manufacturers</p>
+                                                {/if}
+                                            </select>
+                                            <select class="select select-bordered w-full max-w-xs" on:change={ChooseCar}>
+                                                <option disabled selected>Choose a car</option>
+                                                {#each ChosenCars as car }
+                                                    <option>{car.model}</option>
+                                                {/each}
+                                            </select>
+                                        {:else}
+                                            <p>no cars</p>
+                                        {/if}
+                                        <div class="modal-action">
+                                            <form method="dialog">
+                                                {#if CarOfChoice}
+                                                    <button class="btn" on:click={DoneChoosingCar}>Done</button>
+                                                {:else}
+                                                    <button class="btn" disabled>Done</button>
+                                                {/if}
+                                            </form>
+                                        </div>
+                                    </div>
+                                </dialog>
+                                    {:else}
+                                {/if}
+                            {:else}
+                        {/if}
                         
                     <div class="card bg-base-100 h-full min-h-52 shadow-xl ">
                        
