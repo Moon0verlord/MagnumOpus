@@ -6,12 +6,12 @@
     import oktaAuth from '../../oktaAuth';
     import type {AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
     import type {Port, User} from "$lib/server/db/types";
+    import {getLevel, getMaxLevel} from "./page.account";
+    
     let requestPageData: any[] = [];
     let incomingRequests: any[] = [];
     let allRequestData: any[] = [];
     let allOccupiedPorts: any[] = [];
-    import {getLevel, getMaxLevel} from "./page.account";
-
     $: isMobile = $mobile;
     let maxLevel:number | string;
     let nextExp:number | string;
@@ -21,10 +21,7 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
-
-
-
-   
+    
     async function setLevel(user:User)
     {
         if (currentUserInfo) {
@@ -83,6 +80,7 @@
     }
 
     async function PostOktaToDB() {
+  
         let userExists = await CheckUserExists();
 
         if (userExists) {
@@ -264,22 +262,32 @@
 <div class="flex justify-center items-center h-screen mx-3">
     <div class="grid grid-rows-3 grid-flow-col gap-4">
         <div class="row-span-2">
-            <div class="card bg-base-100 h-full min-h-52 shadow-xl">
+            <div class="card bg-base-100 h-full shadow-xl">
                 <div class="w-full card-body">
                     <div class="m-auto">
+                        
                         {#if currentUserInfo }
                             <p>Name : {currentUserInfo.name} </p>
+                            <p>Change name : <input></p>
                             <p>E-mail : {currentUserInfo.email} </p>
+                            <p>Change E-mail : <input></p>
                             <div class="mt-10">
-                                Current Level : {currentUserInfo.level}
-                                Next Level : {maxLevel}
+                                <div style="display: flex; justify-content: space-between;">
+                                          <span>
+                                            Current Level : {currentUserInfo.level}
+                                          </span>
+                                           <span class="text-right">
+                                            Next Level : {maxLevel}
+                                          </span>
+                                </div>
+
                                 <div class="flex items-center">
-                                    <div class="w-72  bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="w-96 bg-gray-200 rounded-full dark:bg-gray-700">
                                         {#if typeof maxLevel !== 'string' && typeof nextExp !== 'string'}
                                             {#if ((currentUserInfo.totalXp/nextExp)*100) <= 30 }
-                                                <div class="bg-blue-600  text-xs font-light text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: {(currentUserInfo.totalXp/nextExp)*100}%">{currentUserInfo.totalXp}</div>
+                                                <div class="bg-blue-600 text-xs font-light text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: {(currentUserInfo.totalXp/nextExp)*100}%">{currentUserInfo.totalXp}</div>
                                                 {:else}
-                                                <div class="bg-blue-600  text-xs font-light text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: {(currentUserInfo.totalXp/nextExp)*100}%"> XP : {currentUserInfo.totalXp}</div>
+                                                <div class="bg-blue-600 text-xs font-light text-blue-100 text-center p-0.5 leading-none rounded-full" style="width: {(currentUserInfo.totalXp/nextExp)*100}%"> XP : {currentUserInfo.totalXp}</div>
                                                 {/if}
                                             {:else}
                                             <div></div>
@@ -287,8 +295,6 @@
                                     </div>
                                     <span class="ml-2">XP: {nextExp}</span>
                                 </div>
-
-
                             </div>
                         {:else}
                             <div role="status">

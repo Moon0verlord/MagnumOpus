@@ -6,6 +6,7 @@
     import {userId} from "../../store";
     import type {Port} from "$lib/server/db/schema";
     import PortsModal from "$lib/components/dialogs/portsModal.svelte";
+    import {MySqlTimestamp} from "drizzle-orm/mysql-core";
 
     let showModal = false;
     let portData: any;
@@ -38,7 +39,8 @@
             body: JSON.stringify({
                 userId: currentUserId,
                 portId: port.portId,
-                stationId: port.stationId
+                stationId: port.stationId,
+                occupiedTime: new Date()
             })
         });
 
@@ -47,9 +49,11 @@
             console.log(resData);
 
             // Update the port status
+
             const index = data.props.chargingPorts.findIndex((x: Port) => x.portId === port.portId);
             data.props.chargingPorts[index].status = 'occupied';
             data.props.chargingPorts[index].usedBy = currentUserId;
+        
 
             // Update the station status
             if (data.props.chargingPorts.filter(x => x.stationId === port.stationId).every(x => x.status === 'occupied')) {

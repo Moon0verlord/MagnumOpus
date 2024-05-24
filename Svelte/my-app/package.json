@@ -39,6 +39,7 @@
 		"@okta/okta-auth-js": "^7.5.1",
 		"@tauri-apps/api": "^1.5.3",
 		"@tauri-apps/plugin-notification": "^2.0.0-beta.2",
+		"axios": "^1.7.2",
 		"bcryptjs": "^2.4.3",
 		"better-sqlite3": "^9.4.3",
 		"dotenv": "^16.4.5",

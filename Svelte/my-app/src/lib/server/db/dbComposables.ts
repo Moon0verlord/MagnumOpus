@@ -83,17 +83,20 @@ export async function ChangeUserXp(email:string,xp:number) {
         return null;
     }
 }
-export async function reservePort(userId: string, portId: string, stationId: string) {
+export async function reservePort(userId: string, portId: string, stationId: string,occupiedTime: Date) {
     try {
+     
         const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
+       
         if (existingPort.length > 0) {
             return "User has already reserved a port";
         }
 
         await db.update(Ports)
-            .set({usedBy: userId, status: 'occupied'})
+            .set({usedBy: userId, status: 'occupied',OccupiedTime:new Date(occupiedTime)})
             .where(eq(Ports.portId, portId))
             .execute();
+        console.log("dbComposables: after update Ports")
 
         const ports = await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
 
@@ -129,7 +132,9 @@ export async function myPorts(userId: string) {
     }
 }
 
-export async function releasePort(portId: string, stationId: string) {
+export async function releasePort(portId: string, stationId: string) 
+{
+   
     try {
         await db.update(Ports)
             .set({usedBy: null, status: 'available'})
@@ -293,4 +298,4 @@ export async function PostOktauser(name: string, email: string, oktaId: string) 
         return null;
     }
 }
-// Calculate power per port 
+

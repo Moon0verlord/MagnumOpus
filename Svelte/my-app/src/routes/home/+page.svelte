@@ -10,11 +10,9 @@
     let incomingRequests: any[] = [];
     let allRequestData: any[] = [];
     let allOccupiedPorts: any[] = [];
-
     let response;
     let curPort: Port;
     let user: User;
-
     $: isMobile = $mobile;
     let userInfo: UserClaims | null = null;
     let currentUserId: string | null = null;
@@ -22,12 +20,6 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
-
-   
-
-   
-   
-    
     async function getOktaUserInfo() {
         try {
             const accessToken = await oktaAuth.tokenManager.get('accessToken') as AccessToken;
@@ -37,7 +29,10 @@
             console.error('Error getting user info:', error);
         }
     }
-
+    async function GetIpCharge(){
+        
+    }
+ 
     async function CheckUserExists() {
         if (userInfo && userInfo.email) {
             const response = await fetch(`/api/home`, {
@@ -58,7 +53,6 @@
             }
         }
     }
-
     async function PostOktaToDB() {
         let userExists = await CheckUserExists();
 
@@ -647,6 +641,7 @@
                                     <tr>
                                         <th>Port</th>
                                         <th>Station ID</th>
+                                        <th>Charge</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -655,6 +650,7 @@
                                         <tr class="p-1">
                                             <td class="p-2">{port.displayName}</td>
                                             <td class="p-2 break-all">{port.stationId}</td>
+                                            
                                             <td class="p-2 justify-end">
                                                 <button class="btn w-24 btn-error"
                                                         on:click={() => disconnectPort(port.portId, port.stationId)}>

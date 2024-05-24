@@ -11,7 +11,8 @@ export const Users  = pg.pgTable("Users", {
     email: pg.text("email").unique(),
     password: pg.text("password"),
     oktaId: pg.text("okta_id"),
-    isAdmin: pg.boolean('isAdmin')
+    isAdmin: pg.boolean('isAdmin'),
+    BatteryMax: pg.decimal("battery_max"),
 });
 
 export type User = InferSelectModel<typeof Users>;
@@ -25,7 +26,6 @@ export const Stations = pg.pgTable("Stations", {
     coordinates: pg.text("coordinates"),
     address: pg.json("address"),
     maxPower: pg.real("max_power"),
-   
     portIds: pg.text("port_ids") // needs to be parsed into an array on leaving
 });
 
@@ -40,6 +40,8 @@ export const Ports = pg.pgTable("Ports", {
     maxPower: pg.real("max_power"),
     actualPower: pg.real("actual_power"),
     displayName: pg.text("display_name"),
+    OccupiedTime: pg.timestamp("occupied_time"),
+    timeRemaining: pg.integer("time_remaining")
 });
 
 export type Port = InferSelectModel<typeof Ports>;
