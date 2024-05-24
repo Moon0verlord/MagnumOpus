@@ -5,11 +5,11 @@
     import oktaAuth from '../../oktaAuth';
     import type {AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
     import type {Port, User} from "$lib/server/db/types";
-    import type {Car, CarData} from "$lib/cars/Cars";
-    import carJson  from "$lib/cars/cars.json";
+    import carJson from '$lib/server/data/cars.json';
+    import type { CarData } from '$lib/server/db/types';
 
 
-    let cars: {[key: string]: CarData[]} = {};
+    let cars: CarData = {};
     let requestPageData: any[] = [];
     let incomingRequests: any[] = [];
     let allRequestData: any[] = [];
@@ -24,6 +24,7 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
+
     async function getOktaUserInfo() {
         try {
             const accessToken = await oktaAuth.tokenManager.get('accessToken') as AccessToken;
@@ -35,8 +36,9 @@
     }
    
     async function getCarData(){
-        cars = carJson;
+        cars = carJson as CarData;
     }
+
     async function CheckUserExists() {
         if (userInfo && userInfo.email) {
             const response = await fetch(`/api/home`, {

@@ -16,6 +16,15 @@ export type Port = {
     status: 'available' | 'occupied' | 'unavailable';
 }
 
+export type Car = {
+    model: string;
+    battery: number;
+};
+
+export type CarData = {
+    [key: string]: Car[];
+};
+
 export type Request = {
     requestId: string;
     priority: 'high' | 'medium' | 'low';
