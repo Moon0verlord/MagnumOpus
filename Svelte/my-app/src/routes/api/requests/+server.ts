@@ -4,8 +4,8 @@ import {requestPort, myRequests} from '$lib/server/db/dbComposables';
 // @ts-ignore
 export const POST = async ({request}) => {
     const body = await request.json();
-
-    const port = await requestPort(body.fromUserId, body.priority, body.requestedPortId, body.message);
+    console.log("POST"+body.percent)
+    const port = await requestPort(body.fromUserId, body.priority, body.requestedPortId, body.message,body.percent);
 
     if (port === 1) {
         return new Response(JSON.stringify({message: "Success"}), {status: 201})

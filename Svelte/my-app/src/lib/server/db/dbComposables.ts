@@ -139,7 +139,7 @@ export async function releasePort(portId: string, stationId: string)
    
     try {
         await db.update(Ports)
-            .set({usedBy: null, status: 'available'})
+            .set({usedBy: null, status: 'available',OccupiedTime: null,timeRemaining: null})
             .where(eq(Ports.portId, portId))
             .execute();
 
@@ -155,14 +155,16 @@ export async function releasePort(portId: string, stationId: string)
     }
 }
 
-export async function requestPort(fromUserId: string, priority: string, requestedPortId: string, message: string) {
+export async function requestPort(fromUserId: string, priority: string, requestedPortId: string, message: string,percent: number) {
+    console.log(typeof percent+", "+percent)
     try {
-        const existingRequest = await db.select().from(Requests).where(and(eq(Requests.fromUserId, fromUserId), eq(Requests.requestedPortId, requestedPortId))).execute();
+        const existingRequest = 
+            await db.select().from(Requests).where(and(eq(Requests.fromUserId, fromUserId), eq(Requests.requestedPortId, requestedPortId))).execute();
         if (existingRequest.length > 0) {
             return 2;
         }
 
-        await db.insert(Requests).values({fromUserId, priority, requestedPortId, message}).execute();
+        await db.insert(Requests).values({fromUserId, priority, requestedPortId, message,percent}).execute();
 
         return 1;
     } catch (error) {

@@ -121,9 +121,9 @@ export const allStationsAvailable = async () => {
             .execute();
         for (const port of ports) {
                 if (station.maxPower != null && ports.length > 1) {
-                    const power = station.maxPower / ports.length
+                    const power = station.maxPower
                     await db.update(Ports)
-                        .set({maxPower:power, actualPower:power})
+                        .set({maxPower:power})
                         
                         .where(eq(Ports.portId, port.portId))
                         .execute();

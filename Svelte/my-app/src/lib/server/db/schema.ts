@@ -39,7 +39,7 @@ export const Ports = pg.pgTable("Ports", {
     emi3Id: pg.text("emi3_id"),
     status: pg.text("status"),
     maxPower: pg.real("max_power"),
-    actualPower: pg.real("actual_power"),
+
     displayName: pg.text("display_name"),
     OccupiedTime: pg.timestamp("occupied_time"),
     timeRemaining: pg.integer("time_remaining")
@@ -52,7 +52,8 @@ export const Requests = pg.pgTable("Requests", {
     priority: pg.text("priority"),
     fromUserId: pg.text("from_userid").references(() => Users.userId),
     requestedPortId: pg.text("requested_portid").references(() => Ports.portId),
-    message: pg.text("message")
+    message: pg.text("message"),
+    percent: pg.integer("percent"),
 });
 export type Request = InferSelectModel<typeof Requests>;
 

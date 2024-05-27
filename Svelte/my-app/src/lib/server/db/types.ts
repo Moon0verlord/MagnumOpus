@@ -32,6 +32,7 @@ export type Request = {
     toUserId: string;
     portId: string;
     message: string;
+    percent: number;
 }
 
 export type User = {
