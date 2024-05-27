@@ -57,6 +57,7 @@
                 body: JSON.stringify({
                     car: CarOfChoice,
                     userId: currentUserId
+                    
                 })
             });
             if (response.ok) {
