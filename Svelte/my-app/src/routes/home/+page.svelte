@@ -625,67 +625,65 @@
                                     {#if cars}
                                     <div class="carousel w-full">
                                         {#each keys as key, i}
-                                          <div id="slide{i + 1}" class="carousel-item relative w-full flex justify-center">
-                                            <div class="card bg-base-100 shadow-xl">
-                                              <div class="card-body">
-                                                <h2 class="card-title">{key}</h2>
-                                                <div class="overflow-x-auto w-full">
-                                                  <table class="table w-full">
-                                                    <thead>
-                                                      <tr>
-                                                        <th class="w-1/2">Model</th>
-                                                        <th class="w-1/2">Select</th>
-                                                      </tr>
-                                                    </thead>
-                                                    <tbody class="bg-base-300">
-                                                      {#each cars[key] as car}
-                                                        <tr>
-                                                          <td class="w-1/2">
-                                                            <div class="flex items-center space-x-3">
-                                                              <div class="avatar">
-                                                                <div class="mask mask-squircle w-12 h-12">
-                                                                  <img src="src/lib/assets/makes/{key}.svg" alt="{key} logo" />
-                                                                </div>
-                                                              </div>
-                                                              <div>{car.model}</div>
-                                                            </div>
-                                                          </td>
-                                                          <td class="w-1/2 text-center">
-                                                            <label>
-                                                              <input type="radio" name="car" value={car.model} class="radio" on:change={ChooseCar} />
-                                                            </label>
-                                                          </td>
-                                                        </tr>
-                                                      {/each}
-                                                    </tbody>
-                                                  </table>
+                                        <div id="slide{i + 1}" class="carousel-item relative w-full flex justify-center">
+                                            <div class="card no-background">
+                                                <div class="card-body">
+                                                    <h2 class="card-title">{key}</h2>
+                                                    <div class="overflow-x-auto w-full">
+                                                        <table class="table w-full fixed-width-table rounded-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Model</th>
+                                                                    <th>Select</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="bg-base-300">
+                                                                {#each cars[key] as car}
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="flex items-center space-x-3">
+                                                                            <div class="avatar">
+                                                                                <div class="mask mask-squircle w-12 h-12">
+                                                                                    <img src="src/lib/assets/makes/{key}.svg" alt="{key} logo" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div>{car.model}</div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <label>
+                                                                            <input type="radio" name="car" value={car.model} class="radio" on:change={ChooseCar} />
+                                                                        </label>
+                                                                    </td>
+                                                                </tr>
+                                                                {/each}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                              </div>
                                             </div>
                                             <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                                              <a href="#slide{i === 0 ? keys.length : i}" class="btn btn-circle">❮</a>
-                                              <a href="#slide{i === keys.length - 1 ? 1 : i + 2}" class="btn btn-circle">❯</a>
+                                                <a href="#slide{i === 0 ? keys.length : i}" class="btn btn-circle">❮</a>
+                                                <a href="#slide{i === keys.length - 1 ? 1 : i + 2}" class="btn btn-circle">❯</a>
                                             </div>
-                                          </div>
+                                        </div>
                                         {/each}
-                                      </div>
+                                    </div>
                                     {:else}
-                                        <p>No cars available</p>
+                                    <p>No cars available</p>
                                     {/if}
                                     <div class="modal-action">
-                                    <form method="dialog">
-                                        {#if CarOfChoice}
+                                        <form method="dialog">
+                                            {#if CarOfChoice}
                                             <button class="btn" on:click={DoneChoosingCar}>Done</button>
-                                        {:else}
+                                            {:else}
                                             <button class="btn" disabled>Done</button>
-                                        {/if}
-                                    </form>
+                                            {/if}
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                        </dialog>
-                                    {:else}
+                            </dialog>
                                 {/if}
-                            {:else}
                         {/if}
                         
                     <div class="card bg-base-100 h-full min-h-52 shadow-xl ">
@@ -1058,3 +1056,29 @@
 {/if}
 
 
+<style>
+    .fixed-width-table th,
+    .fixed-width-table td {
+        width: 50%; /* Adjust the width as needed */
+    }
+    .no-background {
+        background: transparent;
+        box-shadow: none; /* Remove shadow if needed */
+    }
+    .rounded-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 8px; /* Adjust the radius as needed */
+        overflow: hidden;
+    }
+    .rounded-table th:first-child,
+    .rounded-table td:first-child {
+        border-top-left-radius: 8px; /* Adjust the radius as needed */
+        border-bottom-left-radius: 8px; /* Adjust the radius as needed */
+    }
+    .rounded-table th:last-child,
+    .rounded-table td:last-child {
+        border-top-right-radius: 8px; /* Adjust the radius as needed */
+        border-bottom-right-radius: 8px; /* Adjust the radius as needed */
+    }
+</style>
