@@ -6,10 +6,12 @@
     import type {AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
     import type {Port, User} from "$lib/server/db/types";
     import type { CarData } from '$lib/server/db/types';
+    import type { Car } from '$lib/server/db/types';
 
     //Car selection variables
     let ChosenCars: CarData[] = [];
-    let cars: {[key: string]: CarData} = {};
+    // let cars: {[key: string]: CarData} = {};
+    let cars: Record<string, CarData[]> = {};
     let keys: string[] = [];
     let CarOfChoice: string;
     let isOpen =false;
@@ -29,14 +31,11 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
-    async function getBrandCars(event:Event) {
-        let selectedOption = (event.target as HTMLSelectElement).value;
-        for (let key in cars) {
-            if (key === selectedOption) {
-                ChosenCars = cars[key];
-            }
-        }
-    }
+
+    async function getBrandCars(event: Event) {
+    const selectedOption = (event.target as HTMLSelectElement).value;
+    ChosenCars = cars[selectedOption] || [];
+}
     function handleKeyDown(event:KeyboardEvent) {
         if (event.key === 'Escape' && isOpen) {
             event.preventDefault();
@@ -612,54 +611,78 @@
             </div>
         </div>
     {/if}
-{:else}
-    {#if !isMobile}
-        <div class="flex justify-center items-center h-screen mx-3">
-            <div class="grid grid-rows-3 grid-flow-col gap-4">
-                <div class="">
-                    {#if currentUserInfo}
-                        {#if currentUserInfo.carModel == null}
-                                <dialog id="my_modal_1" class="modal">
-                                    <div class="modal-box">
-                                        <h3 class="font-bold text-lg">Hello!</h3>
-                                        <p class="py-4">Please choose your car:</p>
-                                        {#if cars}
-                                            <select class="BrandBox select select-bordered w-full max-w-xs" on:change={getBrandCars}>
-                                                <option disabled selected>Choose a producer</option>
-                                                {#each keys as key}
-                                                    <option>{key}</option>
-                                                {/each}
-                                                {#if ChosenCars}
-                                                    <select class="select select-bordered w-full max-w-xs">
-                                                        <option disabled selected>Choose a car</option>
-                                                        {#each ChosenCars as car }
-                                                            <option>{car}</option>
-                                                        {/each}
-                                                    </select>
-                                                {:else}
-                                                    <p>no manufacturers</p>
-                                                {/if}
-                                            </select>
-                                            <select class="select select-bordered w-full max-w-xs" on:change={ChooseCar}>
-                                                <option disabled selected>Choose a car</option>
-                                                {#each ChosenCars as car }
-                                                    <option>{car.model}</option>
-                                                {/each}
-                                            </select>
+    {:else}
+        {#if !isMobile}
+            <div class="flex justify-center items-center h-screen mx-3">
+                <div class="grid grid-rows-3 grid-flow-col gap-4">
+                    <div class="">
+                        {#if currentUserInfo}
+                            {#if currentUserInfo.carModel == null}
+                            <dialog id="my_modal_1" class="modal">
+                                <div class="modal-box">
+                                    <h3 class="font-bold text-lg">Hello!</h3>
+                                    <p class="py-4">Please choose your car:</p>
+                                    {#if cars}
+                                    <div class="carousel w-full">
+                                        {#each keys as key, i}
+                                          <div id="slide{i + 1}" class="carousel-item relative w-full flex justify-center">
+                                            <div class="card bg-base-100 shadow-xl">
+                                              <div class="card-body">
+                                                <h2 class="card-title">{key}</h2>
+                                                <div class="overflow-x-auto w-full">
+                                                  <table class="table w-full">
+                                                    <thead>
+                                                      <tr>
+                                                        <th class="w-1/2">Model</th>
+                                                        <th class="w-1/2">Select</th>
+                                                      </tr>
+                                                    </thead>
+                                                    <tbody class="bg-base-300">
+                                                      {#each cars[key] as car}
+                                                        <tr>
+                                                          <td class="w-1/2">
+                                                            <div class="flex items-center space-x-3">
+                                                              <div class="avatar">
+                                                                <div class="mask mask-squircle w-12 h-12">
+                                                                  <img src="src/lib/assets/makes/{key}.svg" alt="{key} logo" />
+                                                                </div>
+                                                              </div>
+                                                              <div>{car.model}</div>
+                                                            </div>
+                                                          </td>
+                                                          <td class="w-1/2 text-center">
+                                                            <label>
+                                                              <input type="radio" name="car" value={car.model} class="radio" on:change={ChooseCar} />
+                                                            </label>
+                                                          </td>
+                                                        </tr>
+                                                      {/each}
+                                                    </tbody>
+                                                  </table>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                                              <a href="#slide{i === 0 ? keys.length : i}" class="btn btn-circle">❮</a>
+                                              <a href="#slide{i === keys.length - 1 ? 1 : i + 2}" class="btn btn-circle">❯</a>
+                                            </div>
+                                          </div>
+                                        {/each}
+                                      </div>
+                                    {:else}
+                                        <p>No cars available</p>
+                                    {/if}
+                                    <div class="modal-action">
+                                    <form method="dialog">
+                                        {#if CarOfChoice}
+                                            <button class="btn" on:click={DoneChoosingCar}>Done</button>
                                         {:else}
-                                            <p>no cars</p>
+                                            <button class="btn" disabled>Done</button>
                                         {/if}
-                                        <div class="modal-action">
-                                            <form method="dialog">
-                                                {#if CarOfChoice}
-                                                    <button class="btn" on:click={DoneChoosingCar}>Done</button>
-                                                {:else}
-                                                    <button class="btn" disabled>Done</button>
-                                                {/if}
-                                            </form>
-                                        </div>
-                                    </div>
-                                </dialog>
+                                    </form>
+                                </div>
+                            </div>
+                        </dialog>
                                     {:else}
                                 {/if}
                             {:else}
@@ -1033,3 +1056,5 @@
         </div>
     {/if}
 {/if}
+
+
