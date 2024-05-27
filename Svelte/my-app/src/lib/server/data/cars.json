@@ -1,5 +1,4 @@
 {
-  "Alfa Romeo": [],
   "Audi": [
     {
       "model": "Q8 e-tron 55 quattro",
@@ -210,22 +209,6 @@
     {
       "model": "EQA 250+",
       "battery": 70.5
-    },
-    {
-      "model": "EQA 350 4MATIC",
-      "battery": 66.5
-    },
-    {
-      "model": "EQV EQV 300 Extra-Long",
-      "battery": 90
-    },
-    {
-      "model": "EQT 200",
-      "battery": 45
-    },
-    {
-      "model": "EQC 400 4MATIC",
-      "battery": 80
     }
   ],
   "Nissan": [
@@ -472,7 +455,7 @@
       "battery": 77
     },
     {
-      "model": "e-up! 61 kW",
+      "model": "e-up!",
       "battery": 32.3
     }
   ],

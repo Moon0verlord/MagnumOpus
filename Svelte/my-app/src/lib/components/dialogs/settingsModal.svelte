@@ -65,6 +65,20 @@
                                bind:group={selectedTheme} on:change={() => changeTheme('forest')}/>
                     </label>
                 </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer gap-4">
+                        <span class="label-text">Forest</span>
+                        <input type="radio" name="theme-radios" class="radio theme-controller" value="autumn"
+                               bind:group={selectedTheme} on:change={() => changeTheme('autumn')}/>
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer gap-4">
+                        <span class="label-text">Forest</span>
+                        <input type="radio" name="theme-radios" class="radio theme-controller" value="Business"
+                               bind:group={selectedTheme} on:change={() => changeTheme('business')}/>
+                    </label>
+                </div>
                 <div class="card-actions justify-end">
                     <button class="btn" on:click={close}>Close</button>
                 </div>

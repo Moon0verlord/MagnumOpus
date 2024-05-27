@@ -1,5 +1,7 @@
 <script lang="ts">
+    
     import {createEventDispatcher} from "svelte";
+    import {isNumber} from "@okta/okta-auth-js";
     function incrementCharge(event: Event) {
         percentage_charge= Math.min(percentage_charge + 1, 100);
         console.log(percentage_charge);
@@ -9,9 +11,18 @@
         console.log(percentage_charge);
     }
     function changeCharge(event: Event) {
-        const value = parseInt((event.target as HTMLInputElement).value);
-        percentage_charge = isNaN(value) ? percentage_charge : Math.min(Math.max(value, 0), 100);
-        console.log(percentage_charge);
+        let MainEvent = event.target as HTMLInputElement;
+        const value = parseInt(MainEvent.value);
+        if(isNumber(value) )
+        {
+
+            percentage_charge = Math.min(Math.max(value, 0), 100);
+           
+        }
+        else{
+          MainEvent.value = percentage_charge;
+        }
+        
     }
     const dispatch = createEventDispatcher();
     export let show = false;
@@ -78,9 +89,10 @@
                                 </svg>
                             </button>
                  
-                            <input type="text" id="quantity-input" 
+                            <input type="number" id="quantity-input" 
+                                   
                                    data-input-counter aria-describedby="helper-text-explanation" 
-                                   class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 
+                                   class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 
                                    focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                    bind:value="{ percentage_charge }" placeholder="{percentage_charge}" required on:input={changeCharge}/> 
