@@ -5,6 +5,7 @@ import {v4 as uuidv4} from 'uuid';
 import bcrypt from 'bcryptjs';
 import type {Car, CarData} from "$lib/server/db/types";
 import cars from "$lib/server/data/cars.json";
+import carData from '$lib/server/data/cars.json';
 
 export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
@@ -305,9 +306,24 @@ export async function PostOktauser(name: string, email: string, oktaId: string) 
 export async function GetCars() {
     return cars as CarData;
 }
-export async function PostCar(car: string,userId: string) {
+
+export async function PostCar(car: string, userId: string) {
     try {
-        await db.update(Users).set({carModel: car}).where(eq(Users.userId, userId)).execute();
+        const carModels: CarData = carData;
+        let maxBattery: string | null = null;
+
+        for (const brand in carModels) {
+            const carModel = carModels[brand].find(c => c.model === car);
+            if (carModel) {
+                maxBattery = carModel.battery.toString();
+                break;
+            }
+        }
+
+        await db.update(Users)
+            .set({ carModel: car, BatteryMax: maxBattery })
+            .where(eq(Users.userId, userId))
+            .execute();
     } catch (error) {
         console.error(error);
         return null;

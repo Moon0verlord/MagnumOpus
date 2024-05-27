@@ -27,6 +27,8 @@ module.exports = {
             "black",
             "retro",
             "forest",
+            "autumn",
+            "business",
         ],
     },
     content: ['./src/routes/**/*.{html,svelte,js,ts}', './src/lib/components/**/*.{html,svelte,js,ts}'],

@@ -13,6 +13,7 @@ export const Users  = pg.pgTable("Users", {
     oktaId: pg.text("okta_id"),
     isAdmin: pg.boolean('isAdmin'),
     BatteryMax: pg.decimal("battery_max"),
+    BatteryCurrent: pg.decimal("battery_current"),
     carModel: pg.text("car_model"),
 });
 
