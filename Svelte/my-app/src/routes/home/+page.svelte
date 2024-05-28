@@ -3,7 +3,7 @@
     import {onDestroy, onMount} from 'svelte';
     import {userId} from "../../store";
     import oktaAuth from '../../oktaAuth';
-    import type {AccessToken, IDToken, UserClaims,} from '@okta/okta-auth-js';
+    import {type AccessToken, type IDToken, isNumber, type UserClaims,} from '@okta/okta-auth-js';
     import type {Port, User} from "$lib/server/db/types";
     import type { CarData } from '$lib/server/db/types';
     import type { Car } from '$lib/server/db/types';
@@ -31,7 +31,28 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
+    let percentage_charge = 0;
+    function incrementCharge(event: Event) {
+        percentage_charge= Math.min(percentage_charge + 1, 100);
+        console.log(percentage_charge);
+    }
+    function decrementCharge() {
+        percentage_charge = Math.max(percentage_charge - 1, 0);
+        console.log(percentage_charge);
+    }
+    function changeCharge(event: Event) {
+        let MainEvent = event.target as HTMLInputElement;
+        const value = parseInt(MainEvent.value);
+        if(isNumber(value))
+        {
+            percentage_charge = Math.min(Math.max(value, 0), 100);
+        }
+        else{
 
+            MainEvent.value = percentage_charge;
+
+        }
+    }
     async function getBrandCars(event: Event) {
     const selectedOption = (event.target as HTMLSelectElement).value;
     ChosenCars = cars[selectedOption] || [];
@@ -56,7 +77,8 @@
                 },
                 body: JSON.stringify({
                     car: CarOfChoice,
-                    userId: currentUserId
+                    userId: currentUserId,
+                    batteryCurrent: percentage_charge
                     
                 })
             });
@@ -618,7 +640,7 @@
                 <div class="grid grid-rows-3 grid-flow-col gap-4">
                     <div class="">
                         {#if currentUserInfo}
-                            {#if currentUserInfo.carModel == null}
+                            {#if currentUserInfo.carModel != null}
                             <dialog id="my_modal_1" class="modal">
                                 <div class="modal-box">
                                     <h3 class="font-bold text-lg">Hello!</h3>
@@ -670,13 +692,44 @@
                                         </div>
                                         {/each}
                                     </div>
+                                        <label for="quantity-input" class="block mb-2 text-sm font-medium">Choose battery percentage:</label>
+                                        <div class="grid grid-cols-3">
+                                            <button type="button" id="decrement-button" data-input-counter-decrement="quantity-input" class="bg-gray-100 dark:bg-gray-700 
+                            dark:hover:bg-gray-600 dark:border-gray-600 
+                            hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11
+                            focus:ring-gray-100 dark:focus:ring-gray-700 
+                            focus:ring-2 focus:outline-none" on:click={decrementCharge}>
+                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                                                </svg>
+                                            </button>
+                                            <!-- The [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none in here is used to remove the default arrows in the input field -->
+                                            <input type="number" id="quantity-input"
+                                                   data-input-counter aria-describedby="helper-text-explanation" class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none 
+                                   [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 
+                                   border-x-0 border-gray-300 h-11 text-center text-sm focus:ring-blue-500 
+                                   focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                   bind:value="{ percentage_charge }" placeholder="{percentage_charge}" required on:input={changeCharge}/>
+                                            <button type="button" id="increment-button" data-input-counter-increment="quantity-input"
+                                                    class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 
+                                      hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 
+                                      dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" on:click={incrementCharge}>
+
+                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                                </svg>
+
+                                            </button>
+
+                                        </div>
                                     {:else}
                                     <p>No cars available</p>
                                     {/if}
                                     <div class="modal-action">
                                         <form method="dialog">
-                                            {#if CarOfChoice}
-                                            <button class="btn" on:click={DoneChoosingCar}>Done</button>
+                                            {#if CarOfChoice && percentage_charge!=0}
+                                                <button class="btn" on:click={DoneChoosingCar}>Done</button>
                                             {:else}
                                             <button class="btn" disabled>Done</button>
                                             {/if}

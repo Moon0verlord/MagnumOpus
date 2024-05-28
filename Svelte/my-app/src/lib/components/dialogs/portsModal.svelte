@@ -1,44 +1,66 @@
 <script lang="ts">
-    
-    import {createEventDispatcher} from "svelte";
-    import {isNumber} from "@okta/okta-auth-js";
-    function incrementCharge(event: Event) {
-        percentage_charge= Math.min(percentage_charge + 1, 100);
-        console.log(percentage_charge);
-    }
-    function decrementCharge() {
-        percentage_charge = Math.max(percentage_charge - 1, 0);
-        console.log(percentage_charge);
-    }
-    function changeCharge(event: Event) {
-        let MainEvent = event.target as HTMLInputElement;
-        const value = parseInt(MainEvent.value);
-        if(isNumber(value) )
-        {
 
-            percentage_charge = Math.min(Math.max(value, 0), 100);
-           
-        }
-        else{
-          MainEvent.value = percentage_charge;
-        }
-        
-    }
+    import {createEventDispatcher, onDestroy, onMount} from "svelte";
+    import {isNumber, type UserClaims} from "@okta/okta-auth-js";
+    import {userId} from "../../../store";
+    import type {User} from "$lib/server/db/types";
+    import {mobile} from "../../../routes/mobile/mobile";
+  
     const dispatch = createEventDispatcher();
+    let user: User;
+    $: isMobile = $mobile;
+    let userInfo: UserClaims | null = null;
+    let currentUserId: string | null = null;
+    let unsubscribe: () => void;
     export let show = false;
     export let data: any;
-    export let user: any;
 
+    let percentage = 0;
     const close = () => {
         show = false;
         dispatch("close");
     }
-    
+    onMount(async () => {
+        unsubscribe = userId.subscribe(value => {
+            currentUserId = value;
+        });
+        if (!currentUserId) {
+            if (userInfo && userInfo.email) {
+                const response = await fetch(`/api/user`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'email': (userInfo ? userInfo.email : '')
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    userId.set(data.uuid);
+
+                }
+            }
+        }
+    });
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+    async function getCharge()
+    {
+        console.log("Current User Id"+ currentUserId)
+        const response = await fetch(`/api/requests/charge?id=${currentUserId}`);
+        let data = await response.json();
+        console.log("Charge data"+ data);
+        percentage = data;
+    }
     let description = '';
     let priority = '';
-    let percentage_charge = 0;
+ 
     async function requestPort() {
-        console.log("Request port:"+typeof percentage_charge)
+        await getCharge();
+        if(percentage)
+        {
         const response = await fetch('/api/requests', {
             method: 'POST',
             headers: {
@@ -49,9 +71,11 @@
                 priority: priority,
                 requestedPortId: data.portId,
                 message: description,
-                percent: percentage_charge
+                percent: percentage
             })
         });
+        
+        
         if (response.status === 201) {
             data = await response.json();
             console.log("Return data"+ data.percentage);
@@ -61,6 +85,7 @@
             close();
         } else {
             console.log('Internal Server Error');
+        }
         }
     }
 </script>
@@ -77,40 +102,6 @@
                             {data.status}
                         </div>
                     </dd>
-                    <form class="max-w-xs mx-auto">
-                        <label for="quantity-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Choose battery percentage:</label>
-                        <div class="grid grid-cols-3 ">
-                            <button type="button" id="decrement-button" data-input-counter-decrement="quantity-input" class="bg-gray-100 dark:bg-gray-700 
-                            dark:hover:bg-gray-600 dark:border-gray-600 
-                            hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 
-                            focus:ring-2 focus:outline-none" on:click={decrementCharge}>
-                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
-                                </svg>
-                            </button>
-                            // The [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none 
-                            [&::-webkit-inner-spin-button]:appearance-none in here is used to remove the default arrows in the input field
-                            <input type="number" id="quantity-input" 
-                                   
-                                   data-input-counter aria-describedby="helper-text-explanation" 
-                                   
-                                   class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 
-                                   focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                   bind:value="{ percentage_charge }" placeholder="{percentage_charge}" required on:input={changeCharge}/> 
-                            <button type="button" id="increment-button" data-input-counter-increment="quantity-input" 
-                                      class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 
-                                      hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 
-                                      dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" on:click={incrementCharge}>
-                                
-                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                                </svg>
-                    
-                            </button>
-                      
-                        </div>
-                    </form>
                 </div>
                 <div class="pb-6 grid grid-cols-3 gap-4">
                     <div class="flex">

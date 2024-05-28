@@ -307,7 +307,7 @@ export async function GetCars() {
     return cars as CarData;
 }
 
-export async function PostCar(car: string, userId: string) {
+export async function PostCar(car: string, userId: string,batteryCurrent: string) {
     try {
         const carModels: CarData = carData;
         let maxBattery: string | null = null;
@@ -319,11 +319,26 @@ export async function PostCar(car: string, userId: string) {
                 break;
             }
         }
-
-        await db.update(Users)
-            .set({ carModel: car, BatteryMax: maxBattery })
-            .where(eq(Users.userId, userId))
-            .execute();
+        if(maxBattery!==null) {
+            var per = parseFloat(maxBattery) * (parseFloat(batteryCurrent) / 100)
+            await db.update(Users)
+                .set({carModel: car, BatteryMax: maxBattery, BatteryCurrent: per.toString()})
+                .where(eq(Users.userId, userId))
+                .execute();
+          
+        }
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+export async function getCharge(userId: string) {
+    try {
+        console.log("getCharge"+userId)
+        const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+        if(user[0]!=null) {
+            return user[0].BatteryCurrent && user[0].BatteryMax ? (parseFloat(user[0].BatteryCurrent) / parseFloat(user[0].BatteryMax)) * 100 : 0;;
+        }
     } catch (error) {
         console.error(error);
         return null;

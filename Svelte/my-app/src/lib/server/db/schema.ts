@@ -40,7 +40,6 @@ export const Ports = pg.pgTable("Ports", {
     emi3Id: pg.text("emi3_id"),
     status: pg.text("status"),
     maxPower: pg.real("max_power"),
-
     displayName: pg.text("display_name"),
     OccupiedTime: pg.timestamp("occupied_time"),
     timeRemaining: pg.integer("time_remaining")
