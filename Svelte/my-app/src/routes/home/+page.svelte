@@ -640,7 +640,7 @@
                 <div class="grid grid-rows-3 grid-flow-col gap-4">
                     <div class="">
                         {#if currentUserInfo}
-                            {#if currentUserInfo.carModel != null}
+                            {#if currentUserInfo.carModel == null}
                             <dialog id="my_modal_1" class="modal">
                                 <div class="modal-box">
                                     <h3 class="font-bold text-lg">Hello!</h3>

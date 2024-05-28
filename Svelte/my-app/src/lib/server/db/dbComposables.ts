@@ -63,9 +63,15 @@ export async function getCurUser(id:string|null){
 }
 export async function ChangeUserLevel(email:string,level:number,xp:number){
     try {
+        console.log(email,level,xp)
         let user =  await db.select().from(Users).where(eq(Users.email, email)).execute();
         user[0].level=level;
-        user[0].totalXp=xp;
+        if(xp==null) {
+            user[0].totalXp = 0;
+        }
+        else{
+            user[0].totalXp = 0;
+        }
         await db.update(Users).set(user[0]).where(eq(Users.email, email)).execute();
         console.log(`User level changed to ${level}`);
     }
@@ -157,7 +163,7 @@ export async function releasePort(portId: string, stationId: string)
 }
 
 export async function requestPort(fromUserId: string, priority: string, requestedPortId: string, message: string,percent: number) {
-    console.log(typeof percent+", "+percent)
+
     try {
         const existingRequest = 
             await db.select().from(Requests).where(and(eq(Requests.fromUserId, fromUserId), eq(Requests.requestedPortId, requestedPortId))).execute();
@@ -334,10 +340,9 @@ export async function PostCar(car: string, userId: string,batteryCurrent: string
 }
 export async function getCharge(userId: string) {
     try {
-        console.log("getCharge"+userId)
         const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
         if(user[0]!=null) {
-            return user[0].BatteryCurrent && user[0].BatteryMax ? (parseFloat(user[0].BatteryCurrent) / parseFloat(user[0].BatteryMax)) * 100 : 0;;
+            return user[0].BatteryCurrent && user[0].BatteryMax ? (parseFloat(user[0].BatteryCurrent) / parseFloat(user[0].BatteryMax)) * 100 : 0;
         }
     } catch (error) {
         console.error(error);

@@ -48,11 +48,23 @@
     });
     async function getCharge()
     {
-        console.log("Current User Id"+ currentUserId)
-        const response = await fetch(`/api/requests/charge?id=${currentUserId}`);
+        if(currentUserId)
+        {
+            const response = await fetch(`/api/requests/charge`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'id': (currentUserId ? currentUserId : '')
+                },
+            });
         let data = await response.json();
-        console.log("Charge data"+ data);
+        console.log("Charge data "+ data);
         percentage = data;
+        }
+        else{
+            console.log("User not found");
+        
+        }
     }
     let description = '';
     let priority = '';
@@ -67,7 +79,7 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                fromUserId: user,
+                id: currentUserId,
                 priority: priority,
                 requestedPortId: data.portId,
                 message: description,
