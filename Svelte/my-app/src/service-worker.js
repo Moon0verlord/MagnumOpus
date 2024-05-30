@@ -37,11 +37,6 @@ self.addEventListener('fetch', (event) => {
         }
 
         try {
-            // Ignore chrome-extension URLs
-            if (url.protocol === 'chrome-extension:') {
-                throw new Error('Unsupported protocol');
-            }
-
             const response = await fetch(event.request);
             if (response.status == 200) {
                 cache.put(event.request, response.clone());
