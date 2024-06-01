@@ -3,6 +3,7 @@ import type {StationData, Status} from "$lib/server/db/types";
 import type {Port, Station} from "$lib/server/db/schema";
 import {eq, sql} from "drizzle-orm";
 import {Ports, Stations} from "$lib/server/db/schema";
+// @ts-ignore
 import { API_URL } from '$env/static/private';
 import {list} from "postcss";
 

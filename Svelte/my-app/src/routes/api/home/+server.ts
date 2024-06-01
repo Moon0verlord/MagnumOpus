@@ -1,7 +1,7 @@
 import { PostOktauser } from "$lib/server/db/dbComposables";
 import { GetUserByEmail } from "$lib/server/db/dbComposables";
-// @ts-ignore
 
+// @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();
 
