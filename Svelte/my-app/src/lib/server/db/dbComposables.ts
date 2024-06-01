@@ -70,7 +70,7 @@ export async function ChangeUserLevel(email:string,level:number,xp:number){
             user[0].totalXp = 0;
         }
         else{
-            user[0].totalXp = 0;
+            user[0].totalXp = xp;
         }
         await db.update(Users).set(user[0]).where(eq(Users.email, email)).execute();
         console.log(`User level changed to ${level}`);
@@ -100,9 +100,11 @@ export async function reservePort(userId: string, portId: string, stationId: str
         if (existingPort.length > 0) {
             return "User has already reserved a port";
         }
-
+        const chosenPort = await db.select().from(Ports).where(eq(Ports.portId, portId)).execute();
+        const endTime = await GetEndTimeChargeEstimation(userId,chosenPort[0].maxPower);
+        
         await db.update(Ports)
-            .set({usedBy: userId, status: 'occupied',OccupiedTime:new Date(occupiedTime)})
+            .set({usedBy: userId, status: 'occupied',OccupiedTime:new Date(occupiedTime),timeRemaining:endTime})
             .where(eq(Ports.portId, portId))
             .execute();
         console.log("dbComposables: after update Ports")
@@ -117,6 +119,28 @@ export async function reservePort(userId: string, portId: string, stationId: str
         }
 
         return true;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+export async function GetEndTimeChargeEstimation(userId: string,power: number | null) {
+    //Asuming the Dutch average of 230V so 16A
+    //Using battery size (kWh) / charger power (kW) = charging time (hours).
+    
+    try {
+        const user = (await db.select().from(Users).where(eq(Users.userId, userId)).execute())[0];
+        const PerCharge = await getCharge(user.userId);
+        
+        if (PerCharge && user.BatteryMax && power!=null) 
+        {
+            const remainingCharge = (PerCharge / 100) * parseFloat(user.BatteryMax);
+            var hours = (remainingCharge / power);
+            var n = new Date(0,0);
+            n.setHours(+hours.toString() * 60 * 60);
+            return  n;
+            
+        }
     } catch (error) {
         console.error(error);
         return null;
@@ -349,3 +373,4 @@ export async function getCharge(userId: string) {
         return null;
     }
 }
+

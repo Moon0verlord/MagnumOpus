@@ -42,7 +42,7 @@ export const Ports = pg.pgTable("Ports", {
     maxPower: pg.real("max_power"),
     displayName: pg.text("display_name"),
     OccupiedTime: pg.timestamp("occupied_time"),
-    timeRemaining: pg.integer("time_remaining")
+    timeRemaining: pg.timestamp("time_remaining")
 });
 
 export type Port = InferSelectModel<typeof Ports>;
