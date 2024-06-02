@@ -52,7 +52,7 @@ export async function loginUser(email: string, password: string) {
         return null;
     }
 }
-export async function getCurUser(id:string|null){
+export async function getCurUser(id:string|null) {
     if (id !== null) {
         var NewId = id.replace(/"/g, '');
         var users = await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
@@ -60,6 +60,10 @@ export async function getCurUser(id:string|null){
     } else {
         throw new Error("User ID cannot be null");
     }
+}
+function addHours(date: Date, hours: number): Date {
+    const milliseconds = hours * 60 * 60 * 1000;
+    return new Date(date.getTime() + milliseconds);
 }
 export async function ChangeUserLevel(email:string,level:number,xp:number){
     try {
@@ -138,14 +142,8 @@ export async function GetEndTimeChargeEstimation(occupiedTime:Date, userId: stri
         {
             const remainingCharge = (PerCharge / 100) * parseFloat(user.BatteryMax);
             var hours = (remainingCharge / power);
-            var n = new Date(0,0);
-            n.setSeconds(+hours.toString() * 60 * 60);
-            console.log(occupiedTime.getTime() + n.getTime());
-            return new Date(occupiedTime.getTime() + n.getTime());
-            
-         
-            return null;
-
+            console.log("Hours: "+addHours(occupiedTime,hours));
+            return addHours(occupiedTime,hours);
         }
     } catch (error) {
         console.error(error);
