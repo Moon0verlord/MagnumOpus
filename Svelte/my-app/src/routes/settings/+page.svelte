@@ -1,9 +1,11 @@
 <script>
     import SettingsModal from "$lib/components/dialogs/settingsModal.svelte";
-    import NotificationModal from "$lib/components/dialogs/notificationModal.svelte";
     import { userId } from "../../store";
     import oktaAuth from "../../oktaAuth";
+    import ChangePasswordModal from "$lib/components/dialogs/PasswordModal.svelte";
+    import NotificationModal from "$lib/components/dialogs/notificationModal.svelte";
 
+    let showChangePasswordModal = false;
     let showSetModal = false;
     let showNotifModal = false;
 
@@ -41,13 +43,16 @@
     <div class="w-3/4">
         <!-- Settings Menu -->
         <ul class="menu bg-base-200 shadow-xl rounded-box ml-2.5 mr-2.5 mt-2.5">
-            <li class="menu-title">Settings</li>
-            <li><a href="/settings">Account</a></li>
             <li>
                 <button on:click={openNotification}>Notifications</button>
             </li>
             <li>
                 <button on:click={openSettings}>Appearance</button>
+            </li>
+            <li>
+                <button on:click={() => (showChangePasswordModal = true)}
+                    >Change Password</button
+                >
             </li>
         </ul>
 
@@ -66,4 +71,5 @@
         showNotif={showNotifModal}
         on:close={() => (showNotifModal = false)}
     />
+    <ChangePasswordModal bind:show={showChangePasswordModal} />
 </div>
