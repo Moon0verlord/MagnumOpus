@@ -1,11 +1,10 @@
 <script lang="ts">
     import { mobile } from "../mobile/mobile";
     import type { PageData } from "./$types";
-    import { onDestroy, onMount } from "svelte";
+    import { onMount } from "svelte";
     import { userId } from "../../store";
     import oktaAuth from "../../oktaAuth";
     import type { AccessToken, IDToken, UserClaims } from "@okta/okta-auth-js";
-    import type { Port, User } from "$lib/server/db/types";
 
     export let data: PageData;
     let requestPageData: any[] = data.props.requests ? data.props.requests : [];
@@ -26,7 +25,38 @@
     let currentUserIsAdmin: boolean | null = data.props.admin
         ? data.props.admin
         : null;
-    let currentUserInfo: any | null = data.props.user ? data.props.user : null;
+    let currentUserInfo: any | null;
+    $: currentUserInfo = data.props.user ? data.props.user : null;
+
+    async function sendNotification() {
+        if (!("Notification" in window)) {
+            console.log("This browser does not support desktop notification");
+        } else if (Notification.permission === "granted") {
+            showNotification();
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(function (permission) {
+                if (permission === "granted") {
+                    showNotification();
+                }
+            });
+        }
+    }
+
+    function showNotification() {
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.ready.then(function (registration) {
+                registration.showNotification(
+                    `Hello ${currentUserInfo.name}!`,
+                    {
+                        body: "Welcome to the EV Charging Station",
+                        icon: "/assets/favicon.ico",
+                        tag: "Greeting",
+                    },
+                );
+            });
+        }
+    }
+
     let unsubscribe: () => void;
 
     onMount(async () => {
@@ -39,7 +69,7 @@
             /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
         if (
-            result == "expired" ||
+            result == "Expired" ||
             result == undefined ||
             !uuidv4Regex.test(result)
         ) {
@@ -59,7 +89,7 @@
                     });
                     if (response.ok) {
                         const data = await response.json();
-                        document.cookie = "userId=" + data.uuid + ";";
+                        document.cookie = `userId=${data.uuid}; SameSite=None; path=/; Secure`;
                         userId.set(data.uuid);
                     }
                 }
@@ -78,6 +108,22 @@
                     await myRequests();
                     await getIncomingRequests();
                 }
+            }
+            sendNotification();
+        } else {
+            currentUserId = result;
+            await PopulateUser(currentUserId).then((user) => {
+                currentUserInfo = user;
+                currentUserIsAdmin = user.isAdmin;
+            });
+
+            if (currentUserIsAdmin) {
+                await adminAllRequests();
+                await adminAllOccupiedPorts();
+            } else {
+                await getPorts();
+                await myRequests();
+                await getIncomingRequests();
             }
         }
     });
@@ -142,7 +188,7 @@
                 const data = await response.json();
                 console.log(data.message); // "Success"
                 console.log(data.uuid); // user's UUID
-                document.cookie = "userId=" + data.uuid + ";";
+                document.cookie = `userId=${data.uuid}; SameSite=None; path=/; Secure`;
                 userId.set(data.uuid);
             } else {
                 console.error("Failed to post user to DB");

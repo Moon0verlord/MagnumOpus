@@ -4,9 +4,6 @@
     import { theme } from "./theme/theme";
     import { mobile } from "./mobile/mobile";
     import { onMount, onDestroy } from "svelte";
-    import { pwaInfo } from "virtual:pwa-info";
-
-    $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 
     export let isMobile = false;
 
@@ -65,7 +62,6 @@
 </script>
 
 <svelte:head>
-    {@html webManifestLink}
     <script>
         if (typeof window !== "undefined") {
             const theme = localStorage.getItem("theme") || "light";

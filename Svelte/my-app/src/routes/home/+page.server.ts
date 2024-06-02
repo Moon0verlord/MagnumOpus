@@ -5,7 +5,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
     let userId = null;
     userId = cookies.get('userId');
 
-    if (userId) {
+    let uuidv4Regex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (userId !== null && userId !== undefined && uuidv4Regex.test(userId)) {
         const [portsData, requestsData, incomingData, userData, allrequestData, alloccupiedportsData] = await Promise.all([
             myPorts(userId),
             myRequests(userId),

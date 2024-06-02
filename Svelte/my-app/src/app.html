@@ -11,6 +11,20 @@
 
 <body data-sveltekit-preload-data="hover">
 	<div style="display: contents">%sveltekit.body%</div>
+
+	<script>
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.ready.then(function (registration) {
+				Notification.requestPermission().then(function (permission) {
+					if (permission === 'granted') {
+						console.log('Notification permission granted.');
+					} else {
+						console.log('Unable to get permission to notify.');
+					}
+				});
+			});
+		}
+	</script>
 </body>
 
 </html>
