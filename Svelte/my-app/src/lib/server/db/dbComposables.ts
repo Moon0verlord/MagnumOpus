@@ -124,6 +124,7 @@ export async function reservePort(userId: string, portId: string, stationId: str
         return null;
     }
 }
+
 export async function GetEndTimeChargeEstimation(userId: string,power: number | null) {
     //Asuming the Dutch average of 230V so 16A
     //Using battery size (kWh) / charger power (kW) = charging time (hours).
@@ -322,6 +323,7 @@ export async function GetUserByEmail(email: string) {
         return null;
     }
 }
+
 export async function PostOktauser(name: string, email: string, oktaId: string) {
     try {
         const userId = uuidv4();
@@ -332,6 +334,7 @@ export async function PostOktauser(name: string, email: string, oktaId: string) 
         return null;
     }
 }
+
 //Car selection functions and such 
 export async function GetCars() {
     return cars as CarData;
@@ -362,6 +365,7 @@ export async function PostCar(car: string, userId: string,batteryCurrent: string
         return null;
     }
 }
+
 export async function getCharge(userId: string) {
     try {
         const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();

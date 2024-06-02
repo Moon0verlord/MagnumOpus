@@ -32,14 +32,18 @@
     let unsubscribe: () => void;
     let pageData: any[] = [];
     let percentage_charge = 0;
+
+
     function incrementCharge(event: Event) {
         percentage_charge= Math.min(percentage_charge + 1, 100);
         console.log(percentage_charge);
     }
+
     function decrementCharge() {
         percentage_charge = Math.max(percentage_charge - 1, 0);
         console.log(percentage_charge);
     }
+
     function changeCharge(event: Event) {
         let MainEvent = event.target as HTMLInputElement;
         const value = parseInt(MainEvent.value);
@@ -53,6 +57,17 @@
 
         }
     }
+
+    function navigateToSlide(slideIndex) {
+        const carousel = document.querySelector('.carousel');
+        if (carousel) {
+            carousel.scrollTo({
+                left: (slideIndex - 1) * carousel.offsetWidth,
+                behavior: 'smooth'
+            });
+        }
+    }
+
     async function getBrandCars(event: Event) {
     const selectedOption = (event.target as HTMLSelectElement).value;
     ChosenCars = cars[selectedOption] || [];
@@ -643,13 +658,13 @@
                             {#if currentUserInfo.carModel == null}
                             <dialog id="my_modal_1" class="modal">
                                 <div class="modal-box">
-                                    <h3 class="font-bold text-lg">Hello!</h3>
-                                    <p class="py-4">Please choose your car:</p>
+                                    <h3 class="font-bold text-lg">Please select your car:</h3>
+
                                     {#if cars}
                                     <div class="carousel w-full">
                                         {#each keys as key, i}
                                         <div id="slide{i + 1}" class="carousel-item relative w-full flex justify-center">
-                                            <div class="card no-background">
+                                            <div class="card no-background card-compact" >
                                                 <div class="card-body">
                                                     <h2 class="card-title">{key}</h2>
                                                     <div class="overflow-x-auto w-full">
@@ -685,44 +700,28 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                                                <a href="#slide{i === 0 ? keys.length : i}" class="btn btn-circle">❮</a>
-                                                <a href="#slide{i === keys.length - 1 ? 1 : i + 2}" class="btn btn-circle">❯</a>
+                                            <div class="absolute flex justify-between transform left-4 right-4 top-1/2">
+                                                <button class="btn btn-circle" on:click={() => navigateToSlide(i === 0 ? keys.length : i)}>❮</button>
+                                                <button class="btn btn-circle" on:click={() => navigateToSlide(i === keys.length - 1 ? 1 : i + 2)}>❯</button>
                                             </div>
                                         </div>
                                         {/each}
                                     </div>
-                                        <label for="quantity-input" class="block mb-2 text-sm font-medium">Choose battery percentage:</label>
-                                        <div class="grid grid-cols-3">
-                                            <button type="button" id="decrement-button" data-input-counter-decrement="quantity-input" class="bg-gray-100 dark:bg-gray-700 
-                            dark:hover:bg-gray-600 dark:border-gray-600 
-                            hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11
-                            focus:ring-gray-100 dark:focus:ring-gray-700 
-                            focus:ring-2 focus:outline-none" on:click={decrementCharge}>
-                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
-                                                </svg>
-                                            </button>
-                                            <!-- The [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none in here is used to remove the default arrows in the input field -->
-                                            <input type="number" id="quantity-input"
-                                                   data-input-counter aria-describedby="helper-text-explanation" class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none 
-                                   [&::-webkit-inner-spin-button]:appearance-none bg-gray-50 
-                                   border-x-0 border-gray-300 h-11 text-center text-sm focus:ring-blue-500 
-                                   focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                                   bind:value="{ percentage_charge }" placeholder="{percentage_charge}" required on:input={changeCharge}/>
-                                            <button type="button" id="increment-button" data-input-counter-increment="quantity-input"
-                                                    class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 
-                                      hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 
-                                      dark:focus:ring-gray-700 focus:ring-2 focus:outline-none" on:click={incrementCharge}>
-
-                                                <svg class="w-3 h-3 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                                                </svg>
-
-                                            </button>
-
-                                        </div>
+                                    <label for="quantity-input" class="block mb-2 text-sm font-medium">Select your current battery %:</label>
+                                    <input type="range" id="quantity-input" min="0" max="100" step="10" class="range range-primary" bind:value="{percentage_charge}" />
+                                    <div class="w-full flex justify-between text-xs px-2">
+                                        <span>0%</span>
+                                        <span>10%</span>
+                                        <span>20%</span>
+                                        <span>30%</span>
+                                        <span>40%</span>
+                                        <span>50%</span>
+                                        <span>60%</span>
+                                        <span>70%</span>
+                                        <span>80%</span>
+                                        <span>90%</span>
+                                        <span>100%</span>
+                                    </div>
                                     {:else}
                                     <p>No cars available</p>
                                     {/if}
@@ -751,6 +750,18 @@
                                     <h1 class="card-title text-5xl">Welcome Guest</h1>
                                 {/if}
                                 <p>So glad to see you! Let's get started with managing your session.</p>
+                                {#if currentUserInfo?.carModel}
+                                <div class="mt-4">
+                                    <p>
+                                        Your Car: 
+                                        {#if currentUserInfo.carModel}
+                                            {keys.find(key => cars[key].some(car => car.model === currentUserInfo.carModel))} {currentUserInfo.carModel}
+                                        {/if}
+                                    </p>
+                                    <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryMax}" max="100"></progress>
+                                    <p>Battery: {currentUserInfo.BatteryCurrent}%</p>
+                                </div>
+                            {/if}
                             </div>
                         </div>
                     </div>
@@ -929,14 +940,21 @@
                 <div class="carousel-item h-full">
                     <div class="card w-full bg-base-100">
                         <div class="card-body">
-                            <div class="m-auto overflow-auto">
-                                {#if currentUserInfo}
-                                    <h1 class="card-title text-5xl">Welcome {currentUserInfo.name}</h1>
-                                {:else}
-                                    <h1 class="card-title">Welcome Guest</h1>
-                                {/if}
-                                <p>So glad to see you! Let's get started with managing your session.</p>
-                            </div>
+                            <div class="m-auto">
+                            {#if currentUserInfo}
+                                <h1 class="card-title text-5xl">Welcome {currentUserInfo.name}</h1>
+                            {:else}
+                                <h1 class="card-title text-5xl">Welcome Guest</h1>
+                            {/if}
+                            <p>So glad to see you! Let's get started with managing your session.</p>
+                            {#if currentUserInfo?.carModel}
+                                <div class="mt-4">
+                                    <p>Your Car: {currentUserInfo.carModel}</p>
+                                    <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent}" max="{currentUserInfo.BatteryMax}"></progress>
+                                    <p>Battery: {currentUserInfo.BatteryCurrent}%</p>
+                                </div>
+                            {/if}
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -1108,31 +1126,3 @@
         </div>
     {/if}
 {/if}
-
-
-<style>
-    .fixed-width-table th,
-    .fixed-width-table td {
-        width: 50%; /* Adjust the width as needed */
-    }
-    .no-background {
-        background: transparent;
-        box-shadow: none; /* Remove shadow if needed */
-    }
-    .rounded-table {
-        border-collapse: separate;
-        border-spacing: 0;
-        border-radius: 8px; /* Adjust the radius as needed */
-        overflow: hidden;
-    }
-    .rounded-table th:first-child,
-    .rounded-table td:first-child {
-        border-top-left-radius: 8px; /* Adjust the radius as needed */
-        border-bottom-left-radius: 8px; /* Adjust the radius as needed */
-    }
-    .rounded-table th:last-child,
-    .rounded-table td:last-child {
-        border-top-right-radius: 8px; /* Adjust the radius as needed */
-        border-bottom-right-radius: 8px; /* Adjust the radius as needed */
-    }
-</style>

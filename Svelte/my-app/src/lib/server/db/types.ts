@@ -46,6 +46,8 @@ export type User = {
     totalXp: number;
     level: number;
     carModel: string;
+    BatteryMax: number;
+    BatteryCurrent: number;
 }
 
 export type Address = {
