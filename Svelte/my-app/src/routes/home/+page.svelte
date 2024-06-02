@@ -15,7 +15,7 @@
     let keys: string[] = [];
     let CarOfChoice: string;
     let isOpen =false;
-
+    let charge = 0.0;
     let isMobile: boolean;
     let requestPageData: any[] = [];
     let incomingRequests: any[] = [];
@@ -34,31 +34,11 @@
     let percentage_charge = 0;
 
 
-    function incrementCharge(event: Event) {
-        percentage_charge= Math.min(percentage_charge + 1, 100);
-        console.log(percentage_charge);
+   
+    async function roundToTwoDecimals(number: number) {
+        return parseFloat(number.toFixed(2));
     }
-
-    function decrementCharge() {
-        percentage_charge = Math.max(percentage_charge - 1, 0);
-        console.log(percentage_charge);
-    }
-
-    function changeCharge(event: Event) {
-        let MainEvent = event.target as HTMLInputElement;
-        const value = parseInt(MainEvent.value);
-        if(isNumber(value))
-        {
-            percentage_charge = Math.min(Math.max(value, 0), 100);
-        }
-        else{
-
-            MainEvent.value = percentage_charge;
-
-        }
-    }
-
-    function navigateToSlide(slideIndex) {
+    function navigateToSlide(slideIndex: number) {
         const carousel = document.querySelector('.carousel');
         if (carousel) {
             carousel.scrollTo({
@@ -71,7 +51,7 @@
     async function getBrandCars(event: Event) {
     const selectedOption = (event.target as HTMLSelectElement).value;
     ChosenCars = cars[selectedOption] || [];
-}
+    }
     function handleKeyDown(event:KeyboardEvent) {
         if (event.key === 'Escape' && isOpen) {
             event.preventDefault();
@@ -84,7 +64,10 @@
     {
         if (CarOfChoice && currentUserId) 
         {
+            charge = await roundToTwoDecimals(percentage_charge);
             console.log(CarOfChoice);
+            console.log(charge);
+            console.log(percentage_charge);
             const response = await fetch('/api/cars', {
                 method: 'POST',
                 headers: {
@@ -93,7 +76,7 @@
                 body: JSON.stringify({
                     car: CarOfChoice,
                     userId: currentUserId,
-                    batteryCurrent: percentage_charge
+                    batteryCurrent: charge
                     
                 })
             });
@@ -171,7 +154,6 @@
             console.error('User info is null');
         }
     }
-    
     onMount(async () => {
         
         const response = await fetch('/api/cars', {
@@ -655,7 +637,7 @@
                 <div class="grid grid-rows-3 grid-flow-col gap-4">
                     <div class="">
                         {#if currentUserInfo}
-                            {#if currentUserInfo.carModel == null}
+                            {#if currentUserInfo.carModel === null}
                             <dialog id="my_modal_1" class="modal">
                                 <div class="modal-box">
                                     <h3 class="font-bold text-lg">Please select your car:</h3>
@@ -727,7 +709,8 @@
                                     {/if}
                                     <div class="modal-action">
                                         <form method="dialog">
-                                            {#if CarOfChoice && percentage_charge!=0}
+                                            {#if CarOfChoice && percentage_charge!==0}
+                                                {console.log(percentage_charge)}
                                                 <button class="btn" on:click={DoneChoosingCar}>Done</button>
                                             {:else}
                                             <button class="btn" disabled>Done</button>
@@ -758,7 +741,8 @@
                                             {keys.find(key => cars[key].some(car => car.model === currentUserInfo.carModel))} {currentUserInfo.carModel}
                                         {/if}
                                     </p>
-                                    <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryMax}" max="100"></progress>
+                                                                    
+                                    <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent}" max="100"></progress>
                                     <p>Battery: {currentUserInfo.BatteryCurrent}%</p>
                                 </div>
                             {/if}

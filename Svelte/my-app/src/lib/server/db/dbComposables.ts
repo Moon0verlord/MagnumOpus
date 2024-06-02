@@ -101,7 +101,7 @@ export async function reservePort(userId: string, portId: string, stationId: str
             return "User has already reserved a port";
         }
         const chosenPort = await db.select().from(Ports).where(eq(Ports.portId, portId)).execute();
-        const endTime = await GetEndTimeChargeEstimation(userId,chosenPort[0].maxPower);
+        const endTime = await GetEndTimeChargeEstimation(new Date(occupiedTime),userId,chosenPort[0].maxPower);
         
         await db.update(Ports)
             .set({usedBy: userId, status: 'occupied',OccupiedTime:new Date(occupiedTime),timeRemaining:endTime})
@@ -125,22 +125,27 @@ export async function reservePort(userId: string, portId: string, stationId: str
     }
 }
 
-export async function GetEndTimeChargeEstimation(userId: string,power: number | null) {
+export async function GetEndTimeChargeEstimation(occupiedTime:Date, userId: string,power: number | null) {
     //Asuming the Dutch average of 230V so 16A
     //Using battery size (kWh) / charger power (kW) = charging time (hours).
-    
+
     try {
         const user = (await db.select().from(Users).where(eq(Users.userId, userId)).execute())[0];
         const PerCharge = await getCharge(user.userId);
-        
-        if (PerCharge && user.BatteryMax && power!=null) 
+        const port : Port[] = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
+
+        if (PerCharge && user.BatteryMax && power!=null)
         {
             const remainingCharge = (PerCharge / 100) * parseFloat(user.BatteryMax);
             var hours = (remainingCharge / power);
             var n = new Date(0,0);
-            n.setHours(+hours.toString() * 60 * 60);
-            return  n;
+            n.setSeconds(+hours.toString() * 60 * 60);
+            console.log(occupiedTime.getTime() + n.getTime());
+            return new Date(occupiedTime.getTime() + n.getTime());
             
+         
+            return null;
+
         }
     } catch (error) {
         console.error(error);
@@ -353,9 +358,9 @@ export async function PostCar(car: string, userId: string,batteryCurrent: string
             }
         }
         if(maxBattery!==null) {
-            var per = parseFloat(maxBattery) * (parseFloat(batteryCurrent) / 100)
+            
             await db.update(Users)
-                .set({carModel: car, BatteryMax: maxBattery, BatteryCurrent: per.toString()})
+                .set({carModel: car, BatteryMax: maxBattery, BatteryCurrent: batteryCurrent})
                 .where(eq(Users.userId, userId))
                 .execute();
           
@@ -370,7 +375,7 @@ export async function getCharge(userId: string) {
     try {
         const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
         if(user[0]!=null) {
-            return user[0].BatteryCurrent && user[0].BatteryMax ? (parseFloat(user[0].BatteryCurrent) / parseFloat(user[0].BatteryMax)) * 100 : 0;
+            return user[0].BatteryCurrent && user[0].BatteryMax ? 100 - (parseFloat(user[0].BatteryCurrent)) : null; 
         }
     } catch (error) {
         console.error(error);
