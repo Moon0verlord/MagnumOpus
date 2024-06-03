@@ -1,0 +1,512 @@
+{
+  "Audi": [
+    {
+      "model": "Q8 e-tron 55 quattro",
+      "battery": 106
+    },
+    {
+      "model": "Q8 e-tron Sportback 55 quattro",
+      "battery": 106
+    },
+    {
+      "model": "Q4 e-tron 55 quattro",
+      "battery": 77
+    },
+    {
+      "model": "Q4 e-tron 40",
+      "battery": 76.6
+    },
+    {
+      "model": "e-tron S quattro",
+      "battery": 86
+    },
+    {
+      "model": "e-tron GT RS",
+      "battery": 83.7
+    },
+    {
+      "model": "Q6 e-tron quattro",
+      "battery": 94.9
+    }
+  ],
+  "BMW": [
+    {
+      "model": "iX M60",
+      "battery": 105.2
+    },
+    {
+      "model": "i7 xDrive60",
+      "battery": 101.7
+    },
+    {
+      "model": "i4 M50",
+      "battery": 80.7
+    },
+    {
+      "model": "i5 xDrive40",
+      "battery": 81.2
+    },
+    {
+      "model": "iX2 eDrive20",
+      "battery": 64.8
+    },
+    {
+      "model": "iX1 eDrive20",
+      "battery": 64.7
+    },
+    {
+      "model": "i3",
+      "battery": 37.9
+    }
+  ],
+  "BYD": [
+    {
+      "model": "Seal U Design",
+      "battery": 87
+    },
+    {
+      "model": "Seal RWD",
+      "battery": 82.5
+    },
+    {
+      "model": "Atto 3",
+      "battery": 60.4
+    },
+    {
+      "model": "Dolphin 60 kWh",
+      "battery": 60.4
+    },
+    {
+      "model": "Dolphin 45 kWh Active",
+      "battery": 44.9
+    },
+    {
+      "model": "Tang AWD 86 kWh",
+      "battery": 86.4
+    },
+    {
+      "model": "Han",
+      "battery": 85.4
+    }
+  ],
+  "Citroen": [
+    {
+      "model": "ë-C4",
+      "battery": 46
+    },
+    {
+      "model": "ë-Berlingo XL 50 kWh",
+      "battery": 45
+    },
+    {
+      "model": "AMI 5,5 kWh",
+      "battery": 5.5
+    }
+  ],
+  "Cupra": [
+    {
+      "model": "Born 77 kWh 170 kW",
+      "battery": 77
+    },
+    {
+      "model": "Born 58 kWh 170 kW",
+      "battery": 58
+    },
+    {
+      "model": "Tavascan Endurance",
+      "battery": 77
+    }
+  ],
+  "Fiat": [
+    {
+      "model": "500e Cabrio 42 kWh",
+      "battery": 37.3
+    },
+    {
+      "model": "500e Hatchback 24 kWh",
+      "battery": 21.3
+    },
+    {
+      "model": "E-Ulysse L2 75 kWh",
+      "battery": 69
+    },
+    {
+      "model": "E-Ulysse L2 50 kWh",
+      "battery": 46
+    }
+  ],
+  "Ford": [
+    {
+      "model": "F-150 Lightning Extended Range",
+      "battery": 131
+    },
+    {
+      "model": "Mustang Mach-E Extended Range RWD",
+      "battery": 91
+    },
+    {
+      "model": "Mustang Mach-E Standard Range RWD",
+      "battery": 72
+    },
+    {
+      "model": "Explorer AWD Extended Range",
+      "battery": 79
+    }
+  ],
+  "Hyundai": [
+    {
+      "model": "Ioniq 5 N",
+      "battery": 81
+    },
+    {
+      "model": "Ioniq 5 Long Range AWD",
+      "battery": 74
+    },
+    {
+      "model": "Ioniq 6 Long Range AWD",
+      "battery": 74
+    },
+    {
+      "model": "Kona Electric Long Range",
+      "battery": 63
+    },
+    {
+      "model": "Kona Electric Standard Range",
+      "battery": 46
+    },
+    {
+      "model": "Ioniq Electric 38 kWh",
+      "battery": 38.3
+    }
+  ],
+  "Jaguar": [
+    {
+      "model": "I-PACE EV400",
+      "battery": 84.7
+    }
+  ],
+  "Mercedes-Benz": [
+    {
+      "model": "G 580 EQ",
+      "battery": 116
+    },
+    {
+      "model": "EQS SUV 500 4MATIC",
+      "battery": 108.4
+    },
+    {
+      "model": "EQS AMG 53 4MATIC+",
+      "battery": 107.8
+    },
+    {
+      "model": "EQE 500 4MATIC",
+      "battery": 90.6
+    },
+    {
+      "model": "EQE 350",
+      "battery": 89
+    },
+    {
+      "model": "EQA 250+",
+      "battery": 70.5
+    }
+  ],
+  "Nissan": [
+    {
+      "model": "Ariya 87 kWh e-4ORCE",
+      "battery": 87
+    },
+    {
+      "model": "Ariya 63 kWh FWD",
+      "battery": 63
+    },
+    {
+      "model": "Leaf e+ 62 kWh",
+      "battery": 56
+    },
+    {
+      "model": "Leaf 40 kWh",
+      "battery": 37
+    },
+    {
+      "model": "e-NV200 Evalia 40 kWh",
+      "battery": 36
+    },
+    {
+      "model": "Townstar VAN L1",
+      "battery": 45
+    }
+  ],
+  "Opel": [
+    {
+      "model": "Astra Electric",
+      "battery": 50.8
+    },
+    {
+      "model": "Corsa-e 50 kWh",
+      "battery": 45
+    },
+    {
+      "model": "Mokka-e 50 kWh",
+      "battery": 45
+    },
+    {
+      "model": "Combo-e Life XL 50 kWh",
+      "battery": 45
+    },
+    {
+      "model": "Corsa Electric 51 kWh Long Range",
+      "battery": 48
+    },
+    {
+      "model": "Rocks Electric 5,5 kWh",
+      "battery": 5.5
+    }
+  ],
+  "Peugeot": [
+    {
+      "model": "e-3008 FWD Long Range",
+      "battery": 98
+    },
+    {
+      "model": "e-3008 FWD",
+      "battery": 73
+    },
+    {
+      "model": "e-208 51 kWh",
+      "battery": 48
+    },
+    {
+      "model": "e-Traveller L3 75 kWh",
+      "battery": 69
+    },
+    {
+      "model": "e-308 54 kWh",
+      "battery": 51
+    },
+    {
+      "model": "Scenic E-Tech Electric 87 kWh",
+      "battery": 87
+    },
+    {
+      "model": "5 E-Tech electric 110 kW",
+      "battery": 52
+    }
+  ],
+  "Polestar": [
+    {
+      "model": "3 Long Range Dual Motor Performance Pack",
+      "battery": 107
+    },
+    {
+      "model": "2 Long range Dual motor",
+      "battery": 79
+    },
+    {
+      "model": "2 Standard range Single motor",
+      "battery": 67
+    }
+  ],
+  "Porsche": [
+    {
+      "model": "Taycan Turbo GT",
+      "battery": 97
+    },
+    {
+      "model": "Taycan",
+      "battery": 82.3
+    },
+    {
+      "model": "Macan 4 Electric",
+      "battery": 96
+    },
+    {
+      "model": "Macan Turbo Electric",
+      "battery": 95
+    }
+  ],
+  "Renault": [
+    {
+      "model": "Mégane E-Tech Electric EV60 130",
+      "battery": 60
+    },
+    {
+      "model": "Zoe R135",
+      "battery": 52
+    },
+    {
+      "model": "5 E-Tech electric 110 kW",
+      "battery": 52
+    },
+    {
+      "model": "Twizy Urban 45",
+      "battery": 6.1
+    },
+    {
+      "model": "Kangoo E-Tech Electric EV45",
+      "battery": 44
+    },
+    {
+      "model": "Scenic E-Tech Electric 87 kWh",
+      "battery": 87
+    }
+  ],
+  "Skoda": [
+    {
+      "model": "Enyaq Coupé iV RS",
+      "battery": 77
+    },
+    {
+      "model": "Enyaq iV 80x",
+      "battery": 77
+    },
+    {
+      "model": "Enyaq iV 50",
+      "battery": 52
+    },
+    {
+      "model": "CITIGOe iV 36 kWh",
+      "battery": 32.3
+    }
+  ],
+  "Subaru": [
+    {
+      "model": "Solterra FWD",
+      "battery": 65
+    }
+  ],
+  "Tesla": [
+    {
+      "model": "Roadster",
+      "battery": 200
+    },
+    {
+      "model": "Cybertruck AWD",
+      "battery": 120
+    },
+    {
+      "model": "Model S Plaid",
+      "battery": 95
+    },
+    {
+      "model": "Model 3 Long Range LG battery",
+      "battery": 74
+    },
+    {
+      "model": "Model 3 Performance",
+      "battery": 77
+    },
+    {
+      "model": "Model 3 RWD",
+      "battery": 57.5
+    },
+    {
+      "model": "Model Y Long Range LG battery",
+      "battery": 75
+    },
+    {
+      "model": "Model Y AWD",
+      "battery": 57
+    }
+  ],
+  "Toyota": [
+    {
+      "model": "bZ4X AWD",
+      "battery": 64
+    },
+    {
+      "model": "Mirai FCB130",
+      "battery": 4
+    }
+  ],
+  "Vinfast": [
+    {
+      "model": "VF9 Extended Range",
+      "battery": 123
+    },
+    {
+      "model": "VF8 Plus Extended Range",
+      "battery": 97.7
+    },
+    {
+      "model": "VF8 Eco Standard Range",
+      "battery": 82
+    }
+  ],
+  "Volkswagen": [
+    {
+      "model": "ID.7 Pro S",
+      "battery": 86
+    },
+    {
+      "model": "ID. Buzz LWB",
+      "battery": 85
+    },
+    {
+      "model": "ID.3 GTX",
+      "battery": 79
+    },
+    {
+      "model": "ID.4 GTX",
+      "battery": 77
+    },
+    {
+      "model": "ID.7 Pro",
+      "battery": 77
+    },
+    {
+      "model": "e-up!",
+      "battery": 32.3
+    }
+  ],
+  "Volvo": [
+    {
+      "model": "EX90 Twin Motor",
+      "battery": 107
+    },
+    {
+      "model": "EX90 Single Motor",
+      "battery": 101
+    },
+    {
+      "model": "C40 Recharge Twin Motor",
+      "battery": 79
+    },
+    {
+      "model": "C40 Recharge AWD",
+      "battery": 75
+    },
+    {
+      "model": "C40 Recharge FWD",
+      "battery": 67
+    },
+    {
+      "model": "EX30 Twin Motor Performance",
+      "battery": 64
+    }
+  ],
+  "XPeng": [
+    {
+      "model": "G9 RWD Long Range",
+      "battery": 93
+    },
+    {
+      "model": "P5 600",
+      "battery": 67
+    },
+    {
+      "model": "G6 AWD Performance",
+      "battery": 87.5
+    }
+  ],
+  "Zeekr": [
+    {
+      "model": "001 FR",
+      "battery": 96
+    },
+    {
+      "model": "001 Privilege AWD",
+      "battery": 96
+    }
+  ]
+}

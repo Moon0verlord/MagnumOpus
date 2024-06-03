@@ -106,15 +106,31 @@ export const allPortsAvailable = async () => {
             .execute();
     }
 }
+function logMessage(message: string, level: string = 'info') {
+    console.log(`[${level}] - ${message}`);
+}
 
 export const allStationsAvailable = async () => {
     const allStations = await db.select().from(Stations).execute();
-
     for (const station of allStations) {
+        const ports = await db.select().from(Ports).where(eq(Ports.stationId, station.stationId)).execute();
+
+        logMessage('Seeding started...');
+        logMessage('Created user with email: john.doe@example.com', 'warn');
         await db.update(Stations)
             .set({ overallStatus: 'available' })
             .where(eq(Stations.stationId, station.stationId))
             .execute();
+        for (const port of ports) {
+                if (station.maxPower != null && ports.length > 1) {
+                    const power = station.maxPower
+                    await db.update(Ports)
+                        .set({maxPower:power})
+                        
+                        .where(eq(Ports.portId, port.portId))
+                        .execute();
+                }
+        }
     }
 }
 

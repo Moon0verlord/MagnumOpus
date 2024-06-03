@@ -1,13 +1,20 @@
 ﻿import {type InferInsertModel, type InferSelectModel, sql} from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core"
+import postgres from "postgres";
+import from = postgres.toPascal.column.from;
 
 export const Users  = pg.pgTable("Users", {
     userId: pg.text("user_id").primaryKey(),
+    level: pg.integer("level"),
+    totalXp: pg.integer("total_xp"),
     name: pg.text("name"),
     email: pg.text("email").unique(),
     password: pg.text("password"),
     oktaId: pg.text("okta_id"),
-    isAdmin: pg.boolean('isAdmin')
+    isAdmin: pg.boolean('isAdmin'),
+    BatteryMax: pg.decimal("battery_max"),
+    BatteryCurrent: pg.decimal("battery_current"),
+    carModel: pg.text("car_model"),
 });
 
 export type User = InferSelectModel<typeof Users>;
@@ -32,7 +39,10 @@ export const Ports = pg.pgTable("Ports", {
     usedBy: pg.text("used_by").references(() => Users.userId),
     emi3Id: pg.text("emi3_id"),
     status: pg.text("status"),
+    maxPower: pg.real("max_power"),
     displayName: pg.text("display_name"),
+    OccupiedTime: pg.timestamp("occupied_time"),
+    timeRemaining: pg.timestamp("time_remaining")
 });
 
 export type Port = InferSelectModel<typeof Ports>;
@@ -42,7 +52,8 @@ export const Requests = pg.pgTable("Requests", {
     priority: pg.text("priority"),
     fromUserId: pg.text("from_userid").references(() => Users.userId),
     requestedPortId: pg.text("requested_portid").references(() => Ports.portId),
-    message: pg.text("message")
+    message: pg.text("message"),
+    percent: pg.integer("percent"),
 });
 export type Request = InferSelectModel<typeof Requests>;
 

@@ -16,8 +16,8 @@
     const openNotification = () => {
         showNotifModal = true;
     };
-
-    // Adjust the path as necessary
+    
+ // Adjust the path as necessary
 
     function logout() {
         userId.set(null);
@@ -39,22 +39,20 @@
 </script>
 
 <!-- Menu -->
-<div class="flex justify-center items-center h-screen">
+<div class="flex justify-center items-center h-screen w-screen">
     <div class="w-3/4">
-        <!-- Settings Menu -->
-        <ul class="menu bg-base-200 shadow-xl rounded-box ml-2.5 mr-2.5 mt-2.5">
-            <li>
-                <button on:click={openNotification}>Notifications</button>
-            </li>
-            <li>
-                <button on:click={openSettings}>Appearance</button>
-            </li>
-            <li>
-                <button on:click={() => (showChangePasswordModal = true)}
-                    >Change Password</button
-                >
-            </li>
-        </ul>
+    <!-- Settings Menu -->
+    <ul class="menu bg-base-200 shadow-xl rounded-box ml-2.5 mr-2.5 mt-2.5">
+        <li class="menu-title">Settings</li>
+        <li><a href="/account">Account</a></li>
+        <li><button on:click={openNotification}>Notifications</button></li>
+        <li>
+            <button on:click={openSettings}>Appearance</button>
+        </li>
+        <li><button on:click={() => (showChangePasswordModal = true)}>Change Password</button
+        >
+        </li>
+    </ul>
 
         <!-- Logout -->
         <ul class="menu bg-base-200 shadow-xl rounded-box ml-2.5 mr-2.5 mt-2.5">

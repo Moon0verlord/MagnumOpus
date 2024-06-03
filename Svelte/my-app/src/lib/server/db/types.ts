@@ -14,7 +14,19 @@ export type Port = {
     usedByUser: string | null ;
     emi3Id: string;
     status: 'available' | 'occupied' | 'unavailable';
+    OccupiedTime: Date | null;
+    timeRemaining: Date | null;
+    maxPower: number;
 }
+
+export type Car = {
+    model: string;
+    battery: number;
+};
+
+export type CarData = {
+    [key: string]: Car[];
+};
 
 export type Request = {
     requestId: string;
@@ -23,6 +35,7 @@ export type Request = {
     toUserId: string;
     portId: string;
     message: string;
+    percent: number;
 }
 
 export type User = {
@@ -33,6 +46,11 @@ export type User = {
     userTheme: string | null;
     oktaId: string | null;
     isAdmin: boolean;
+    totalXp: number;
+    level: number;
+    carModel: string;
+    BatteryMax: number;
+    BatteryCurrent: number;
 }
 
 export type Address = {

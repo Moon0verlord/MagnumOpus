@@ -1,34 +1,94 @@
 <script lang="ts">
-    import {createEventDispatcher} from "svelte";
-
+    import {createEventDispatcher, onDestroy, onMount} from "svelte";
+    import {isNumber, type UserClaims} from "@okta/okta-auth-js";
+    import {userId} from "../../../store";
+    import type {User} from "$lib/server/db/types";
+    import {mobile} from "../../../routes/mobile/mobile";
+  
     const dispatch = createEventDispatcher();
+    let user: User;
+    $: isMobile = $mobile;
+    let userInfo: UserClaims | null = null;
+    let currentUserId: string | null = null;
+    let unsubscribe: () => void;
     export let show = false;
     export let data: any;
-    export let user: any;
-
+    let percentage = 0;
+    
     const close = () => {
         show = false;
         dispatch("close");
     }
+    
+    onMount(async () => {
+        unsubscribe = userId.subscribe(value => {
+            currentUserId = value;
+        });
+        if (!currentUserId) {
+            if (userInfo && userInfo.email) {
+                const response = await fetch(`/api/user`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'email': (userInfo ? userInfo.email : '')
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    userId.set(data.uuid);
 
-
-
+                }
+            }
+        }
+    });
+    
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+    async function getCharge()
+    {
+        if(currentUserId)
+        {
+            const response = await fetch(`/api/requests/charge`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'id': (currentUserId ? currentUserId : '')
+                },
+            });
+        let data = await response.json();
+        console.log("Charge data "+ data);
+        percentage = data;
+        }
+        else{
+            console.log("User not found");
+        
+        }
+    }
     let description = '';
     let priority = '';
-
+ 
     async function requestPort() {
+        await getCharge();
+        if(percentage)
+        {
         const response = await fetch('/api/requests', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                fromUserId: user,
+                id: currentUserId,
                 priority: priority,
                 requestedPortId: data.portId,
-                message: description
+                message: description,
+                percent: percentage
             })
         });
+        
+        
         if (response.status === 201) {
             close();
             const responseSlack = await fetch('/api/slack', {
@@ -41,7 +101,7 @@
                     userId: user,
                     portId: data.portId,
                     priority: priority,
-                    description: description, 
+                    description: description,
                 }),
             });
         } else if (response.status === 202) {
@@ -49,6 +109,7 @@
             close();
         } else {
             console.log('Internal Server Error');
+        }
         }
     }
 </script>

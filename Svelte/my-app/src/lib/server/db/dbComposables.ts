@@ -1,8 +1,12 @@
-﻿import { type Port, Ports, Requests, type Station, Stations, type User, Users } from "$lib/server/db/schema";
-import { db } from "$lib/server/db/db.server";
-import { and, eq } from "drizzle-orm";
-import { v4 as uuidv4 } from 'uuid';
+﻿import {type Port, Ports, Requests, type Station, Stations, type User, Users} from "$lib/server/db/schema";
+
+import {db} from "$lib/server/db/db.server";
+import {and, eq} from "drizzle-orm";
+import {v4 as uuidv4} from 'uuid';
 import bcrypt from 'bcryptjs';
+import type {CarData} from "$lib/server/db/types";
+import cars from "$lib/server/data/cars.json";
+import carData from "$lib/server/data/cars.json";
 
 export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
@@ -43,7 +47,6 @@ export async function loginUser(email: string, password: string) {
 
         if (user && user.length > 0 && user[0].password) {
             const match = await bcrypt.compare(password, user[0].password);
-
             if (match) {
                 return user[0];
             }
@@ -54,10 +57,10 @@ export async function loginUser(email: string, password: string) {
         return null;
     }
 }
+
 export async function getCurUser(id: string | null) {
     if (id !== null) {
         var NewId = id.replace(/"/g, '');
-        console.log("Url:" + NewId);
         var users = await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
         return await users[0];
     } else {
@@ -65,15 +68,56 @@ export async function getCurUser(id: string | null) {
     }
 }
 
-export async function reservePort(userId: string, portId: string, stationId: string) {
+function addHours(date: Date, hours: number): Date {
+    const milliseconds = hours * 60 * 60 * 1000;
+    return new Date(date.getTime() + milliseconds);
+}
+
+export async function ChangeUserLevel(email:string,level:number,xp:number){
     try {
+        console.log(email,level,xp)
+        let user =  await db.select().from(Users).where(eq(Users.email, email)).execute();
+        user[0].level=level;
+        if(xp==null) {
+            user[0].totalXp = 0;
+        }
+        else{
+            user[0].totalXp = xp;
+        }
+        await db.update(Users).set(user[0]).where(eq(Users.email, email)).execute();
+        console.log(`User level changed to ${level}`);
+    }
+    catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function ChangeUserXp(email:string,xp:number) {
+    try {
+        let user =  await db.select().from(Users).where(eq(Users.email, email)).execute();
+        user[0].totalXp=xp;
+        await db.update(Users).set(user[0]).where(eq(Users.email, email)).execute();
+        console.log(`User xp changed to ${xp}`);
+    }
+    catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export async function reservePort(userId: string, portId: string, stationId: string,occupiedTime: Date) {
+    try {
+     
         const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
         if (existingPort.length > 0) {
             return "User has already reserved a port";
         }
-
+        const chosenPort = await db.select().from(Ports).where(eq(Ports.portId, portId)).execute();
+        const endTime = await GetEndTimeChargeEstimation(new Date(occupiedTime),userId,chosenPort[0].maxPower);
+        
         await db.update(Ports)
-            .set({ usedBy: userId, status: 'occupied' })
+            .set({usedBy: userId, status: 'occupied',OccupiedTime:new Date(occupiedTime),timeRemaining:endTime})
             .where(eq(Ports.portId, portId))
             .execute();
 
@@ -93,6 +137,28 @@ export async function reservePort(userId: string, portId: string, stationId: str
     }
 }
 
+export async function GetEndTimeChargeEstimation(occupiedTime:Date, userId: string,power: number | null) {
+    //Asuming the Dutch average of 230V so 16A
+    //Using battery size (kWh) / charger power (kW) = charging time (hours).
+
+    try {
+        const user = (await db.select().from(Users).where(eq(Users.userId, userId)).execute())[0];
+        const PerCharge = await getCharge(user.userId);
+       
+
+        if (PerCharge && user.BatteryMax && power!=null)
+        {
+            const remainingCharge = (PerCharge / 100) * parseFloat(user.BatteryMax);
+            var hours = (remainingCharge / power);
+            console.log("Hours: "+addHours(occupiedTime,hours));
+            return addHours(occupiedTime,hours);
+        }
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 export async function allOccupiedPorts() {
     try {
         return await db.select().from(Ports).where(eq(Ports.status, 'occupied')).execute();
@@ -103,6 +169,7 @@ export async function allOccupiedPorts() {
 }
 
 export async function myPorts(userId: string) {
+
     try {
         return await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
     } catch (error) {
@@ -114,7 +181,7 @@ export async function myPorts(userId: string) {
 export async function releasePort(portId: string, stationId: string) {
     try {
         await db.update(Ports)
-            .set({ usedBy: null, status: 'available' })
+            .set({usedBy: null, status: 'available',OccupiedTime: null,timeRemaining: null})
             .where(eq(Ports.portId, portId))
             .execute();
 
@@ -130,14 +197,15 @@ export async function releasePort(portId: string, stationId: string) {
     }
 }
 
-export async function requestPort(fromUserId: string, priority: string, requestedPortId: string, message: string) {
+export async function requestPort(fromUserId: string, priority: string, requestedPortId: string, message: string,percent: number) {
+
     try {
-        const existingRequest = await db.select().from(Requests).where(and(eq(Requests.fromUserId, fromUserId), eq(Requests.requestedPortId, requestedPortId))).execute();
+        const existingRequest = 
+            await db.select().from(Requests).where(and(eq(Requests.fromUserId, fromUserId), eq(Requests.requestedPortId, requestedPortId))).execute();
         if (existingRequest.length > 0) {
             return 2;
         }
-
-        await db.insert(Requests).values({ fromUserId, priority, requestedPortId, message }).execute();
+        await db.insert(Requests).values({fromUserId, priority, requestedPortId, message,percent}).execute();
 
         return 1;
     } catch (error) {
@@ -281,8 +349,7 @@ export async function checkPassword(currentPassword : string, userId: string) {
       const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
   
       if (user && user.length > 0 && user[0].password) {
-        const match = await bcrypt.compare(currentPassword, user[0].password);
-        return match;
+          return await bcrypt.compare(currentPassword, user[0].password);
       }
   
       return false;
@@ -308,3 +375,112 @@ export async function checkPassword(currentPassword : string, userId: string) {
       return false;
     }
   }
+
+//Car selection functions and such 
+export async function GetCars() {
+    return cars as CarData;
+}
+
+export async function PostCar(car: string, userId: string,batteryCurrent: string): Promise<boolean> {
+    try {
+        const carModels: CarData = carData;
+        let maxBattery: string | null = null;
+
+        for (const brand in carModels) {
+            const carModel = carModels[brand].find(c => c.model === car);
+            if (carModel) {
+                maxBattery = carModel.battery.toString();
+                break;
+            }
+        }
+        if(maxBattery!==null) {
+            
+            await db.update(Users)
+                .set({carModel: car, BatteryMax: maxBattery, BatteryCurrent: batteryCurrent})
+                .where(eq(Users.userId, userId))
+                .execute();
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+export async function getCharge(userId: string | null) {
+    if(userId !== null) {
+        try {
+            const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+            
+            if (user[0] != null) {
+                return user[0].BatteryCurrent && user[0].BatteryMax ? 100 - (parseFloat(user[0].BatteryCurrent)) : null;
+            }
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+    else {
+        throw new Error("User ID cannot be null");
+    }
+}
+export async function GetInterCharge(userId: string, BatteryCurrent: string, BatteryMax: string) {
+    try {
+    
+        if(userId !== null && BatteryCurrent !== undefined && BatteryMax !== undefined) {
+            {
+             
+                const users : User[] = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+                const user = users[0];
+                const PerCharge = await getCharge(userId);
+                const ports : Port[] =  await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
+                
+                if (ports !== null) {
+                    {
+                       
+                        if (ports.length > 0) {
+                     
+                            const port = ports[0];
+                            if (port!==null) {
+                         
+                                const power = port.maxPower;
+                                const date = new Date()
+
+                                if (PerCharge && BatteryMax && port.timeRemaining && power && port.OccupiedTime){
+                                
+                                    const timeElapsed = (new Date().getTime() - port.OccupiedTime.getTime()) / 1000 / 60;
+                                    let remainingTime = port.timeRemaining.getHours() - timeElapsed;
+                                    
+
+                                    if (remainingTime < 0) {
+                                        remainingTime = 0;
+                                    }
+                                    
+                                    const chargingRate = parseFloat(BatteryMax) / power;
+                                    const curCharge = parseFloat(BatteryCurrent);
+                                    let estimatedCharge = PerCharge + (chargingRate * timeElapsed);
+
+                                    if (estimatedCharge > 100) {
+                                        estimatedCharge = 100;
+                                    }
+                                    await db.update(Users)
+                                        .set({BatteryCurrent: estimatedCharge.toString()})
+                                        .where(eq(Users.userId, userId))
+                                        .execute();
+                                    return remainingTime;
+
+                                }
+                            }
+                        }
+                    }
+                } 
+                
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
