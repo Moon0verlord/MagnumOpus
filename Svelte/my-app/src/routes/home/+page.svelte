@@ -858,7 +858,6 @@
                                     <tr>
                                         <th>Port</th>
                                         <th>Station ID</th>
-                                        <th>Charge</th>
                                         <th></th>
                                     </tr>
                                     </thead>
