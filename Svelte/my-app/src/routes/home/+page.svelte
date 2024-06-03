@@ -37,9 +37,9 @@
 
     setInterval(async () => {
         //Add check to prevent users without a port from being abused by this
-        console.log("Checking for data");
+        
         if (currentUserInfo && currentUserInfo.BatteryCurrent && currentUserId){
-            console.log("Fetching data");
+    
             try {
                 const response = await fetch(`/api/charge`, {
                     method: 'GET',
@@ -58,7 +58,8 @@
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                // Handle the error here (same as above)
+          
+                
             }
         }
     }, 2000);
