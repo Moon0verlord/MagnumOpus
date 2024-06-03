@@ -3,6 +3,10 @@ import {GetPort, GetUserAdminStatus} from "$lib/server/db/dbComposables";
 import type {Port} from "$lib/server/db/schema";
 import * as dotenv from 'dotenv';
 
+export const isEmpty = function(text: string): boolean {
+    return text === null || text.match(/^ *$/) !== null;
+};
+
 // @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();
@@ -11,7 +15,7 @@ export const POST = async ({ request }) => {
     if (!process.env.SLACK_WEBHOOK) {
         console.log('SLACK_WEBHOOK environment variable does not exist');
     } else {
-        if ('portId' in body && 'userId' in body && 'priority' in body && 'description' in body) {
+        if ('portId' in body && 'userId' in body && 'priority' in body) {
             const portInfo = (await GetPort(body.portId)).pop();
             const userInfo = (await GetUserAdminStatus(body.userId)).pop();
             const portUser = (await GetUserAdminStatus(portInfo!.usedBy!)).pop();
@@ -98,7 +102,7 @@ export const POST = async ({ request }) => {
                                     "elements": [
                                         {
                                             "type": "text",
-                                            "text": `${body.description}`
+                                            "text": `${(isEmpty(body.description) ? "No message given with request." : body.description)}`
                                         }
                                     ]
                                 }
