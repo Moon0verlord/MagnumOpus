@@ -1,5 +1,6 @@
 import {GetCars, getCharge, GetEndTimeChargeEstimation, GetInterCharge} from "$lib/server/db/dbComposables";
 
+// @ts-ignore
 export const GET = async ({request}) => {
     try {
         const currentCharge = request.headers.get('currentCharge');
@@ -8,7 +9,7 @@ export const GET = async ({request}) => {
         if (currentCharge && maxCharge && uId) {
             const data = await GetInterCharge(uId, currentCharge, maxCharge);
          
-            return new Response(JSON.stringify(data), {status: 200});
+            return new Response(JSON.stringify({charge: data}), {status: 200});
         }
     }
     catch(e){
