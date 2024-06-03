@@ -78,7 +78,7 @@
         <div class="navbar bg-base-100 h-24">
             <div class="flex-1 items-center h-20">
                 <a href="/home" class="btn btn-ghost text-xl px-2">
-                    <img src="src/lib/assets/logo.svg" alt="Logo" class="w-6 h-6 mr-" />
+                    <img src="/assets/logo.svg" alt="Logo" class="w-6 h-6 mr-" />
                     Schuberg Hub
                 </a>
             </div>

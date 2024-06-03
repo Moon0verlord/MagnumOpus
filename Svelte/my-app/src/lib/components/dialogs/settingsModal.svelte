@@ -108,7 +108,7 @@
                 <div class="form-control">
                     <label class="label cursor-pointer gap-4">
                         <span class="label-text">Business</span>
-                        <input type="radio" name="theme-radios" class="radio theme-controller" value="Business"
+                        <input type="radio" name="theme-radios" class="radio theme-controller" value="business"
                                bind:group={selectedTheme} on:change={() => changeTheme('business')}/>
                     </label>
                 </div>

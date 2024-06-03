@@ -924,7 +924,7 @@
                                                                                 <div class="flex items-center space-x-3">
                                                                                     <div class="avatar">
                                                                                         <div class="mask mask-squircle w-12 h-12">
-                                                                                            <img src="src/lib/assets/makes/{key}.svg" alt="{key} logo"/>
+                                                                                            <img src="/assets/makes/{key}.svg" alt="{key} logo"/>
                                                                                         </div>
                                                                                     </div>
                                                                                     <div>{car.model}</div>
