@@ -41,6 +41,7 @@
                     userId: user,
                     portId: data.portId,
                     priority: priority,
+                    description: description, 
                 }),
             });
         } else if (response.status === 202) {

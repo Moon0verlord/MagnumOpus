@@ -11,7 +11,7 @@ export const POST = async ({ request }) => {
     if (!process.env.SLACK_WEBHOOK) {
         console.log('SLACK_WEBHOOK environment variable does not exist');
     } else {
-        if ('portId' in body && 'userId' in body && 'priority' in body) {
+        if ('portId' in body && 'userId' in body && 'priority' in body && 'description' in body) {
             const portInfo = (await GetPort(body.portId)).pop();
             const userInfo = (await GetUserAdminStatus(body.userId)).pop();
             const portUser = (await GetUserAdminStatus(portInfo!.usedBy!)).pop();
@@ -77,6 +77,30 @@ export const POST = async ({ request }) => {
                                 {
                                     "type": "mrkdwn",
                                     "text": `:large_orange_diamond: *Urgency*: ${body.priority}`
+                                }
+                            ]
+                        },
+                        {
+                            "type": "divider"
+                        },
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": "*Message*"
+                            }
+                        },
+                        {
+                            "type": "rich_text",
+                            "elements": [
+                                {
+                                    "type": "rich_text_section",
+                                    "elements": [
+                                        {
+                                            "type": "text",
+                                            "text": `${body.description}`
+                                        }
+                                    ]
                                 }
                             ]
                         },
