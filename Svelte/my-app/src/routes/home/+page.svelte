@@ -174,15 +174,31 @@
     }
 
     setInterval(async () => {
-        if (currentUserInfo && currentUserInfo.BatteryCurrent) {
-            try {
-                // @ts-ignore
-                const data = await fetchData(currentUserInfo.BatteryCurrent, currentUserInfo.BatteryMax, currentUserInfo.userId);
-            } catch (error) {
-                // Handle the error here (same as above)
+        if (currentUserInfo && currentUserInfo.BatteryCurrent && currentUserId){
+        try {
+            const response = await fetch(`/api/charge`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'currentCharge': currentUserInfo.BatteryCurrent.toString(),
+                    'maxCharge': currentUserInfo.BatteryMax.toString(),
+                    'userId': currentUserId?.toString()
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data ){
+                    
+                    console.log("Remaining Charge:", data);
+                }
             }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+    
+            
         }
-    }, 2000);
+    }
+    }, 1000);
 
 
     async function roundToTwoDecimals(number: number) {
@@ -980,9 +996,10 @@
                                                 {keys.find(key => cars[key].some(car => car.model === currentUserInfo.carModel))} {currentUserInfo.carModel}
                                             {/if}
                                         </p>
-
+                                        {#key currentUserInfo.BatteryCurrent }
                                         <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent}" max="100"></progress>
                                         <p>Battery: {currentUserInfo.BatteryCurrent}%</p>
+                                            {/key}
                                     </div>
                                 {/if}
                             </div>
