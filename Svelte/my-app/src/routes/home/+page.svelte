@@ -199,7 +199,7 @@
             
         }
     }
-    }, 1000);
+    }, 3000);
 
 
     async function roundToTwoDecimals(number: number) {
