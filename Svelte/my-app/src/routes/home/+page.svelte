@@ -49,6 +49,8 @@
     let unsubscribe: () => void;
     let pageData: any[] = [];
     let percentage_charge = 0;
+    let carIntervalId: any;
+    
     onMount(async () => {
         let result = document.cookie
             .split("; ")
@@ -116,6 +118,38 @@
                 await getIncomingRequests();
             }
         }
+
+        carIntervalId = setInterval(async () => {
+            if (currentUserInfo && currentUserInfo.BatteryCurrent && currentUserId){
+                try {
+                    const response = await fetch(`/api/charge`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'currentCharge': currentUserInfo.BatteryCurrent.toString(),
+                            // @ts-ignore
+                            'maxCharge': currentUserInfo.BatteryMax.toString(),
+                            'userId': currentUserId?.toString()
+                        },
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data ){
+
+                            console.log("Remaining Charge:", data);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+
+
+                }
+            }
+        }, 3000);
+    });
+
+    onDestroy(() => {
+        clearInterval(carIntervalId);
     });
 
     async function sendNotification() {
@@ -144,37 +178,6 @@
                     },
                 );
             });
-        }
-    }
-
-    async function fetchData(
-        currentCharge: number,
-        maxCharge: number,
-        userId: string,
-    ) {
-        try {
-            console.log("DATA", currentCharge, maxCharge, userId);
-            const response = await fetch("/api/charge", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    currentCharge: `${currentCharge}`,
-                    maxCharge: `${maxCharge}`,
-                    userId: `${userId}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(
-                    `API call failed with status ${response.status}`,
-                );
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            // Handle the error here (e.g., retry, display an error message)
         }
     }
 
@@ -220,17 +223,6 @@
                 left: (slideIndex - 1) * carousel.offsetWidth,
                 behavior: "smooth",
             });
-        }
-    }
-
-    async function getBrandCars(event: Event) {
-        const selectedOption = (event.target as HTMLSelectElement).value;
-        ChosenCars = cars[selectedOption] || [];
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-        if (event.key === "Escape" && isOpen) {
-            event.preventDefault();
         }
     }
 
