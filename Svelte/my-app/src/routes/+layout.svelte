@@ -77,8 +77,10 @@
     {#if !isMobile && ["/home", "/stations", "/settings", "/schuberg_api", "/test", "/notifications", "/about", "/account"].includes(currentPage)}
         <div class="navbar bg-base-100 h-24">
             <div class="flex-1 items-center h-20">
-                <img src="src/lib/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
-                <a href="/home" class="btn btn-ghost text-xl px-0">Schuberg Hub</a>
+                <a href="/home" class="btn btn-ghost text-xl px-2">
+                    <img src="src/lib/assets/logo.svg" alt="Logo" class="w-6 h-6 mr-" />
+                    Schuberg Hub
+                </a>
             </div>
             <div class="flex-none">
                 <ul class="menu menu-horizontal px-1">
