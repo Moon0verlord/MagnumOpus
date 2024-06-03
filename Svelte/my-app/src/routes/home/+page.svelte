@@ -19,8 +19,8 @@
     //Car selection variables
     let ChosenCars: CarData[] = [];
     // let cars: {[key: string]: CarData} = {};
-    let cars: Record<string, CarData[]> = {};
-    let keys: string[] = [];
+    let cars: Record<string, CarData[]> = data.props.cars;
+    let keys: string[] = Object.keys(cars);
     let CarOfChoice: string;
     let isOpen = false;
     let charge = 0.0;
@@ -36,21 +36,7 @@
     let unsubscribe: () => void;
     let pageData: any[] = [];
     let percentage_charge = 0;
-
     onMount(async () => {
-        const response = await fetch('/api/cars', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (response.ok) {
-            cars = (await response.json());
-            if (cars) {
-                keys = Object.keys(cars);
-            }
-        }
-
         let result = document.cookie
             .split("; ")
             .find((row: string) => row.startsWith("userId="))

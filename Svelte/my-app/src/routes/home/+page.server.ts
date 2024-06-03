@@ -1,12 +1,15 @@
 import type { PageServerLoad } from "./$types";
-import { myPorts, myRequests, incomingRequests, GetUserAdminStatus, allRequests, allOccupiedPorts } from "$lib/server/db/dbComposables";
+import { myPorts, myRequests, incomingRequests, GetUserAdminStatus, allRequests, allOccupiedPorts, GetCars } from "$lib/server/db/dbComposables";
 
 export const load: PageServerLoad = async ({ cookies }) => {
     let userId = null;
+    let cars: any[string] = [];
     userId = cookies.get('userId');
 
     let uuidv4Regex =
         /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    cars = await GetCars();
 
     if (userId !== null && userId !== undefined && uuidv4Regex.test(userId)) {
         const [portsData, requestsData, incomingData, userData, allrequestData, alloccupiedportsData] = await Promise.all([
@@ -15,7 +18,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
             incomingRequests(userId),
             GetUserAdminStatus(userId),
             allRequests(),
-            allOccupiedPorts()
+            allOccupiedPorts(),
         ]);
 
         let ports, requests, incoming, user, admin, requestsAll, usedPorts;
@@ -42,14 +45,15 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
         return {
             props: {
-                userId,
-                ports,
-                requests,
-                incoming,
-                user,
-                admin,
-                requestsAll,
-                usedPorts
+                userId: userId,
+                ports: ports,
+                requests: requests,
+                incoming: incoming,
+                user: user,
+                admin: admin,
+                requestsAll: requestsAll,
+                usedPorts: usedPorts,
+                cars: cars,
             }
         };
     }
@@ -64,7 +68,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
             user: null,
             admin: false,
             requestsAll: [],
-            usedPorts: []
+            usedPorts: [],
+            cars: cars,
         }
     };
 };
