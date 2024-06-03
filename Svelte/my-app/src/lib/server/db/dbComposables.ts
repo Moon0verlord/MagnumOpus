@@ -375,7 +375,7 @@ export async function GetCars() {
     return cars as CarData;
 }
 
-export async function PostCar(car: string, userId: string,batteryCurrent: string) {
+export async function PostCar(car: string, userId: string,batteryCurrent: string): Promise<boolean> {
     try {
         const carModels: CarData = carData;
         let maxBattery: string | null = null;
@@ -393,11 +393,12 @@ export async function PostCar(car: string, userId: string,batteryCurrent: string
                 .set({carModel: car, BatteryMax: maxBattery, BatteryCurrent: batteryCurrent})
                 .where(eq(Users.userId, userId))
                 .execute();
-          
+            return true;
         }
+        return false;
     } catch (error) {
         console.error(error);
-        return null;
+        return false;
     }
 }
 
