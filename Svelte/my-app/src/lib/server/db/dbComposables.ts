@@ -369,12 +369,51 @@ export async function PostCar(car: string, userId: string,batteryCurrent: string
     }
 }
 
-export async function getCharge(userId: string) {
-    try {
-        const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
-        if(user[0]!=null) {
-            return user[0].BatteryCurrent && user[0].BatteryMax ? 100 - (parseFloat(user[0].BatteryCurrent)) : null; 
+export async function getCharge(userId: string | null) {
+    if(userId !== null) {
+        try {
+            const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+            
+            if (user[0] != null) {
+                return user[0].BatteryCurrent && user[0].BatteryMax ? 100 - (parseFloat(user[0].BatteryCurrent)) : null;
+            }
+        } catch (error) {
+            console.error(error);
+            return null;
         }
+    }
+    else {
+        throw new Error("User ID cannot be null");
+    }
+}
+export async function GetInterCharge(userId: string |null, BatteryCurrent: string | null, BatteryMax: string | null) {
+    try {
+       
+        if(userId !== null && BatteryCurrent !== null && BatteryMax !== null) {
+            {
+                const users : User[] = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+                console.log("GetInterCharge: "+users.length)
+                const user = users[0];
+                const PerCharge = await getCharge(user.userId);
+                const port: Port[] = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
+                const power = port[0].maxPower;
+                const date = new Date()
+                if (PerCharge && user.BatteryMax
+                    && power != null
+                    && port[0].OccupiedTime != null
+                    && port[0].timeRemaining != null) {
+                    const timePassed = (new Date().getTime() - port[0].OccupiedTime.getTime()) / 1000 / 60 / 60;
+                    const chargePerHour = (PerCharge / port[0].timeRemaining.getHours());
+                    const remainingCharge = (PerCharge / 100) * parseFloat(user.BatteryMax);
+                    return remainingCharge - (chargePerHour * timePassed);
+                }
+            }
+            console.log("1Finished");
+        }
+        else {
+            throw new Error("User ID cannot be null");
+        }
+        console.log("2Finished");
     } catch (error) {
         console.error(error);
         return null;

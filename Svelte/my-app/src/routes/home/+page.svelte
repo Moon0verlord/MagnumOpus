@@ -34,7 +34,47 @@
     let percentage_charge = 0;
 
 
-   
+    async function fetchData(currentCharge: number, maxCharge: number, userId: string) {
+        try {
+            console.log("DATA", currentCharge, maxCharge, userId)
+            const response = await fetch('/api/charge', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'currentCharge': `${currentCharge}`,
+                    'maxCharge': `${maxCharge}`,
+                    'userId': `${userId}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`API call failed with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            // Handle the error here (e.g., retry, display an error message)
+        }
+    }
+
+    setInterval(async () => {
+        console.log("Checking for data");
+        console.log(currentUserInfo);
+        if (currentUserInfo && currentUserInfo.BatteryCurrent){
+            console.log("Fetching data");
+            try {
+                const data = await fetchData(currentUserInfo.BatteryCurrent, currentUserInfo.BatteryMax, currentUserInfo.userId);
+                console.log("data", data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                // Handle the error here (same as above)
+            }
+        }
+    }, 2000);
+
+
     async function roundToTwoDecimals(number: number) {
         return parseFloat(number.toFixed(2));
     }
@@ -47,7 +87,7 @@
             });
         }
     }
-
+  
     async function getBrandCars(event: Event) {
     const selectedOption = (event.target as HTMLSelectElement).value;
     ChosenCars = cars[selectedOption] || [];
@@ -64,6 +104,7 @@
     {
         if (CarOfChoice && currentUserId) 
         {
+            
             charge = await roundToTwoDecimals(percentage_charge);
             console.log(CarOfChoice);
             console.log(charge);
