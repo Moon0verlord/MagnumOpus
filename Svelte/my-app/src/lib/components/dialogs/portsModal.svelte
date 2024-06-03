@@ -1,5 +1,4 @@
 <script lang="ts">
-
     import {createEventDispatcher, onDestroy, onMount} from "svelte";
     import {isNumber, type UserClaims} from "@okta/okta-auth-js";
     import {userId} from "../../../store";
@@ -14,12 +13,13 @@
     let unsubscribe: () => void;
     export let show = false;
     export let data: any;
-
     let percentage = 0;
+    
     const close = () => {
         show = false;
         dispatch("close");
     }
+    
     onMount(async () => {
         unsubscribe = userId.subscribe(value => {
             currentUserId = value;
@@ -41,6 +41,7 @@
             }
         }
     });
+    
     onDestroy(() => {
         if (unsubscribe) {
             unsubscribe();
@@ -89,9 +90,20 @@
         
         
         if (response.status === 201) {
-            data = await response.json();
-            console.log("Return data"+ data.percentage);
             close();
+            const responseSlack = await fetch('/api/slack', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: 'Port Request',
+                    userId: currentUserId,
+                    portId: data.portId,
+                    priority: priority,
+                    description: description,
+                }),
+            });
         } else if (response.status === 202) {
             console.log('Port is already requested');
             close();

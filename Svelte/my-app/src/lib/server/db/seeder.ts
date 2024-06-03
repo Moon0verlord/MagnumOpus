@@ -3,6 +3,7 @@ import type {StationData, Status} from "$lib/server/db/types";
 import type {Port, Station} from "$lib/server/db/schema";
 import {eq, sql} from "drizzle-orm";
 import {Ports, Stations} from "$lib/server/db/schema";
+// @ts-ignore
 import { API_URL } from '$env/static/private';
 import {list} from "postcss";
 
@@ -80,7 +81,8 @@ export const Seeder = async (data : StationData[]) => {
             address: JSON.stringify(station.address),
             maxPower: station.maxPower,
             portIds: getPortIds(station),
-        });
+        })
+
 
         for (const port of station.evses) {
             await db.insert(Ports).values({

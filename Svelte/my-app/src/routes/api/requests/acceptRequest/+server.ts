@@ -1,5 +1,6 @@
 import {acceptRequest} from "$lib/server/db/dbComposables";
 
+// @ts-ignore
 export const POST = async ({request}) => {
     const body = await request.json();
 
