@@ -181,36 +181,6 @@
         }
     }
 
-    setInterval(async () => {
-        if (
-            currentUserInfo &&
-            currentUserInfo.BatteryCurrent &&
-            currentUserId
-        ) {
-            try {
-                const response = await fetch(`/api/charge`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        currentCharge:
-                            currentUserInfo.BatteryCurrent.toString(),
-                        // @ts-ignore
-                        maxCharge: currentUserInfo.BatteryMax.toString(),
-                        userId: currentUserId?.toString(),
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data) {
-                        console.log("Remaining Charge:", data);
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        }
-    }, 5000);
-
     async function roundToTwoDecimals(number: number) {
         return parseFloat(number.toFixed(2));
     }
