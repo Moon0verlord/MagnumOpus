@@ -1,19 +1,20 @@
 ﻿import {SLACK_WEBHOOK} from "$env/static/private";
-import {GetPort, GetUser} from "$lib/server/db/dbComposables";
+import {GetPort, GetUserAdminStatus} from "$lib/server/db/dbComposables";
 import type {Port} from "$lib/server/db/schema";
+import * as dotenv from 'dotenv';
 
 // @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();
     let response : Response
+    dotenv.config();
     if (!process.env.SLACK_WEBHOOK) {
         console.log('SLACK_WEBHOOK environment variable does not exist');
     } else {
         if ('portId' in body && 'userId' in body && 'priority' in body) {
-            console.log('formatted sending')
             const portInfo = (await GetPort(body.portId)).pop();
-            const userInfo = (await GetUser(body.userId)).pop();
-            const portUser = (await GetUser(portInfo!.usedBy!)).pop();
+            const userInfo = (await GetUserAdminStatus(body.userId)).pop();
+            const portUser = (await GetUserAdminStatus(portInfo!.usedBy!)).pop();
             const now = new Date();
             const date = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
             const time = `${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}`;

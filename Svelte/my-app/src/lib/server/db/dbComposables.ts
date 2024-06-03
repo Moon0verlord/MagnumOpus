@@ -8,6 +8,10 @@ export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
 };
 
+export const GetPort = async (portId: string): Promise<Port[]> => {
+    return await db.select().from(Ports).where(eq(Ports.portId, portId)).execute();
+};
+
 export const GetAllStations = async (): Promise<Station[]> => {
     return await db.select().from(Stations).execute();
 };
