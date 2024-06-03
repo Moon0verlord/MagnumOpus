@@ -1,4 +1,4 @@
-import {GetCars, PostCar, requestPort} from "$lib/server/db/dbComposables";
+import {GetCars, PostCar} from "$lib/server/db/dbComposables";
 
 // @ts-ignore
 export const GET = async ({request}) => {
