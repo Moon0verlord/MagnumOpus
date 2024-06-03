@@ -3,7 +3,7 @@ import {GetPort, GetUserAdminStatus} from "$lib/server/db/dbComposables";
 import type {Port} from "$lib/server/db/schema";
 import * as dotenv from 'dotenv';
 
-export const isEmpty = function(text: string): boolean {
+const isEmpty = function(text: string): boolean {
     return text === null || text.match(/^ *$/) !== null;
 };
 
