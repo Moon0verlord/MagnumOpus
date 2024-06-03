@@ -13,6 +13,9 @@
 
   $: isMobile = $mobile;
 
+  sessionStorage.removeItem("userId");
+  document.cookie = `userId=Expired; SameSite=None; path=/; Secure`;
+
   // Okta Login function. works fine
   async function handleOktaLogin() {
     try {
