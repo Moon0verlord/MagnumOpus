@@ -181,6 +181,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                     'currentCharge': currentUserInfo.BatteryCurrent.toString(),
+                    // @ts-ignore
                     'maxCharge': currentUserInfo.BatteryMax.toString(),
                     'userId': currentUserId?.toString()
                 },
@@ -1086,7 +1087,6 @@
                                     <tr>
                                         <th>Port</th>
                                         <th>Station ID</th>
-                                        <th>Charge</th>
                                         <th></th>
                                     </tr>
                                     </thead>
