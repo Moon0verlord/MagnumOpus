@@ -49,7 +49,7 @@
             isLoading = false;
 
             setTimeout(() => {
-            alertMessageDisplay = false;}, 5000);
+                alertMessageDisplay = false;}, 5000);
             return;
 
         }
@@ -196,7 +196,7 @@
     <!-- Blank section with logo and quote on the left -->
     <div class="flex flex-col justify-between p-12 bg-base-200 text-base-content">
       <div class="relative z-20 flex items-center text-lg font-medium">
-        <img src="src/lib/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
+        <img src="/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
         <h2 class="text-2xl font-bold mb-1">Schuberg Philis</h2>
       </div>
       <div class="relative z-20 mt-auto">
@@ -229,7 +229,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.587 1.413T20 20zm8-7.175q.125 0 .263-.038t.262-.112L19.6 8.25q.2-.125.3-.312t.1-.413q0-.5-.425-.75T18.7 6.8L12 11L5.3 6.8q-.45-.275-.875-.012T4 7.525q0 .25.1.438t.3.287l7.075 4.425q.125.075.263.113t.262.037"/>
                 </svg>
-                <input type="text" class="grow" placeholder="Name" bind:value={name} on:input={handleInput} />
+                <input type="text" class="grow" placeholder="Email" bind:value={email} on:input={handleInput} />
               </label>
             </div>
             <div class="mb-4">

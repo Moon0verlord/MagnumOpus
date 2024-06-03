@@ -58,10 +58,10 @@
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-             
+                // Handle the error here (same as above)
             }
         }
-    }, 4000);
+    }, 2000);
 
 
     async function roundToTwoDecimals(number: number) {
@@ -737,8 +737,7 @@
                                     {/if}
                                     <div class="modal-action">
                                         <form method="dialog">
-                                            {#if CarOfChoice && percentage_charge!==0}
-                                 
+                                            {#if CarOfChoice && percentage_charge !== 0}
                                                 <button class="btn" on:click={DoneChoosingCar}>Done</button>
                                             {:else}
                                             <button class="btn" disabled>Done</button>
@@ -762,20 +761,18 @@
                                 {/if}
                                 <p>So glad to see you! Let's get started with managing your session.</p>
                                 {#if currentUserInfo?.carModel}
-                                <div class="mt-4">
-                                    <p>
-                                        Your Car: 
-                                        {#if currentUserInfo.carModel}
-                                            {keys.find(key => cars[key].some(car => car.model === currentUserInfo.carModel))} {currentUserInfo.carModel}
-                                        {/if}
-                                    </p>
-                                    {#key percRemain}
-                                   
-                                    <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent.toString()}" max="100"></progress>
-                                    <p>Battery: {currentUserInfo.BatteryCurrent.toString()}%</p>
-                                        {/key}
-                                </div>
-                            {/if}
+                                    <div class="mt-4">
+                                        <p>
+                                            Your Car:
+                                            {#if currentUserInfo.carModel}
+                                                {keys.find(key => cars[key].some(car => car.model === currentUserInfo.carModel))} {currentUserInfo.carModel}
+                                            {/if}
+                                        </p>
+
+                                        <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent}" max="100"></progress>
+                                        <p>Battery: {currentUserInfo.BatteryCurrent}%</p>
+                                    </div>
+                                {/if}
                             </div>
                         </div>
                     </div>
