@@ -15,6 +15,7 @@ export const POST = async ({ request }) => {
     if (!process.env.SLACK_WEBHOOK) {
         console.log('SLACK_WEBHOOK environment variable does not exist');
     } else {
+        console.log(body)
         if ('portId' in body && 'userId' in body && 'priority' in body) {
             const portInfo = (await GetPort(body.portId)).pop();
             const userInfo = (await GetUserAdminStatus(body.userId)).pop();

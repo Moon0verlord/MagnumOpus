@@ -98,7 +98,7 @@
                 },
                 body: JSON.stringify({
                     message: 'Port Request',
-                    userId: user,
+                    userId: currentUserId,
                     portId: data.portId,
                     priority: priority,
                     description: description,
