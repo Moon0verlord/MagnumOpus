@@ -1,27 +1,26 @@
 <script lang="ts">
     import "../app.css";
-    import {page} from "$app/stores";
-    import {theme} from './theme/theme';
-    import {mobile} from './mobile/mobile';
-    import {onMount, onDestroy} from 'svelte';
-
+    import { page } from "$app/stores";
+    import { theme } from "./theme/theme";
+    import { mobile } from "./mobile/mobile";
+    import { onMount, onDestroy } from "svelte";
 
     export let isMobile = false;
 
     onMount(() => {
         // Initial check
-        isMobile = window.innerWidth < 768  
+        isMobile = window.innerWidth < 768;
         mobile.set(isMobile);
 
         // Listen for resize events
-        window.addEventListener('resize', () => {
-            isMobile = window.innerWidth < 768  
+        window.addEventListener("resize", () => {
+            isMobile = window.innerWidth < 768;
             mobile.set(isMobile);
         });
     });
 
-    if (typeof window !== 'undefined') {
-        const localTheme = localStorage.getItem('theme');
+    if (typeof window !== "undefined") {
+        const localTheme = localStorage.getItem("theme");
         if (localTheme) {
             theme.set(localTheme); // Update the theme store
         }
@@ -31,28 +30,28 @@
     $: currentPage = $page.url.pathname;
 
     // Subscribe to the theme store
-    theme.subscribe(value => {
-        if (typeof window !== 'undefined') {
-            document.documentElement.setAttribute('data-theme', value); // Update the data-theme attribute
+    theme.subscribe((value) => {
+        if (typeof window !== "undefined") {
+            document.documentElement.setAttribute("data-theme", value); // Update the data-theme attribute
         }
     });
 
-    const unsubscribe = mobile.subscribe(value => {
+    const unsubscribe = mobile.subscribe((value) => {
         isMobile = value;
     });
 
     // Add a storage event listener
-    if (typeof window !== 'undefined') {
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'theme') {
-                theme.set(localStorage.getItem('theme') || 'light'); // Update the theme store
+    if (typeof window !== "undefined") {
+        window.addEventListener("storage", (event) => {
+            if (event.key === "theme") {
+                theme.set(localStorage.getItem("theme") || "light"); // Update the theme store
             }
         });
     }
 
-    const unsubscribeTheme = theme.subscribe(value => {
-        if (typeof window !== 'undefined') {
-            document.documentElement.setAttribute('data-theme', value); // Update the data-theme attribute
+    const unsubscribeTheme = theme.subscribe((value) => {
+        if (typeof window !== "undefined") {
+            document.documentElement.setAttribute("data-theme", value); // Update the data-theme attribute
         }
     });
 
@@ -64,9 +63,9 @@
 
 <svelte:head>
     <script>
-        if (typeof window !== 'undefined') {
-            const theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
+        if (typeof window !== "undefined") {
+            const theme = localStorage.getItem("theme") || "light";
+            document.documentElement.setAttribute("data-theme", theme);
         }
     </script>
 </svelte:head>
@@ -75,21 +74,21 @@
 
 <!-- Desktop Navbar -->
 
-{#if !isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test', '/notifications', '/about', '/account'].includes(currentPage)}
-    <div class="navbar bg-base-100 h-24">
-        <div class="flex-1 items-center h-20 ">
-            <img src="src/lib/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
-            <a href="/home" class="btn btn-ghost text-xl px-0">Schuberg Hub</a>
+    {#if !isMobile && ["/home", "/stations", "/settings", "/schuberg_api", "/test", "/notifications", "/about", "/account"].includes(currentPage)}
+        <div class="navbar bg-base-100 h-24">
+            <div class="flex-1 items-center h-20">
+                <img src="src/lib/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
+                <a href="/home" class="btn btn-ghost text-xl px-0">Schuberg Hub</a>
+            </div>
+            <div class="flex-none">
+                <ul class="menu menu-horizontal px-1">
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="/stations">Stations</a></li>
+                    <li><a href="/settings">Settings</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="flex-none">
-            <ul class="menu menu-horizontal px-1">
-                <li><a href="/home">Home</a></li>
-                <li><a href="/stations">Stations</a></li>
-                <li><a href="/settings">Settings</a></li>
-            </ul>
-        </div>
-    </div>
-{/if}
+    {/if}
 
 <div class="{isMobile ? (currentPage === '/' || currentPage === '/register' ? '' : '-mb-16') : (currentPage === '/' || currentPage === '/register' ? '' : '-mt-24')}">
     <slot/>

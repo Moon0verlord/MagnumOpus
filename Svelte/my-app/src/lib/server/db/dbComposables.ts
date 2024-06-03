@@ -3,9 +3,9 @@ import {db} from "$lib/server/db/db.server";
 import {and, eq} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
 import bcrypt from 'bcryptjs';
-import type {Car, CarData} from "$lib/server/db/types";
+import type {CarData} from "$lib/server/db/types";
 import cars from "$lib/server/data/cars.json";
-import carData from '$lib/server/data/cars.json';
+import carData from "$lib/server/data/cars.json";
 
 export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
@@ -19,7 +19,7 @@ export const GetAllPortsFromStation = async (stationId: string): Promise<Port[]>
     return await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
 }
 
-export const GetUserAdminStatus = async (userId: string) : Promise<User[]> => {
+export const GetUserAdminStatus = async (userId: string): Promise<User[]> => {
     return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
 }
 
@@ -28,7 +28,7 @@ export async function PostUser(name: string, email: string, password: string) {
         const userId = uuidv4();
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const result = await db.insert(Users).values({userId, name, email, password: hashedPassword}).execute();
+        const result = await db.insert(Users).values({ userId, name, email, password: hashedPassword }).execute();
         return result;
     } catch (error) {
         console.error(error);
@@ -52,7 +52,8 @@ export async function loginUser(email: string, password: string) {
         return null;
     }
 }
-export async function getCurUser(id:string|null) {
+
+export async function getCurUser(id: string | null) {
     if (id !== null) {
         var NewId = id.replace(/"/g, '');
         var users = await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
@@ -61,10 +62,12 @@ export async function getCurUser(id:string|null) {
         throw new Error("User ID cannot be null");
     }
 }
+
 function addHours(date: Date, hours: number): Date {
     const milliseconds = hours * 60 * 60 * 1000;
     return new Date(date.getTime() + milliseconds);
 }
+
 export async function ChangeUserLevel(email:string,level:number,xp:number){
     try {
         console.log(email,level,xp)
@@ -84,6 +87,7 @@ export async function ChangeUserLevel(email:string,level:number,xp:number){
         return null;
     }
 }
+
 export async function ChangeUserXp(email:string,xp:number) {
     try {
         let user =  await db.select().from(Users).where(eq(Users.email, email)).execute();
@@ -96,11 +100,11 @@ export async function ChangeUserXp(email:string,xp:number) {
         return null;
     }
 }
+
 export async function reservePort(userId: string, portId: string, stationId: string,occupiedTime: Date) {
     try {
      
         const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
-       
         if (existingPort.length > 0) {
             return "User has already reserved a port";
         }
@@ -111,13 +115,12 @@ export async function reservePort(userId: string, portId: string, stationId: str
             .set({usedBy: userId, status: 'occupied',OccupiedTime:new Date(occupiedTime),timeRemaining:endTime})
             .where(eq(Ports.portId, portId))
             .execute();
-        console.log("dbComposables: after update Ports")
 
         const ports = await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
 
         if (ports.every(port => port.status === 'occupied')) {
             await db.update(Stations)
-                .set({overallStatus: 'occupied'})
+                .set({ overallStatus: 'occupied' })
                 .where(eq(Stations.stationId, stationId))
                 .execute();
         }
@@ -169,9 +172,7 @@ export async function myPorts(userId: string) {
     }
 }
 
-export async function releasePort(portId: string, stationId: string) 
-{
-   
+export async function releasePort(portId: string, stationId: string) {
     try {
         await db.update(Ports)
             .set({usedBy: null, status: 'available',OccupiedTime: null,timeRemaining: null})
@@ -179,7 +180,7 @@ export async function releasePort(portId: string, stationId: string)
             .execute();
 
         await db.update(Stations)
-            .set({overallStatus: 'available'})
+            .set({ overallStatus: 'available' })
             .where(eq(Stations.stationId, stationId))
             .execute();
 
@@ -198,7 +199,6 @@ export async function requestPort(fromUserId: string, priority: string, requeste
         if (existingRequest.length > 0) {
             return 2;
         }
-
         await db.insert(Requests).values({fromUserId, priority, requestedPortId, message,percent}).execute();
 
         return 1;
@@ -305,7 +305,7 @@ export async function acceptRequest(fromId: string, requestedPortId: string) {
         }
 
         await db.update(Ports)
-            .set({usedBy: fromId, status: 'occupied'})
+            .set({ usedBy: fromId, status: 'occupied' })
             .where(eq(Ports.portId, requestedPortId))
             .execute();
 
@@ -330,13 +330,45 @@ export async function GetUserByEmail(email: string) {
 export async function PostOktauser(name: string, email: string, oktaId: string) {
     try {
         const userId = uuidv4();
-        const result = await db.insert(Users).values({userId, name, email, oktaId}).execute();
-        return {userId, result};
+        const result = await db.insert(Users).values({ userId, name, email, oktaId }).execute();
+        return { userId, result };
     } catch (error) {
         console.error(error);
         return null;
     }
 }
+
+export async function checkPassword(currentPassword : string, userId: string) {
+    try {
+      const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+  
+      if (user && user.length > 0 && user[0].password) {
+          return await bcrypt.compare(currentPassword, user[0].password);
+      }
+  
+      return false;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  export async function changePassword(newPassword : string, userId : string) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+  
+      await db.update(Users)
+        .set({ password: hashedPassword })
+        .where(eq(Users.userId, userId))
+        .execute();
+  
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
 
 //Car selection functions and such 
 export async function GetCars() {
