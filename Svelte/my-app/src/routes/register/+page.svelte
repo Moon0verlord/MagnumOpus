@@ -196,7 +196,7 @@
     <!-- Blank section with logo and quote on the left -->
     <div class="flex flex-col justify-between p-12 bg-base-200 text-base-content">
       <div class="relative z-20 flex items-center text-lg font-medium">
-        <img src="src/lib/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
+        <img src="/assets/logo.svg" alt="Logo" class="w-10 h-10 mr-" />
         <h2 class="text-2xl font-bold mb-1">Schuberg Philis</h2>
       </div>
       <div class="relative z-20 mt-auto">

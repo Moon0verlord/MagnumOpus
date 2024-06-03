@@ -1,16 +1,12 @@
-﻿import {type Port, Ports, Requests, type Station, Stations, type User, Users} from "$lib/server/db/schema";
-import {db} from "$lib/server/db/db.server";
-import {and, eq} from "drizzle-orm";
-import {v4 as uuidv4} from 'uuid';
+﻿import { type Port, Ports, Requests, type Station, Stations, type User, Users } from "$lib/server/db/schema";
+import { db } from "$lib/server/db/db.server";
+import { and, eq } from "drizzle-orm";
+import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 
 export const GetAllPorts = async (): Promise<Port[]> => {
     return await db.select().from(Ports).execute();
 };
-
-export const GetPort = async (portId: string) : Promise<Port[]> => {
-    return await db.select().from(Ports).where(eq(Ports.portId, portId)).execute()
-}
 
 export const GetAllStations = async (): Promise<Station[]> => {
     return await db.select().from(Stations).execute();
@@ -20,12 +16,7 @@ export const GetAllPortsFromStation = async (stationId: string): Promise<Port[]>
     return await db.select().from(Ports).where(eq(Ports.stationId, stationId)).execute();
 }
 
-// maybe change this one bit unclear that it returns the whole user when method name says status
-export const GetUserAdminStatus = async (userId: string) : Promise<User[]> => {
-    return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
-}
-
-export const GetUser = async (userId: string) : Promise<User[]> => {
+export const GetUserAdminStatus = async (userId: string): Promise<User[]> => {
     return await db.select().from(Users).where(eq(Users.userId, userId)).execute();
 }
 
@@ -34,7 +25,7 @@ export async function PostUser(name: string, email: string, password: string) {
         const userId = uuidv4();
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const result = await db.insert(Users).values({userId, name, email, password: hashedPassword}).execute();
+        const result = await db.insert(Users).values({ userId, name, email, password: hashedPassword }).execute();
         return result;
     } catch (error) {
         console.error(error);
@@ -48,6 +39,7 @@ export async function loginUser(email: string, password: string) {
 
         if (user && user.length > 0 && user[0].password) {
             const match = await bcrypt.compare(password, user[0].password);
+
             if (match) {
                 return user[0];
             }
@@ -58,10 +50,10 @@ export async function loginUser(email: string, password: string) {
         return null;
     }
 }
-export async function getCurUser(id:string|null){
+export async function getCurUser(id: string | null) {
     if (id !== null) {
         var NewId = id.replace(/"/g, '');
-        console.log("Url:"+NewId);
+        console.log("Url:" + NewId);
         var users = await db.select().from(Users).where(eq(Users.userId, NewId)).execute();
         return await users[0];
     } else {
@@ -77,7 +69,7 @@ export async function reservePort(userId: string, portId: string, stationId: str
         }
 
         await db.update(Ports)
-            .set({usedBy: userId, status: 'occupied'})
+            .set({ usedBy: userId, status: 'occupied' })
             .where(eq(Ports.portId, portId))
             .execute();
 
@@ -85,7 +77,7 @@ export async function reservePort(userId: string, portId: string, stationId: str
 
         if (ports.every(port => port.status === 'occupied')) {
             await db.update(Stations)
-                .set({overallStatus: 'occupied'})
+                .set({ overallStatus: 'occupied' })
                 .where(eq(Stations.stationId, stationId))
                 .execute();
         }
@@ -118,12 +110,12 @@ export async function myPorts(userId: string) {
 export async function releasePort(portId: string, stationId: string) {
     try {
         await db.update(Ports)
-            .set({usedBy: null, status: 'available'})
+            .set({ usedBy: null, status: 'available' })
             .where(eq(Ports.portId, portId))
             .execute();
 
         await db.update(Stations)
-            .set({overallStatus: 'available'})
+            .set({ overallStatus: 'available' })
             .where(eq(Stations.stationId, stationId))
             .execute();
 
@@ -141,7 +133,7 @@ export async function requestPort(fromUserId: string, priority: string, requeste
             return 2;
         }
 
-        await db.insert(Requests).values({fromUserId, priority, requestedPortId, message}).execute();
+        await db.insert(Requests).values({ fromUserId, priority, requestedPortId, message }).execute();
 
         return 1;
     } catch (error) {
@@ -247,7 +239,7 @@ export async function acceptRequest(fromId: string, requestedPortId: string) {
         }
 
         await db.update(Ports)
-            .set({usedBy: fromId, status: 'occupied'})
+            .set({ usedBy: fromId, status: 'occupied' })
             .where(eq(Ports.portId, requestedPortId))
             .execute();
 
@@ -272,8 +264,8 @@ export async function GetUserByEmail(email: string) {
 export async function PostOktauser(name: string, email: string, oktaId: string) {
     try {
         const userId = uuidv4();
-        const result = await db.insert(Users).values({userId, name, email, oktaId}).execute();
-        return {userId, result};
+        const result = await db.insert(Users).values({ userId, name, email, oktaId }).execute();
+        return { userId, result };
     } catch (error) {
         console.error(error);
         return null;
