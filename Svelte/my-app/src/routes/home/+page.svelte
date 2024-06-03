@@ -32,47 +32,36 @@
     let unsubscribe: () => void;
     let pageData: any[] = [];
     let percentage_charge = 0;
-
-
-    async function fetchData(currentCharge: number, maxCharge: number, userId: string) {
-        try {
-            console.log("DATA", currentCharge, maxCharge, userId)
-            const response = await fetch('/api/charge', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'currentCharge': `${currentCharge}`,
-                    'maxCharge': `${maxCharge}`,
-                    'userId': `${userId}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`API call failed with status ${response.status}`);
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            // Handle the error here (e.g., retry, display an error message)
-        }
-    }
+    let percRemain = 0 ;
+    
 
     setInterval(async () => {
+        //Add check to prevent users without a port from being abused by this
         console.log("Checking for data");
-        console.log(currentUserInfo);
-        if (currentUserInfo && currentUserInfo.BatteryCurrent){
+        if (currentUserInfo && currentUserInfo.BatteryCurrent && currentUserId){
             console.log("Fetching data");
             try {
-                const data = await fetchData(currentUserInfo.BatteryCurrent, currentUserInfo.BatteryMax, currentUserInfo.userId);
-                console.log("data", data);
+                const response = await fetch(`/api/charge`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'currentCharge': currentUserInfo.BatteryCurrent.toString(),
+                        'maxCharge': currentUserInfo.BatteryMax.toString(),
+                        'userId': currentUserId?.toString()
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data ){
+                        console.log("Remaining Charge:", data);
+                    }
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                // Handle the error here (same as above)
+             
             }
         }
-    }, 2000);
+    }, 4000);
 
 
     async function roundToTwoDecimals(number: number) {
@@ -106,9 +95,7 @@
         {
             
             charge = await roundToTwoDecimals(percentage_charge);
-            console.log(CarOfChoice);
-            console.log(charge);
-            console.log(percentage_charge);
+            percRemain = 100 - charge;
             const response = await fetch('/api/cars', {
                 method: 'POST',
                 headers: {
@@ -751,7 +738,7 @@
                                     <div class="modal-action">
                                         <form method="dialog">
                                             {#if CarOfChoice && percentage_charge!==0}
-                                                {console.log(percentage_charge)}
+                                 
                                                 <button class="btn" on:click={DoneChoosingCar}>Done</button>
                                             {:else}
                                             <button class="btn" disabled>Done</button>
@@ -782,9 +769,11 @@
                                             {keys.find(key => cars[key].some(car => car.model === currentUserInfo.carModel))} {currentUserInfo.carModel}
                                         {/if}
                                     </p>
-                                                                    
-                                    <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent}" max="100"></progress>
-                                    <p>Battery: {currentUserInfo.BatteryCurrent}%</p>
+                                    {#key percRemain}
+                                   
+                                    <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent.toString()}" max="100"></progress>
+                                    <p>Battery: {currentUserInfo.BatteryCurrent.toString()}%</p>
+                                        {/key}
                                 </div>
                             {/if}
                             </div>

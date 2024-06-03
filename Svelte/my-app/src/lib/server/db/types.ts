@@ -16,6 +16,7 @@ export type Port = {
     status: 'available' | 'occupied' | 'unavailable';
     OccupiedTime: Date | null;
     timeRemaining: Date | null;
+    maxPower: number;
 }
 
 export type Car = {
