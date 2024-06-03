@@ -36,6 +36,8 @@
     let unsubscribe: () => void;
     let pageData: any[] = [];
     let percentage_charge = 0;
+    let carIntervalId: any;
+    
     onMount(async () => {
         let result = document.cookie
             .split("; ")
@@ -103,6 +105,38 @@
                 await getIncomingRequests();
             }
         }
+
+        carIntervalId = setInterval(async () => {
+            if (currentUserInfo && currentUserInfo.BatteryCurrent && currentUserId){
+                try {
+                    const response = await fetch(`/api/charge`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'currentCharge': currentUserInfo.BatteryCurrent.toString(),
+                            // @ts-ignore
+                            'maxCharge': currentUserInfo.BatteryMax.toString(),
+                            'userId': currentUserId?.toString()
+                        },
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data ){
+
+                            console.log("Remaining Charge:", data);
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+
+
+                }
+            }
+        }, 3000);
+    });
+
+    onDestroy(() => {
+        clearInterval(carIntervalId);
     });
     
     async function sendNotification() {
@@ -158,34 +192,6 @@
             // Handle the error here (e.g., retry, display an error message)
         }
     }
-
-    setInterval(async () => {
-        if (currentUserInfo && currentUserInfo.BatteryCurrent && currentUserId){
-        try {
-            const response = await fetch(`/api/charge`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'currentCharge': currentUserInfo.BatteryCurrent.toString(),
-                    // @ts-ignore
-                    'maxCharge': currentUserInfo.BatteryMax.toString(),
-                    'userId': currentUserId?.toString()
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                if (data ){
-                    
-                    console.log("Remaining Charge:", data);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-    
-            
-        }
-    }
-    }, 3000);
 
 
     async function roundToTwoDecimals(number: number) {
