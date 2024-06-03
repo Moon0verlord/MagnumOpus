@@ -53,6 +53,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data ){
+                        
                         console.log("Remaining Charge:", data);
                     }
                 }
@@ -62,7 +63,7 @@
                 
             }
         }
-    }, 2000);
+    }, 1000);
 
 
     async function roundToTwoDecimals(number: number) {
@@ -769,9 +770,10 @@
                                                 {keys.find(key => cars[key].some(car => car.model === currentUserInfo.carModel))} {currentUserInfo.carModel}
                                             {/if}
                                         </p>
-
+                                        {#key currentUserInfo.BatteryCurrent }
                                         <progress class="progress progress-primary w-full" value="{currentUserInfo.BatteryCurrent}" max="100"></progress>
                                         <p>Battery: {currentUserInfo.BatteryCurrent}%</p>
+                                            {/key}
                                     </div>
                                 {/if}
                             </div>
