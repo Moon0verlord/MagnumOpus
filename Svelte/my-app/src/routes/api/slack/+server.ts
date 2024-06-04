@@ -122,7 +122,7 @@ export const POST = async ({ request }) => {
                                         "emoji": true
                                     },
                                     "value": "click_me_123",
-                                    "url": "http://localhost:5173/test",
+                                    "url": "http://localhost:5173/stations",
                                     "action_id": "button-action"
                                 }
                             ]

@@ -1,7 +1,6 @@
 ﻿import {type Port, Ports, Requests, type Station, Stations, type User, Users} from "$lib/server/db/schema";
-
 import {db} from "$lib/server/db/db.server";
-import {and, eq} from "drizzle-orm";
+import {and, eq, sql} from "drizzle-orm";
 import {v4 as uuidv4} from 'uuid';
 import bcrypt from 'bcryptjs';
 import type {CarData} from "$lib/server/db/types";
@@ -15,6 +14,11 @@ export const GetAllPorts = async (): Promise<Port[]> => {
 export const GetPort = async (portId: string): Promise<Port[]> => {
     return await db.select().from(Ports).where(eq(Ports.portId, portId)).execute();
 };
+
+export const PostCharge = async (userId: string, charge: any) => {
+    // @ts-ignore
+    await db.update(Users).set({BatteryCurrent: charge, lastChargeTime: Date.now()}).where(eq(Users.userId, userId)).execute();
+}
 
 export const GetAllStations = async (): Promise<Station[]> => {
     return await db.select().from(Stations).execute();
@@ -129,7 +133,7 @@ export async function reservePort(userId: string, portId: string, stationId: str
                 .where(eq(Stations.stationId, stationId))
                 .execute();
         }
-
+        await db.update(Users).set({lastChargeTime: Date.now().toString()}).where(eq(Users.userId, userId))
         return true;
     } catch (error) {
         console.error(error);
@@ -169,7 +173,6 @@ export async function allOccupiedPorts() {
 }
 
 export async function myPorts(userId: string) {
-
     try {
         return await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
     } catch (error) {

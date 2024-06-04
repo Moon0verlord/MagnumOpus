@@ -15,6 +15,8 @@ export const Users  = pg.pgTable("Users", {
     BatteryMax: pg.decimal("battery_max"),
     BatteryCurrent: pg.decimal("battery_current"),
     carModel: pg.text("car_model"),
+    // Unix Timestamp
+    lastChargeTime: pg.text("last_charge_time"),
 });
 
 export type User = InferSelectModel<typeof Users>;
