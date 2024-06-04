@@ -133,7 +133,7 @@ export async function reservePort(userId: string, portId: string, stationId: str
                 .where(eq(Stations.stationId, stationId))
                 .execute();
         }
-
+        await db.update(Users).set({lastChargeTime: Date.now().toString()}).where(eq(Users.userId, userId))
         return true;
     } catch (error) {
         console.error(error);
