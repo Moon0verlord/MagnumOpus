@@ -17,7 +17,7 @@ export const GetPort = async (portId: string): Promise<Port[]> => {
 
 export const PostCharge = async (userId: string, charge: any) => {
     // @ts-ignore
-    await db.update(Users).set({BatteryCurrent: charge, lastChargeTime: sql`now()`}).where(eq(Users.userId, userId)).execute();
+    await db.update(Users).set({BatteryCurrent: charge, lastChargeTime: Date.now()}).where(eq(Users.userId, userId)).execute();
 }
 
 export const GetAllStations = async (): Promise<Station[]> => {

@@ -80,7 +80,6 @@
             }
             else {
                 console.log('Data pushed successfully');
-                console.log(new Date(currentUserInfo?.lastChargeTime!))
             }
         } catch (error) {
             console.error('Error pushing data:', error);
@@ -123,10 +122,10 @@
                 }
             }
             if (currentUserId !== null) {
-                await PopulateUser(currentUserId).then((user) => {
-                    currentUserInfo = user;
-                    currentUserIsAdmin = user.isAdmin;
-                });
+                // await PopulateUser(currentUserId).then((user) => {
+                //     currentUserInfo = user;
+                //     currentUserIsAdmin = user.isAdmin;
+                // });
 
                 if (currentUserIsAdmin) {
                     await adminAllRequests();
@@ -139,11 +138,11 @@
             }
             sendNotification();
         } else {
-            currentUserId = result;
-            await PopulateUser(currentUserId).then((user) => {
-                currentUserInfo = user;
-                currentUserIsAdmin = user.isAdmin;
-            });
+            // currentUserId = result;
+            // await PopulateUser(currentUserId).then((user) => {
+            //     currentUserInfo = user;
+            //     currentUserIsAdmin = user.isAdmin;
+            // });
 
             if (currentUserIsAdmin) {
                 await adminAllRequests();
@@ -160,12 +159,12 @@
                 try {
                     if (carCharge && portsData.length >= 1)
                         // Simple increment counter for now, easier to show charging during demo. Switch with actual calculation in production.
-                        Math.min(100, carCharge += 1)
+                        carCharge = Math.min(100, carCharge + 1)
                 } catch (error) {
                     console.error("Error fetching data:", error);
                 }
             }
-        }, 3000);
+        }, 4000);
     });
 
     onDestroy(() => {
@@ -1097,7 +1096,7 @@
                                                 {currentUserInfo.carModel}
                                             {/if}
                                         </p>
-                                        {#key currentUserInfo.BatteryCurrent}
+                                        {#if currentUserInfo.BatteryCurrent}
                                             <progress
                                                     class="progress progress-primary w-full"
                                                     value={currentUserInfo.BatteryCurrent}
@@ -1106,7 +1105,7 @@
                                             <p>
                                                 Battery: {carCharge}%
                                             </p>
-                                        {/key}
+                                        {/if}
                                     </div>
                                 {/if}
                             </div>
