@@ -5,13 +5,15 @@ import {
     allStationsAvailable,
     Seeder,
     StationPortBalancer,
-    PortDisplayNameGenerator, ClearPorts, ClearStations
+    PortDisplayNameGenerator, ClearPorts, ClearStations, ClearRequests
 } from "$lib/server/db/seeder";
 import fs from 'fs';
 import path from 'path';
 
 export const GET = async () => {
     try {
+        await ClearRequests();
+        console.log("All requests are deleted.");
         await ClearPorts();
         console.log("All port entries deleted.");
         await ClearStations();

@@ -1,12 +1,13 @@
 ﻿import {db} from "$lib/server/db/db.server"
 import type {StationData, Status} from "$lib/server/db/types";
-import type {Port, Station} from "$lib/server/db/schema";
+import {type Port, Requests, type Station} from "$lib/server/db/schema";
 import {eq, sql} from "drizzle-orm";
 import {Ports, Stations} from "$lib/server/db/schema";
 // @ts-ignore
 import { API_URL } from '$env/static/private';
 import {list} from "postcss";
 
+export const ClearRequests = async () => await db.delete(Requests);
 export const ClearPorts = async () => await db.delete(Ports);
 export const ClearStations = async () => await db.delete(Stations);
 
@@ -106,17 +107,11 @@ export const allPortsAvailable = async () => {
             .execute();
     }
 }
-function logMessage(message: string, level: string = 'info') {
-    console.log(`[${level}] - ${message}`);
-}
 
 export const allStationsAvailable = async () => {
     const allStations = await db.select().from(Stations).execute();
     for (const station of allStations) {
         const ports = await db.select().from(Ports).where(eq(Ports.stationId, station.stationId)).execute();
-
-        logMessage('Seeding started...');
-        logMessage('Created user with email: john.doe@example.com', 'warn');
         await db.update(Stations)
             .set({ overallStatus: 'available' })
             .where(eq(Stations.stationId, station.stationId))
