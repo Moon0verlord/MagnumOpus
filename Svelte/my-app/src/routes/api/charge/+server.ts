@@ -1,5 +1,46 @@
-import {GetCars, getCharge, GetEndTimeChargeEstimation, GetInterCharge, PostCharge} from "$lib/server/db/dbComposables";
+import {GetInterCharge, PostCharge} from "$lib/server/db/dbComposables";
 
+/**
+ * @openapi
+ * /api/charge:
+ *   get:
+ *     summary: Get intermediate charge
+ *     parameters:
+ *       - in: header
+ *         name: currentCharge
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: header
+ *         name: maxCharge
+ *         schema:
+ *           type: string
+ *         required: true
+ *       - in: header
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 charge:
+ *                   type: string
+ *       400:
+ *         description: Failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 // @ts-ignore
 export const GET = async ({request}) => {
     try {
@@ -16,6 +57,51 @@ export const GET = async ({request}) => {
     }
 }
 
+/**
+ * @openapi
+ * /api/charge:
+ *   post:
+ *     summary: Post a charge
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               charge:
+ *                 type: string
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Failed. Charge or userId were null.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 // @ts-ignore
 export const POST = async ({ request }) => {
     try {
@@ -34,6 +120,3 @@ export const POST = async ({ request }) => {
         return new Response(JSON.stringify({message: "Failed"}), {status: 500});
     }
 }
-
-    
-    

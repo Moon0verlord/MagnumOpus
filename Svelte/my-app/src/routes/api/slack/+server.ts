@@ -1,12 +1,63 @@
 ﻿import {SLACK_WEBHOOK} from "$env/static/private";
 import {GetPort, GetUserAdminStatus} from "$lib/server/db/dbComposables";
-import type {Port} from "$lib/server/db/schema";
 import * as dotenv from 'dotenv';
 
 const isEmpty = function(text: string): boolean {
     return text === null || text.match(/^ *$/) !== null;
 };
 
+
+/**
+ * @openapi
+ * /api/slack:
+ *   post:
+ *     summary: Send a message to Slack
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               portId:
+ *                 type: string
+ *               userId:
+ *                 type: string
+ *               priority:
+ *                 type: string
+ *               message:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: No slack webhook is set
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 // @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();

@@ -2,7 +2,33 @@
 import {GetUserAdminStatus} from "$lib/server/db/dbComposables";
 import type {User} from "$lib/server/db/schema";
 
-// obviously unsafe with automatically inferring userId in body etc etc but we can manage.
+/**
+ * @openapi
+ * /api/admin:
+ *   post:
+ *     summary: Check if user is admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 isAdmin:
+ *                   type: boolean
+ */
 // @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();

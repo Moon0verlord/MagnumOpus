@@ -1,5 +1,55 @@
 import { reservePort } from "$lib/server/db/dbComposables";
 
+
+/**
+ * @openapi
+ * /api/stations:
+ *   post:
+ *     summary: Reserve a port
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               portId:
+ *                 type: string
+ *               stationId:
+ *                 type: string
+ *               occupiedTime:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       202:
+ *         description: User has already reserved a port
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 // @ts-ignore
 export const POST = async ({ request }) => {
     const body = await request.json();
