@@ -108,10 +108,12 @@ export const POST = async ({ request }) => {
         const body = await request.json()
         let charge = body.charge;
         let userId = body.userId
+        
         if ((charge !== null && charge) && userId !== null) {
             await PostCharge(userId, charge);
             return new Response(JSON.stringify({message: "Success"}), {status: 200});
         }
+        
         return new Response(JSON.stringify({message: "Failed. Charge or userId were null."}), {status: 400});
     }
     catch (error)
