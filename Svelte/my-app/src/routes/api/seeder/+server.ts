@@ -10,6 +10,31 @@ import {
 import fs from 'fs';
 import path from 'path';
 
+/**
+ * @openapi
+ * /api/seeder:
+ *   get:
+ *     summary: Seed the database
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
 export const GET = async () => {
     try {
         await ClearRequests();
@@ -33,7 +58,7 @@ export const GET = async () => {
         console.log("All station ports are balanced to a maximum, unneeded ports removed from DB.");
         await PortDisplayNameGenerator();
         console.log("Generated display name for all remaining ports.");
-        
+
         console.log("Done!");
         return new Response(JSON.stringify(
                 { message: "OK" }),
