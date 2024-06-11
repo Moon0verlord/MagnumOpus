@@ -23,6 +23,74 @@
     let unsubscribe: () => void;
     let pageData: any[] = [];
     
+    async function UpdateUser(email: string | null, name: string | null) {
+        const response = await fetch('/api/ChangeUser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id : currentUserId,
+                name: name,
+                email: email
+            })
+        });
+
+        const data = await response.json();
+        return data.user;
+    }
+    async function changeUserEmail(event: KeyboardEvent) {
+        const inputElement = event.target as HTMLInputElement;
+        const inputValue = inputElement.value;
+        await UpdateUser(inputValue,null);
+    }
+    async function changeUserName(event: KeyboardEvent) {
+        const inputElement = event.target as HTMLInputElement;
+        const inputValue = inputElement.value;
+        await UpdateUser(null,inputValue);
+    }
+    async function pushChargeData(carCharge: number) {
+        try {
+            console.log('Pushing data:', carCharge)
+            const response = await fetch('/api/charge', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: currentUserInfo ? currentUserInfo.userId : null,
+                    charge: carCharge
+                })
+            });
+            if (response.status !== 200) {
+                console.error('Error pushing data, response not OK.');
+            }
+            else {
+                console.log('Data pushed successfully');
+            }
+        } catch (error) {
+            console.error('Error pushing data:', error);
+        }
+    }
+    async function ChangeCharge(event: KeyboardEvent) {
+        // Get the input element
+        const inputElement = event.target as HTMLInputElement;
+
+        // Get the current value as a number (handling non-numeric input)
+        let inputValue = Number(inputElement.value);
+        if (isNaN(inputValue)) {
+            inputValue = 0; // Set to 0 if input is not a number
+        }
+
+        // Enforce valid range (0-100) using Math.min and Math.max
+        inputValue = Math.min(Math.max(inputValue, 0), 100);
+
+        // Update the input element's value
+        inputElement.value = inputValue.toString();
+        
+        await pushChargeData(inputValue);
+    }
+
     async function setLevel(user:User)
     {
         if (currentUserInfo) {
@@ -267,12 +335,23 @@
             <div class="card bg-base-100 h-full shadow-xl">
                 <div class="w-full card-body">
                     <div class="m-auto">
-                        
                         {#if currentUserInfo }
-                            <p>Name : {currentUserInfo.name} </p>
-                            <p>Change name : <input></p>
-                            <p>E-mail : {currentUserInfo.email} </p>
-                            <p>Change E-mail : <input></p>
+                            <p>Name : 
+                                <input  class="input input-bordered w-30 max-w-xs h-5"  placeholder="{currentUserInfo.name}"  type="text" on:keydown={(e) => e.key === 'Enter' && changeUserName(e)}>
+                            </p>
+                            {#if currentUserInfo.oktaId===null}
+                                <p>E-mail : 
+                                    <input class="input input-bordered w-30 max-w-xs h-5"   placeholder="{currentUserInfo.email}" type="text" on:keydown={(e) => e.key === 'Enter' && changeUserEmail(e)} >
+                                </p>
+                            {/if}
+                            <!-- TODO fix change user change car -->
+                            <p>Car :
+                                <input class="input input-bordered w-30 max-w-xs h-5" placeholder="{currentUserInfo.carModel}">
+                            </p>
+                            <p>
+                                Change battery: 
+                                <input class="input input-bordered w-30 max-w-xs h-5"  placeholder="{currentUserInfo.BatteryCurrent}" type="number" on:keydown={(e) => e.key === 'Enter' && ChangeCharge(e)}>
+                            </p>    
                             <div class="mt-10">
                                 <div style="display: flex; justify-content: space-between;">
                                           <span>
