@@ -51,6 +51,7 @@
     }
     async function pushChargeData(carCharge: number) {
         try {
+            console.log('Pushing data:', carCharge)
             const response = await fetch('/api/charge', {
                 method: 'POST',
                 headers: {
@@ -86,7 +87,7 @@
 
         // Update the input element's value
         inputElement.value = inputValue.toString();
-
+        
         await pushChargeData(inputValue);
     }
 
@@ -338,9 +339,11 @@
                             <p>Name : 
                                 <input  class="input input-bordered w-30 max-w-xs h-5"  placeholder="{currentUserInfo.name}"  type="text" on:keydown={(e) => e.key === 'Enter' && changeUserName(e)}>
                             </p>
-                            <p>E-mail : 
-                                <input class="input input-bordered w-30 max-w-xs h-5"   placeholder="{currentUserInfo.email}" type="text" on:keydown={(e) => e.key === 'Enter' && changeUserEmail(e)} >
-                            </p>
+                            {#if currentUserInfo.oktaId===null}
+                                <p>E-mail : 
+                                    <input class="input input-bordered w-30 max-w-xs h-5"   placeholder="{currentUserInfo.email}" type="text" on:keydown={(e) => e.key === 'Enter' && changeUserEmail(e)} >
+                                </p>
+                            {/if}
                             <!-- TODO fix change user change car -->
                             <p>Car :
                                 <input class="input input-bordered w-30 max-w-xs h-5" placeholder="{currentUserInfo.carModel}">
