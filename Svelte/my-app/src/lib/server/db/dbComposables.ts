@@ -472,6 +472,40 @@ export async function getCharge(userId: string | null) {
         throw new Error("User ID cannot be null");
     }
 }
+export async function ChangeUser(id: string , email:string | null, name:string | null){
+    const NullEmail = (email === null ? 1 : 0);
+    const total = NullEmail + (name === null ? 1 : 0);
+    switch (total)
+    {
+        case 0:
+            await db.update(Users)
+                .set({email: email, name: name})
+                .where(eq(Users.userId, id))
+                .execute();
+            break;
+        case 1:
+            if(NullEmail === 1)
+            {
+                await db.update(Users)
+                    .set({name: name})
+                    .where(eq(Users.userId, id))
+                    .execute();
+            }
+            else
+            {
+                await db.update(Users)
+                    .set({email: email})
+                    .where(eq(Users.userId, id))
+                    .execute();
+            }
+            break;
+            
+        case 2:
+            console.log("No changes were made");
+            break;
+    }
+    return total !== 0;
+}
 export async function GetInterCharge(userId: string, BatteryCurrent: string, BatteryMax: string) {
     try {
     
