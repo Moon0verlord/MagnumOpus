@@ -122,10 +122,10 @@
                 }
             }
             if (currentUserId !== null) {
-                // await PopulateUser(currentUserId).then((user) => {
-                //     currentUserInfo = user;
-                //     currentUserIsAdmin = user.isAdmin;
-                // });
+                await PopulateUser(currentUserId).then((user) => {
+                    currentUserInfo = user;
+                    currentUserIsAdmin = user.isAdmin;
+                });
 
                 if (currentUserIsAdmin) {
                     await adminAllRequests();
@@ -137,21 +137,6 @@
                 }
             }
             sendNotification();
-        } else {
-            // currentUserId = result;
-            // await PopulateUser(currentUserId).then((user) => {
-            //     currentUserInfo = user;
-            //     currentUserIsAdmin = user.isAdmin;
-            // });
-
-            if (currentUserIsAdmin) {
-                await adminAllRequests();
-                await adminAllOccupiedPorts();
-            } else {
-                await getPorts();
-                await myRequests();
-                await getIncomingRequests();
-            }
         }
 
         carIntervalId = setInterval(async () => {
@@ -324,6 +309,11 @@
             }),
         });
         const data = await response.json();
+
+        let millis = Date.now() - Number(data.user.lastChargeTime)
+        const intervals = Math.floor(millis / 4000);
+        data.user.BatteryCurrent = Math.min(100, Number(data.user.BatteryCurrent) + intervals);
+
         return data.user;
     }
 

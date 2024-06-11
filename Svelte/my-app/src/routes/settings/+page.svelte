@@ -21,7 +21,6 @@
 
     function logout() {
         userId.set(null);
-        sessionStorage.removeItem("userId");
         document.cookie = `userId=Expired; SameSite=None; path=/; Secure`;
 
         // Attempt to log out from Okta
