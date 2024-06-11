@@ -13,6 +13,7 @@
     let allRequestData: any[] = [];
     let allOccupiedPorts: any[] = [];
     $: isMobile = $mobile;
+    let curLevel:number | string;
     let maxLevel:number | string;
     let nextExp:number | string;
     let userInfo: UserClaims | null = null;
@@ -26,6 +27,7 @@
     {
         if (currentUserInfo) {
             let Level = await getLevel(user.totalXp);
+            curLevel = Level;
             [maxLevel,nextExp] = await getMaxLevel(Level,user.totalXp)
             const response = await fetch('/api/getuser', {
                 method: 'POST',
@@ -274,7 +276,7 @@
                             <div class="mt-10">
                                 <div style="display: flex; justify-content: space-between;">
                                           <span>
-                                            Current Level : {currentUserInfo.level}
+                                            Current Level : {curLevel}
                                           </span>
                                            <span class="text-right">
                                             Next Level : {maxLevel}

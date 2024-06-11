@@ -73,6 +73,7 @@ export async function getCurUser(id: string | null) {
 }
 
 function addHours(date: Date, hours: number): Date {
+    console.log("Estimated time: "+new Date(date.getTime() + hours*60 *60 * 1000));
     const milliseconds = hours * 60 * 60 * 1000;
     return new Date(date.getTime() + milliseconds);
 }
@@ -148,14 +149,12 @@ export async function GetEndTimeChargeEstimation(occupiedTime:Date, userId: stri
     try {
         const user = (await db.select().from(Users).where(eq(Users.userId, userId)).execute())[0];
         const PerCharge = await getCharge(user.userId);
-       
+        
 
         if (PerCharge && user.BatteryMax && power!=null)
         {
             const remainingCharge = (PerCharge / 100) * parseFloat(user.BatteryMax);
-            var hours = (remainingCharge / power);
-            console.log("Hours: "+addHours(occupiedTime,hours));
-            return addHours(occupiedTime,hours);
+            return new Date(occupiedTime.getTime() + (remainingCharge / power)*60*60*1000);;
         }
     } catch (error) {
         console.error(error);
@@ -183,17 +182,62 @@ export async function myPorts(userId: string) {
 
 export async function releasePort(portId: string, stationId: string) {
     try {
-        await db.update(Ports)
-            .set({usedBy: null, status: 'available',OccupiedTime: null,timeRemaining: null})
-            .where(eq(Ports.portId, portId))
-            .execute();
+        const port = await db.select().from(Ports).where(eq(Ports.portId, portId)).execute();
+        const userId = port[0].usedBy as string;
+        if(userId) {
+            const user = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
+            const curXp = user[0].totalXp as number;
+            
+            if(port[0].timeRemaining == null) {
+                console.error("Time remaining is null")
+            }
+            
+            else {
+                const time = port[0].timeRemaining!.getTime();
+                const xpDeliberate = time - new Date().getTime()
+                switch (true) {
+                    case (xpDeliberate < 0):
+                        await db.update(Users)
+                            .set({totalXp: curXp + 40})
+                            .where(eq(Users.userId, userId))
+                            .execute();
+                        break;
+                    case (xpDeliberate == 0):
+                        await db.update(Users)
+                            .set({totalXp: curXp + 30})
+                            .where(eq(Users.userId, userId))
+                            .execute();
+                        break;
 
-        await db.update(Stations)
-            .set({ overallStatus: 'available' })
-            .where(eq(Stations.stationId, stationId))
-            .execute();
+                    case (xpDeliberate > 0 && xpDeliberate < 600000):
+                        await db.update(Users)
+                            .set({totalXp: curXp + 20})
+                            .where(eq(Users.userId, userId))
+                            .execute();
+                        break;
+                    case (xpDeliberate > 1800000 && xpDeliberate < 3600000):
+                        await db.update(Users)
+                            .set({totalXp: curXp + 10})
+                            .where(eq(Users.userId, userId))
+                            .execute();
+                        break;
+                }
+            }
+        }
+            await db.update(Ports)
+                .set({usedBy: null, status: 'available', OccupiedTime: null, timeRemaining: null})
+                
+                .where(eq(Ports.portId, portId))
+                .execute();
 
-        return true;
+            await db.update(Stations)
+                .set({overallStatus: 'available'})
+              
+                .where(eq(Stations.stationId, stationId))
+                .execute();
+
+            return true;
+        
     } catch (error) {
         console.error(error);
         return null;
