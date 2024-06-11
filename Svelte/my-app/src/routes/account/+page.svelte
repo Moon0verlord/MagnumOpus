@@ -22,7 +22,25 @@
     let currentUserInfo: User | null;
     let unsubscribe: () => void;
     let pageData: any[] = [];
-    
+    async function ChangeCharge(event: KeyboardEvent) {
+        // Get the input element
+        const inputElement = event.target as HTMLInputElement;
+
+        // Get the current value as a number (handling non-numeric input)
+        let inputValue = Number(inputElement.value);
+        if (isNaN(inputValue)) {
+            inputValue = 0; // Set to 0 if input is not a number
+        }
+
+        // Enforce valid range (0-100) using Math.min and Math.max
+        inputValue = Math.min(Math.max(inputValue, 0), 100);
+
+        // Update the input element's value
+        inputElement.value = inputValue.toString();
+
+        console.log(inputValue+ " "+ currentUserId);
+    }
+
     async function setLevel(user:User)
     {
         if (currentUserInfo) {
@@ -267,12 +285,16 @@
             <div class="card bg-base-100 h-full shadow-xl">
                 <div class="w-full card-body">
                     <div class="m-auto">
-                        
                         {#if currentUserInfo }
                             <p>Name : {currentUserInfo.name} </p>
                             <p>Change name : <input></p>
                             <p>E-mail : {currentUserInfo.email} </p>
                             <p>Change E-mail : <input></p>
+                            <p>Car :<input></p>
+                            <p>
+                                Change battery: 
+                                <input type="number" on:keydown={(e) => e.key === 'Enter' && ChangeCharge(e)}>
+                            </p>    
                             <div class="mt-10">
                                 <div style="display: flex; justify-content: space-between;">
                                           <span>
