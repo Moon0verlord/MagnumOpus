@@ -13,7 +13,7 @@
 
   $: isMobile = $mobile;
 
-  sessionStorage.removeItem("userId");
+  userId.set(null);
   document.cookie = `userId=Expired; SameSite=None; path=/; Secure`;
 
   // Okta Login function. works fine
