@@ -20,9 +20,14 @@
     let currentUserId: string | null = null;
     let currentUserIsAdmin: boolean | null = null;
     let currentUserInfo: User | null;
+    
     let unsubscribe: () => void;
     let pageData: any[] = [];
-    
+
+    //Check updates 
+    let UpdateCharge: boolean = false;
+    let UpdateName: boolean = false;
+    let UpdateEmail: boolean = false;
     async function UpdateUser(email: string | null, name: string | null) {
         const response = await fetch('/api/ChangeUser', {
             method: 'POST',
@@ -35,7 +40,17 @@
                 email: email
             })
         });
-
+        if(response.ok)
+        {
+            if(email)
+            {
+                UpdateEmail = true;
+            }
+            if(name)
+            {
+                UpdateName = true;
+            }
+        }
         const data = await response.json();
         return data.user;
     }
@@ -66,7 +81,7 @@
                 console.error('Error pushing data, response not OK.');
             }
             else {
-                console.log('Data pushed successfully');
+                UpdateCharge = true ;
             }
         } catch (error) {
             console.error('Error pushing data:', error);
@@ -338,10 +353,17 @@
                         {#if currentUserInfo }
                             <p>Name : 
                                 <input  class="input input-bordered w-30 max-w-xs h-5"  placeholder="{currentUserInfo.name}"  type="text" on:keydown={(e) => e.key === 'Enter' && changeUserName(e)}>
+                                {#if UpdateName}
+                                    <span class="text-green-500">Updated</span>
+                                {/if}
                             </p>
                             {#if currentUserInfo.oktaId===null}
                                 <p>E-mail : 
                                     <input class="input input-bordered w-30 max-w-xs h-5"   placeholder="{currentUserInfo.email}" type="text" on:keydown={(e) => e.key === 'Enter' && changeUserEmail(e)} >
+
+                                    {#if UpdateEmail}
+                                        <span class="text-green-500">Updated</span>
+                                    {/if}
                                 </p>
                             {/if}
                             <!-- TODO fix change user change car -->
@@ -351,6 +373,9 @@
                             <p>
                                 Change battery: 
                                 <input class="input input-bordered w-30 max-w-xs h-5"  placeholder="{currentUserInfo.BatteryCurrent}" type="number" on:keydown={(e) => e.key === 'Enter' && ChangeCharge(e)}>
+                                {#if UpdateCharge}
+                                    <span class="text-green-500">Updated</span>
+                                {/if}
                             </p>    
                             <div class="mt-10">
                                 <div style="display: flex; justify-content: space-between;">
