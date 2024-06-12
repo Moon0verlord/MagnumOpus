@@ -191,11 +191,6 @@
           <span class="label-text-alt">
             <a href="/register" class="link link-hover">Register</a>
           </span>
-          <span class="label-text-alt"
-            ><a href="/forgotpassword" class="link link-hover"
-              >Forgot Password</a
-            ></span
-          >
         </div>
         <div class="divider -mt-1">OR</div>
         <button
@@ -330,9 +325,6 @@
                   on:input={handleInput}
                 />
               </label>
-              <a href="##" class="label-text-alt link link-hover"
-                >Forgot Password?</a
-              >
             </div>
             <button type="submit" class="btn btn-primary w-full">Login</button>
           </form>

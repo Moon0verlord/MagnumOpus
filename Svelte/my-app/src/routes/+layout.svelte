@@ -71,14 +71,17 @@
 </svelte:head>
 
 <html lang="en" class="bg outline-none">
+    <!-- Desktop Navbar -->
 
-<!-- Desktop Navbar -->
-
-    {#if !isMobile && ["/home", "/stations", "/settings", "/schuberg_api", "/test", "/notifications", "/about", "/account"].includes(currentPage)}
+    {#if !isMobile && ["/home", "/stations", "/settings", "/account"].includes(currentPage)}
         <div class="navbar bg-base-100 h-24">
             <div class="flex-1 items-center h-20">
                 <a href="/home" class="btn btn-ghost text-xl px-2">
-                    <img src="/assets/logo.svg" alt="Logo" class="w-6 h-6 mr-" />
+                    <img
+                        src="/assets/logo.svg"
+                        alt="Logo"
+                        class="w-6 h-6 mr-"
+                    />
                     Schuberg Hub
                 </a>
             </div>
@@ -92,28 +95,36 @@
         </div>
     {/if}
 
-<div class="{isMobile ? (currentPage === '/' || currentPage === '/register' ? '' : '-mb-16') : (currentPage === '/' || currentPage === '/register' ? '' : '-mt-24')}">
-    <slot/>
-</div>
-
-<!-- Mobile Navbar -->
-{#if isMobile && ['/home', '/stations', '/settings', '/schuberg_api', '/test'].includes(currentPage)}
-    <div class="btm-nav">
-        <a href="/home" class:active={currentPage === '/home'}>
-            <button>
-                <span class="btm-nav-label">Home</span>
-            </button>
-        </a>
-        <a href="/stations" class:active={currentPage === '/stations'}>
-            <button>
-                <span class="btm-nav-label">Stations</span>
-            </button>
-        </a>
-        <a href="/settings" class:active={currentPage === '/settings'}>
-            <button>
-                <span class="btm-nav-label">Settings</span>
-            </button>
-        </a>
+    <div
+        class={isMobile
+            ? currentPage === "/" || currentPage === "/register"
+                ? ""
+                : "-mb-16"
+            : currentPage === "/" || currentPage === "/register"
+              ? ""
+              : "-mt-24"}
+    >
+        <slot />
     </div>
-{/if}
+
+    <!-- Mobile Navbar -->
+    {#if isMobile && ["/home", "/stations", "/settings", "/account"].includes(currentPage)}
+        <div class="btm-nav">
+            <a href="/home" class:active={currentPage === "/home"}>
+                <button>
+                    <span class="btm-nav-label">Home</span>
+                </button>
+            </a>
+            <a href="/stations" class:active={currentPage === "/stations"}>
+                <button>
+                    <span class="btm-nav-label">Stations</span>
+                </button>
+            </a>
+            <a href="/settings" class:active={currentPage === "/settings"}>
+                <button>
+                    <span class="btm-nav-label">Settings</span>
+                </button>
+            </a>
+        </div>
+    {/if}
 </html>
