@@ -12,7 +12,6 @@
     };
     
  // Adjust the path as necessary
-
     function logout() {
         userId.set(null);
         document.cookie = `userId=Expired; SameSite=None; path=/; Secure`;

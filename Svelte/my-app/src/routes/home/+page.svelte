@@ -13,17 +13,11 @@
     import { beforeNavigate } from "$app/navigation";
 
     export let data: PageData;
-    let requestPageData: any[] = data.props.requests ? data.props.requests : [];
-    let incomingRequests: any[] = data.props.incoming
-        ? data.props.incoming
-        : [];
-    let allRequestData: any[] = data.props.requestsAll
-        ? data.props.requestsAll
-        : [];
-    let allOccupiedPorts: any[] = data.props.usedPorts
-        ? data.props.usedPorts
-        : [];
-    let portsData: any[] = data.props.ports ? data.props.ports : [];
+    let requestPageData: any[] = data && data.props && data.props.requests ? data.props.requests : [];
+    let incomingRequests: any[] = data && data.props && data.props.incoming ? data.props.incoming : [];
+    let allRequestData: any[] = data && data.props && data.props.requestsAll ? data.props.requestsAll : [];
+    let allOccupiedPorts: any[] = data && data.props && data.props.usedPorts ? data.props.usedPorts : [];
+    let portsData: any[] = data && data.props && data.props.ports ? data.props.ports : [];
 
     //Car selection variables
     let cars: Record<string, CarData[]> = data.props.cars;
@@ -324,11 +318,7 @@
                 console.log(data.uuid); // user's UUID
                 document.cookie = `userId=${data.uuid}; SameSite=None; path=/; Secure`;
                 userId.set(data.uuid);
-            } else {
-                console.error("Failed to post user to DB");
             }
-        } else {
-            console.error("User info is null");
         }
     }
 
