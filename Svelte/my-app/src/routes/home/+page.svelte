@@ -165,7 +165,7 @@
 
         carIntervalId = setInterval(async () => {
             try{
-            if (currentUserInfo && currentUserInfo.BatteryCurrent) {
+            if (currentUserInfo && currentUserInfo.BatteryCurrent && portsData.length > 0) {
                 const port = portsData[0];
                     if(port.maxPower) 
                     {
