@@ -1434,276 +1434,276 @@
                             </div>
                         </div>
                     </div>
-                    <div class="carousel-item h-full">
-                        <div class="card w-full bg-base-100">
-                            <div class="card-body">
-                                <h2 class="card-title">My Port</h2>
-                                {#if portsData.length === 0}
-                                    <div class="chat chat-start">
-                                        <div class="chat-bubble">
-                                            It's kind of empty
-                                        </div>
+                </div>
+                <div class="carousel-item h-full">
+                    <div class="card w-full bg-base-100">
+                        <div class="card-body">
+                            <h2 class="card-title">My Port</h2>
+                            {#if portsData.length === 0}
+                                <div class="chat chat-start">
+                                    <div class="chat-bubble">
+                                        It's kind of empty
                                     </div>
-                                    <div class="chat chat-end">
-                                        <div class="chat-bubble">Yes it is</div>
+                                </div>
+                                <div class="chat chat-end">
+                                    <div class="chat-bubble">Yes it is</div>
+                                </div>
+                            {:else}
+                                <table id="ports-table" class="table">
+                                    <thead class="bg-base-200">
+                                        <tr>
+                                            <th>Port</th>
+                                            <th>Station ID</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-base-300">
+                                        {#each portsData as port}
+                                            <tr class="p-1">
+                                                <td class="p-1 text-xs"
+                                                    >{port.displayName}</td
+                                                >
+                                                <td
+                                                    class="p-1 text-xs break-all"
+                                                    >{port.stationId}</td
+                                                >
+                                                <td class="p-1 justify-end">
+                                                    <button
+                                                        class="btn w-20 text-xs btn-error"
+                                                        on:click={() =>
+                                                            disconnectPort(
+                                                                port.portId,
+                                                                port.stationId,
+                                                            )}
+                                                    >
+                                                        Disconnect
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {/each}
+                                    </tbody>
+                                </table>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item h-full">
+                    <div class="card w-full bg-base-100">
+                        <div class="card-body">
+                            <h2 class="card-title">My Requests</h2>
+                            {#if requestPageData.length === 0}
+                                <div class="chat chat-start">
+                                    <div class="chat-bubble">
+                                        No requests to be seen here
                                     </div>
-                                {:else}
+                                </div>
+                                <div class="chat chat-start">
+                                    <div class="chat-bubble">:)</div>
+                                </div>
+                            {:else}
+                                <div class="overflow-y-auto max-h-80">
                                     <table id="ports-table" class="table">
                                         <thead class="bg-base-200">
                                             <tr>
                                                 <th>Port</th>
-                                                <th>Station ID</th>
+                                                <th>Priority</th>
+                                                <th>Message</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody class="bg-base-300">
-                                            {#each portsData as port}
+                                            {#each requestPageData as request}
                                                 <tr class="p-1">
                                                     <td class="p-1 text-xs"
-                                                        >{port.displayName}</td
+                                                        >{request.displayName}</td
                                                     >
+                                                    <td class="p-1">
+                                                        {#if request.priority === "high"}
+                                                            <span
+                                                                class="badge text-xs badge-error"
+                                                                >High</span
+                                                            >
+                                                        {:else if request.priority === "medium"}
+                                                            <span
+                                                                class="badge text-xs badge-warning"
+                                                                >Medium</span
+                                                            >
+                                                        {:else}
+                                                            <span
+                                                                class="badge text-xs badge-success"
+                                                                >Low</span
+                                                            >
+                                                        {/if}
+                                                    </td>
+                                                    <td class="p-1">
+                                                        <label
+                                                            for="my_modal_{request.requestId}"
+                                                            class="btn text-xs"
+                                                            >Show Message</label
+                                                        >
+                                                        <input
+                                                            type="checkbox"
+                                                            id="my_modal_{request.requestId}"
+                                                            class="modal-toggle"
+                                                        />
+                                                        <div
+                                                            class="modal"
+                                                            role="dialog"
+                                                        >
+                                                            <div
+                                                                class="modal-box"
+                                                            >
+                                                                <h3
+                                                                    class="font-bold text-lg"
+                                                                >
+                                                                    Message
+                                                                </h3>
+                                                                <p
+                                                                    class="py-4 overflow-y-auto max-h-40"
+                                                                >
+                                                                    {request.message}
+                                                                </p>
+                                                                <div
+                                                                    class="modal-action"
+                                                                >
+                                                                    <label
+                                                                        for="my_modal_{request.requestId}"
+                                                                        class="btn"
+                                                                        >Close</label
+                                                                    >
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
                                                     <td
-                                                        class="p-1 text-xs break-all"
-                                                        >{port.stationId}</td
+                                                        class="p-1 justify-end"
                                                     >
-                                                    <td class="p-1 justify-end">
                                                         <button
                                                             class="btn w-20 text-xs btn-error"
                                                             on:click={() =>
-                                                                disconnectPort(
-                                                                    port.portId,
-                                                                    port.stationId,
+                                                                cancelRequest(
+                                                                    request.requestId,
                                                                 )}
-                                                        >
-                                                            Disconnect
+                                                            >Cancel
                                                         </button>
                                                     </td>
                                                 </tr>
                                             {/each}
                                         </tbody>
                                     </table>
-                                {/if}
-                            </div>
+                                </div>
+                            {/if}
                         </div>
                     </div>
-                    <div class="carousel-item h-full">
-                        <div class="card w-full bg-base-100">
-                            <div class="card-body">
-                                <h2 class="card-title">My Requests</h2>
-                                {#if requestPageData.length === 0}
-                                    <div class="chat chat-start">
-                                        <div class="chat-bubble">
-                                            No requests to be seen here
-                                        </div>
+                </div>
+                <div class="carousel-item h-full">
+                    <div class="card w-full bg-base-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Incoming Requests</h2>
+                            {#if incomingRequests.length === 0}
+                                <div class="chat chat-start">
+                                    <div class="chat-bubble">
+                                        No incoming requests to be seen here
                                     </div>
-                                    <div class="chat chat-start">
-                                        <div class="chat-bubble">:)</div>
-                                    </div>
-                                {:else}
-                                    <div class="overflow-y-auto max-h-80">
-                                        <table id="ports-table" class="table">
-                                            <thead class="bg-base-200">
-                                                <tr>
-                                                    <th>Port</th>
-                                                    <th>Priority</th>
-                                                    <th>Message</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-base-300">
-                                                {#each requestPageData as request}
-                                                    <tr class="p-1">
-                                                        <td class="p-1 text-xs"
-                                                            >{request.displayName}</td
+                                </div>
+                                <div class="chat chat-start">
+                                    <div class="chat-bubble">:(</div>
+                                </div>
+                            {:else}
+                                <div class="overflow-y-auto max-h-80">
+                                    <table id="ports-table" class="table">
+                                        <thead class="bg-base-200">
+                                            <tr>
+                                                <th>Port</th>
+                                                <th>Priority</th>
+                                                <th>Message</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-base-300">
+                                            {#each incomingRequests as request}
+                                                <tr class="p-1">
+                                                    <td class="p-1 text-xs"
+                                                        >{request.displayName}</td
+                                                    >
+                                                    <td class="p-1">
+                                                        {#if request.priority === "high"}
+                                                            <span
+                                                                class="badge text-xs badge-error"
+                                                                >High</span
+                                                            >
+                                                        {:else if request.priority === "medium"}
+                                                            <span
+                                                                class="badge text-xs badge-warning"
+                                                                >Medium</span
+                                                            >
+                                                        {:else}
+                                                            <span
+                                                                class="badge text-xs badge-success"
+                                                                >Low</span
+                                                            >
+                                                        {/if}
+                                                    </td>
+                                                    <td class="p-1">
+                                                        <label
+                                                            for="my_modal_{request.requestId}"
+                                                            class="btn text-xs"
+                                                            >Show Message</label
                                                         >
-                                                        <td class="p-1">
-                                                            {#if request.priority === "high"}
-                                                                <span
-                                                                    class="badge text-xs badge-error"
-                                                                    >High</span
-                                                                >
-                                                            {:else if request.priority === "medium"}
-                                                                <span
-                                                                    class="badge text-xs badge-warning"
-                                                                    >Medium</span
-                                                                >
-                                                            {:else}
-                                                                <span
-                                                                    class="badge text-xs badge-success"
-                                                                    >Low</span
-                                                                >
-                                                            {/if}
-                                                        </td>
-                                                        <td class="p-1">
-                                                            <label
-                                                                for="my_modal_{request.requestId}"
-                                                                class="btn text-xs"
-                                                                >Show Message</label
-                                                            >
-                                                            <input
-                                                                type="checkbox"
-                                                                id="my_modal_{request.requestId}"
-                                                                class="modal-toggle"
-                                                            />
+                                                        <input
+                                                            type="checkbox"
+                                                            id="my_modal_{request.requestId}"
+                                                            class="modal-toggle"
+                                                        />
+                                                        <div
+                                                            class="modal"
+                                                            role="dialog"
+                                                        >
                                                             <div
-                                                                class="modal"
-                                                                role="dialog"
+                                                                class="modal-box"
                                                             >
-                                                                <div
-                                                                    class="modal-box"
+                                                                <h3
+                                                                    class="font-bold text-lg"
                                                                 >
-                                                                    <h3
-                                                                        class="font-bold text-lg"
+                                                                    Message
+                                                                </h3>
+                                                                <p
+                                                                    class="py-4 overflow-y-auto max-h-40"
+                                                                >
+                                                                    {request.message}
+                                                                </p>
+                                                                <div
+                                                                    class="modal-action"
+                                                                >
+                                                                    <label
+                                                                        for="my_modal_{request.requestId}"
+                                                                        class="btn"
+                                                                        >Close</label
                                                                     >
-                                                                        Message
-                                                                    </h3>
-                                                                    <p
-                                                                        class="py-4 overflow-y-auto max-h-40"
-                                                                    >
-                                                                        {request.message}
-                                                                    </p>
-                                                                    <div
-                                                                        class="modal-action"
-                                                                    >
-                                                                        <label
-                                                                            for="my_modal_{request.requestId}"
-                                                                            class="btn"
-                                                                            >Close</label
-                                                                        >
-                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </td>
-                                                        <td
-                                                            class="p-1 justify-end"
+                                                        </div>
+                                                    </td>
+                                                    <td
+                                                        class="p-1 justify-end"
+                                                    >
+                                                        <button
+                                                            class="btn w-20 text-xs btn-success"
+                                                            on:click={() =>
+                                                                approveRequest(
+                                                                    request.fromUserId,
+                                                                    request.requestedPortId,
+                                                                )}
                                                         >
-                                                            <button
-                                                                class="btn w-20 text-xs btn-error"
-                                                                on:click={() =>
-                                                                    cancelRequest(
-                                                                        request.requestId,
-                                                                    )}
-                                                                >Cancel
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                {/each}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                {/if}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item h-full">
-                        <div class="card w-full bg-base-100">
-                            <div class="card-body">
-                                <h2 class="card-title">Incoming Requests</h2>
-                                {#if incomingRequests.length === 0}
-                                    <div class="chat chat-start">
-                                        <div class="chat-bubble">
-                                            No incoming requests to be seen here
-                                        </div>
-                                    </div>
-                                    <div class="chat chat-start">
-                                        <div class="chat-bubble">:(</div>
-                                    </div>
-                                {:else}
-                                    <div class="overflow-y-auto max-h-80">
-                                        <table id="ports-table" class="table">
-                                            <thead class="bg-base-200">
-                                                <tr>
-                                                    <th>Port</th>
-                                                    <th>Priority</th>
-                                                    <th>Message</th>
-                                                    <th></th>
+                                                            Approve
+                                                        </button>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody class="bg-base-300">
-                                                {#each incomingRequests as request}
-                                                    <tr class="p-1">
-                                                        <td class="p-1 text-xs"
-                                                            >{request.displayName}</td
-                                                        >
-                                                        <td class="p-1">
-                                                            {#if request.priority === "high"}
-                                                                <span
-                                                                    class="badge text-xs badge-error"
-                                                                    >High</span
-                                                                >
-                                                            {:else if request.priority === "medium"}
-                                                                <span
-                                                                    class="badge text-xs badge-warning"
-                                                                    >Medium</span
-                                                                >
-                                                            {:else}
-                                                                <span
-                                                                    class="badge text-xs badge-success"
-                                                                    >Low</span
-                                                                >
-                                                            {/if}
-                                                        </td>
-                                                        <td class="p-1">
-                                                            <label
-                                                                for="my_modal_{request.requestId}"
-                                                                class="btn text-xs"
-                                                                >Show Message</label
-                                                            >
-                                                            <input
-                                                                type="checkbox"
-                                                                id="my_modal_{request.requestId}"
-                                                                class="modal-toggle"
-                                                            />
-                                                            <div
-                                                                class="modal"
-                                                                role="dialog"
-                                                            >
-                                                                <div
-                                                                    class="modal-box"
-                                                                >
-                                                                    <h3
-                                                                        class="font-bold text-lg"
-                                                                    >
-                                                                        Message
-                                                                    </h3>
-                                                                    <p
-                                                                        class="py-4 overflow-y-auto max-h-40"
-                                                                    >
-                                                                        {request.message}
-                                                                    </p>
-                                                                    <div
-                                                                        class="modal-action"
-                                                                    >
-                                                                        <label
-                                                                            for="my_modal_{request.requestId}"
-                                                                            class="btn"
-                                                                            >Close</label
-                                                                        >
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td
-                                                            class="p-1 justify-end"
-                                                        >
-                                                            <button
-                                                                class="btn w-20 text-xs btn-success"
-                                                                on:click={() =>
-                                                                    approveRequest(
-                                                                        request.fromUserId,
-                                                                        request.requestedPortId,
-                                                                    )}
-                                                            >
-                                                                Approve
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                {/each}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                {/if}
-                            </div>
+                                            {/each}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {/if}
                         </div>
                     </div>
                 </div>
