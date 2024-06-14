@@ -1,4 +1,7 @@
 import { PostUser } from '$lib/server/db/dbComposables';
+import { json } from '@sveltejs/kit';
+import { GetUserByEmail } from '$lib/server/db/dbComposables';
+
 
 /**
  * @openapi
@@ -54,3 +57,4 @@ export const POST = async ({ request }) => {
 
     return new Response(JSON.stringify({ message: "Failed"}), { status: 400 })
 }
+

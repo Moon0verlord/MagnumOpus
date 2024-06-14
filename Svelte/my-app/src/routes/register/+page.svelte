@@ -17,6 +17,22 @@
     let alertMessageDisplay = false;
     let alertMessage = ''
 
+    function validateName(name: string): boolean {
+    const nameRegex = /^[A-Za-z\s]+$/;
+    return nameRegex.test(name);
+    }
+
+    function validateEmail(email: string): boolean {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function validatePassword(password: string): boolean {
+        // Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return passwordRegex.test(password);
+    }
+
     async function handleRegisterKey(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             if (name === '' || email === '' || password === '' || confirmPassword === '') {
@@ -28,71 +44,75 @@
     }
 
     async function handleRegister() {
-        isLoading = true;
+       isLoading = true;
 
-        if (name === '' || email === '' || password === '' || confirmPassword === '') {
-            if (name === '') {
-                isNameError = true;
-            }
-            if (email === '') {
-                isEmailError = true;
-            }
-            if (password === '') {
-                isPasswordError = true;
-            }
-            if (confirmPassword === '') {
-                isConfirmPasswordError = true;
-            }
+       // Reset error states
+       isNameError = false;
+       isEmailError = false;
+       isPasswordError = false;
+       isConfirmPasswordError = false;
+       isPasswordMatchError = false;
+       isSuccess = false;
 
-            alertMessageDisplay = true;
-            alertMessage = 'Please fill in all fields';
-            isLoading = false;
+       // Validate inputs
+       if (!validateName(name)) {
+           isNameError = true;
+           alertMessage = 'Name must contain only letters and spaces';
+       } else if (!validateEmail(email)) {
+           isEmailError = true;
+           alertMessage = 'Invalid email address';
+       } else if (!validatePassword(password)) {
+           isPasswordError = true;
+           alertMessage = 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+       } else if (password !== confirmPassword) {
+           isPasswordMatchError = true;
+           alertMessage = 'Passwords do not match';
+       } else {
+           // Check if email already exists
+           const emailCheckResponse = await fetch('/api/register/checkEmail', {
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json'
+               },
+               body: JSON.stringify({ email })
+           });
 
-            setTimeout(() => {
-                alertMessageDisplay = false;}, 5000);
-            return;
+           const emailCheckData = await emailCheckResponse.json();
 
-        }
+           if (emailCheckData.exists) {
+               isEmailError = true;
+               alertMessage = 'Email already exists';
+           } else {
+               // Proceed with registration
+               const response = await fetch('/api/register', {
+                   method: 'POST',
+                   headers: {
+                       'Content-Type': 'application/json'
+                   },
+                   body: JSON.stringify({
+                       name: name,
+                       email: email,
+                       password: password
+                   })
+               });
 
-        if (password !== confirmPassword) {
-            alertMessageDisplay = true;
-            alertMessage = 'Password does not match';
-            isLoading = false;
-            setTimeout(() => {
-            alertMessageDisplay = false;}, 5000);
-            return;
-        }
-        isLoading = true;
+               console.log(response.status);
 
-        const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: name,
-            email: email,
-            password: password
-        })
-      });
+               if (response.status === 201) {
+                   isSuccess = true;
+                   alertMessage = 'Registration successful';
+               } else {
+                   alertMessage = 'Registration failed';
+               }
+           }
+       }
 
-      console.log(response.status);
-
-      if (response.status === 201) {
-          isSuccess = true;
-          alertMessageDisplay = true;
-          alertMessage = 'Registration successful';
-      } else {
-          alertMessageDisplay = true;
-          alertMessage = 'Registration failed';
-      }
-      isLoading = false;
-
-      setTimeout(() => {
-            alertMessageDisplay = false;
-        }, 5000);
-
-    }
+       alertMessageDisplay = true;
+       isLoading = false;
+       setTimeout(() => {
+           alertMessageDisplay = false;
+       }, 5000);
+   }
 
     function handleInput() {
         if (name !== '') {
@@ -225,7 +245,7 @@
               </label>
             </div>
             <div class="mb-4">
-              <label class="input input-bordered {isNameError ? 'input-error animate-pulse' : ''} flex items-center gap-2">
+              <label class="input input-bordered {isEmailError ? 'input-error animate-pulse' : ''} flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.587 1.413T20 20zm8-7.175q.125 0 .263-.038t.262-.112L19.6 8.25q.2-.125.3-.312t.1-.413q0-.5-.425-.75T18.7 6.8L12 11L5.3 6.8q-.45-.275-.875-.012T4 7.525q0 .25.1.438t.3.287l7.075 4.425q.125.075.263.113t.262.037"/>
                 </svg>
@@ -241,7 +261,7 @@
               </label>
             </div>
             <div class="mb-6">
-              <label class="input input-bordered {isConfirmPasswordError ? 'input-error animate-pulse' : ''} flex items-center gap-2">
+              <label class="input input-bordered {isPasswordMatchError ? 'input-error animate-pulse' : ''} flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M2 19v-2h20v2zm1.15-6.05l-1.3-.75l.85-1.5H1V9.2h1.7l-.85-1.45L3.15 7L4 8.45L4.85 7l1.3.75L5.3 9.2H7v1.5H5.3l.85 1.5l-1.3.75l-.85-1.5zm8 0l-1.3-.75l.85-1.5H9V9.2h1.7l-.85-1.45l1.3-.75l.85 1.45l.85-1.45l1.3.75l-.85 1.45H15v1.5h-1.7l.85 1.5l-1.3.75l-.85-1.5zm8 0l-1.3-.75l.85-1.5H17V9.2h1.7l-.85-1.45l1.3-.75l.85 1.45l.85-1.45l1.3.75l-.85 1.45H23v1.5h-1.7l.85 1.5l-1.3.75l-.85-1.5z"/>
                 </svg>
