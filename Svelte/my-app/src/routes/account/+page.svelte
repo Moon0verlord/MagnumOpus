@@ -384,7 +384,7 @@
                             <span class="label-text-alt">Enter to confirm</span>
                         {/if}
                         </div>
-                        <input type="number" placeholder="{currentUserInfo.BatteryCurrent.toString()}" class="input input-bordered w-full max-w-xs h-7" min="1" on:keydown={(e) => e.key === 'Enter' && ChangeCharge(e)} />
+                        <input type="number" placeholder="{currentUserInfo.BatteryCurrent.toString()}" class="input input-bordered w-full max-w-xs h-7" min="1" max="100" on:keydown={(e) => e.key === 'Enter' && ChangeCharge(e)} />
                     </label>
 
                     <div class="mt-4">
