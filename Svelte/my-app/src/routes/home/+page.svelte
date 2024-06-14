@@ -20,7 +20,7 @@
     let portsData: any[] = data && data.props && data.props.ports ? data.props.ports : [];
 
     //Car selection variables
-    let cars: Record<string, CarData[]> = data.props.cars;
+    let cars: Record<string, CarData[]> = data && data.props && data.props.cars ? data.props.cars : [];
     let keys: string[] = Object.keys(cars);
     let CarOfChoice: string;
 

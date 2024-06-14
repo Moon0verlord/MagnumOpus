@@ -4,7 +4,7 @@
     import {userId} from "../../../store";
     import type {User} from "$lib/server/db/types";
     import {mobile} from "../../../routes/mobile/mobile";
-  
+
     const dispatch = createEventDispatcher();
     let user: User;
     $: isMobile = $mobile;
@@ -14,12 +14,12 @@
     export let show = false;
     export let data: any;
     let percentage = 0;
-    
+
     const close = () => {
         show = false;
         dispatch("close");
     }
-    
+
     onMount(async () => {
         unsubscribe = userId.subscribe(value => {
             currentUserId = value;
@@ -41,16 +41,15 @@
             }
         }
     });
-    
+
     onDestroy(() => {
         if (unsubscribe) {
             unsubscribe();
         }
     });
-    async function getCharge()
-    {
-        if(currentUserId)
-        {
+
+    async function getCharge() {
+        if (currentUserId) {
             const response = await fetch(`/api/requests/charge`, {
                 method: 'GET',
                 headers: {
@@ -58,22 +57,19 @@
                     'id': (currentUserId ? currentUserId : '')
                 },
             });
-        let data = await response.json();
-        console.log("Charge data "+ data);
-        percentage = data;
-        }
-        else{
+            let data = await response.json();
+            percentage = data.charge;
+        } else {
             console.log("User not found");
-        
+
         }
     }
+
     let description = '';
     let priority = '';
- 
+
     async function requestPort() {
         await getCharge();
-        if(percentage)
-        {
         const response = await fetch('/api/requests', {
             method: 'POST',
             headers: {
@@ -87,8 +83,8 @@
                 percent: percentage
             })
         });
-        
-        
+
+
         if (response.status === 201) {
             close();
             const responseSlack = await fetch('/api/slack', {
@@ -109,7 +105,6 @@
             close();
         } else {
             console.log('Internal Server Error');
-        }
         }
     }
 </script>
@@ -137,7 +132,7 @@
                             <div class="form-control">
                                 <label class="label cursor-pointer">
                                     <span class="label-text pr-5">Urgent</span>
-                                    <input type="radio" name="radio-10" bind:group={priority} value="high"  class="radio checked:bg-red-500"/>
+                                    <input type="radio" name="radio-10" bind:group={priority} value="high" class="radio checked:bg-red-500"/>
                                 </label>
                             </div>
                             <div class="form-control">

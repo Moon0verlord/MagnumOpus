@@ -33,7 +33,7 @@ export const GET = async ({ request }) => {
     const userId = request.headers.get('id');
     if (userId) {
         const charge = await getCharge(userId);
-        if (charge) {
+        if (charge != null) {
             return new Response(JSON.stringify(charge), { status: 201 });
         }
     }
