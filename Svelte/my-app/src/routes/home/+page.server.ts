@@ -51,7 +51,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
                     // User has port, so new charge must be calculated based on time away.
                     let millis = Date.now() - Number(user?.lastChargeTime)
                     const intervals = Math.floor(millis / 4000);
-                    // Calculate how many 1 second intervals there were, and increase charge by that amount (obviously test numbers and not real but you know)
+                    // Calculate how many 4 second intervals there were, and increase charge by that amount (obviously test numbers and not real but you know)
                     user.BatteryCurrent = Math.min(100, Number(user.BatteryCurrent) + intervals).toString()
                 }
             }

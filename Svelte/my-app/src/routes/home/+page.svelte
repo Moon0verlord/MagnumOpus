@@ -343,15 +343,17 @@
             }),
         });
         const data = await response.json();
+        let user = data.user
+        if (user?.lastChargeTime !== null && portsData.length >= 1)
+        {
+            // User has port, so new charge must be calculated based on time away.
+            let millis = Date.now() - Number(user?.lastChargeTime)
+            const intervals = Math.floor(millis / 4000);
+            // Calculate how many 4 second intervals there were, and increase charge by that amount (obviously test numbers and not real but you know)
+            data.user.BatteryCurrent = Math.min(100, Number(user.BatteryCurrent) + intervals).toString()
+        }
 
-        let millis = Date.now() - Number(data.user.lastChargeTime);
-        const intervals = Math.floor(millis / 4000);
-        data.user.BatteryCurrent = Math.min(
-            100,
-            Number(data.user.BatteryCurrent) + intervals,
-        );
-
-        return data.user;
+        return user;
     }
 
     async function UserAdminCheck(id: string) {

@@ -21,8 +21,6 @@ export const Users  = pg.pgTable("Users", {
 
 export type User = InferSelectModel<typeof Users>;
 
-export type InsertUserSchuberg = InferInsertModel<typeof Users>;
-
 export const Stations = pg.pgTable("Stations", {
     stationId: pg.text("station_id").primaryKey(),
     locationId: pg.text("location_id"),
