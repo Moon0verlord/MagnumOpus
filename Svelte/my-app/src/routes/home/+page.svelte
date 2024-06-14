@@ -167,16 +167,24 @@
             try{
             if (currentUserInfo && currentUserInfo.BatteryCurrent) {
                 const port = portsData[0];
-                const date = new Date();
-                const millis = date.getTime();
-                const lastCharge = currentUserInfo.lastChargeTime;
-                if (lastCharge !== null && lastCharge !== undefined && currentUserInfo.BatteryMax) {
-                    const timeAway = Math.floor((millis - parseFloat(lastCharge)) / 1000);
-                    const chargeRate = parseFloat(currentUserInfo.BatteryMax) / port.maxPower;
-                    console.log(Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate))
-                    const charge = Math.min(100, Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate));
-                    carCharge += Math.min(100,charge-carCharge);
-                }
+                    if(port.maxPower) 
+                    {
+                        const date = new Date();
+                        const millis = date.getTime();
+                        const lastCharge = currentUserInfo.lastChargeTime;
+                        if (lastCharge !== null && lastCharge !== undefined && currentUserInfo.BatteryMax) {
+                            const timeAway = Math.floor((millis - parseFloat(lastCharge)) / 1000);
+                            const chargeRate = parseFloat(currentUserInfo.BatteryMax) / port.maxPower;
+                            console.log(Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate))
+                            const charge = Math.min(100, Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate));
+                            if(carCharge < 100){
+                                carCharge = charge;
+                            }
+                            else if (charge >= 100){
+                                carCharge = 100;
+                            }
+                        }
+                    }
             }
             } catch (error) {
                 console.error("Error calculating charge:", error);
@@ -1123,7 +1131,7 @@
                                         {#if currentUserInfo.BatteryCurrent}
                                             <progress
                                                 class="progress progress-primary w-full"
-                                                value={currentUserInfo.BatteryCurrent}
+                                                value={carCharge}
                                                 max="100"
                                             ></progress>
                                             <p>
