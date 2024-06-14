@@ -377,7 +377,7 @@
                     {/if}
                     <label class="form-control w-full max-w-xs">
                         <div class="label">
-                        <span class="label-text">Battery:</span>
+                        <span class="label-text">Battery percentage:</span>
                         {#if UpdateCharge}
                             <span class="label-text-alt text-green-500">Updated</span>
                         {:else}
