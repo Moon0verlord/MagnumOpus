@@ -71,13 +71,6 @@ export async function getCurUser(id: string | null) {
         throw new Error("User ID cannot be null");
     }
 }
-
-function addHours(date: Date, hours: number): Date {
-    console.log("Estimated time: "+new Date(date.getTime() + hours*60 *60 * 1000));
-    const milliseconds = hours * 60 * 60 * 1000;
-    return new Date(date.getTime() + milliseconds);
-}
-
 export async function ChangeUserLevel(email:string,level:number,xp:number){
     try {
         console.log(email,level,xp)
