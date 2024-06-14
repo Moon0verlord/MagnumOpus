@@ -14,7 +14,6 @@ export type Port = {
     usedByUser: string | null ;
     emi3Id: string;
     status: 'available' | 'occupied' | 'unavailable';
-    OccupiedTime: Date | null;
     timeRemaining: Date | null;
     maxPower: number;
 }

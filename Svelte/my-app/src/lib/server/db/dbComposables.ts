@@ -104,18 +104,16 @@ export async function ChangeUserXp(email:string,xp:number) {
     }
 }
 
-export async function reservePort(userId: string, portId: string, stationId: string,occupiedTime: Date) {
+export async function reservePort(userId: string, portId: string, stationId: string) {
     try {
      
         const existingPort = await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
         if (existingPort.length > 0) {
             return "User has already reserved a port";
         }
-        const chosenPort = await db.select().from(Ports).where(eq(Ports.portId, portId)).execute();
-        const endTime = await GetEndTimeChargeEstimation(new Date(occupiedTime),userId,chosenPort[0].maxPower);
         
         await db.update(Ports)
-            .set({usedBy: userId, status: 'occupied',OccupiedTime:new Date(occupiedTime),timeRemaining:endTime})
+            .set({usedBy: userId, status: 'occupied'})
             .where(eq(Ports.portId, portId))
             .execute();
 
@@ -129,26 +127,6 @@ export async function reservePort(userId: string, portId: string, stationId: str
         }
         await db.update(Users).set({lastChargeTime: Date.now().toString()}).where(eq(Users.userId, userId))
         return true;
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-}
-
-export async function GetEndTimeChargeEstimation(occupiedTime:Date, userId: string,power: number | null) {
-    //Asuming the Dutch average of 230V so 16A
-    //Using battery size (kWh) / charger power (kW) = charging time (hours).
-
-    try {
-        const user = (await db.select().from(Users).where(eq(Users.userId, userId)).execute())[0];
-        const PerCharge = await getCharge(user.userId);
-        
-
-        if (PerCharge && user.BatteryMax && power!=null)
-        {
-            const remainingCharge = (PerCharge / 100) * parseFloat(user.BatteryMax);
-            return new Date(occupiedTime.getTime() + (remainingCharge / power)*60*60*1000);;
-        }
     } catch (error) {
         console.error(error);
         return null;
@@ -218,7 +196,7 @@ export async function releasePort(portId: string, stationId: string) {
             }
         }
             await db.update(Ports)
-                .set({usedBy: null, status: 'available', OccupiedTime: null, timeRemaining: null})
+                .set({usedBy: null, status: 'available'})
                 
                 .where(eq(Ports.portId, portId))
                 .execute();
@@ -499,62 +477,5 @@ export async function ChangeUser(id: string , email:string | null, name:string |
     }
     return total !== 0;
 }
-export async function GetInterCharge(userId: string, BatteryCurrent: string, BatteryMax: string) {
-    try {
-    
-        if(userId !== null && BatteryCurrent !== undefined && BatteryMax !== undefined) {
-            {
-             
-                const users : User[] = await db.select().from(Users).where(eq(Users.userId, userId)).execute();
-                const user = users[0];
-                const PerCharge = await getCharge(userId);
-                const ports : Port[] =  await db.select().from(Ports).where(eq(Ports.usedBy, userId)).execute();
-                
-                if (ports !== null) {
-                    {
-                       
-                        if (ports.length > 0) {
-                     
-                            const port = ports[0];
-                            if (port!==null) {
-                         
-                                const power = port.maxPower;
-                                const date = new Date()
 
-                                if (PerCharge && BatteryMax && port.timeRemaining && power && port.OccupiedTime){
-                                
-                                    const timeElapsed = (new Date().getTime() - port.OccupiedTime.getTime()) / 1000 / 60;
-                                    let remainingTime = port.timeRemaining.getHours() - timeElapsed;
-                                    
-
-                                    if (remainingTime < 0) {
-                                        remainingTime = 0;
-                                    }
-                                    
-                                    const chargingRate = parseFloat(BatteryMax) / power;
-                                    const curCharge = parseFloat(BatteryCurrent);
-                                    let estimatedCharge = PerCharge + (chargingRate * timeElapsed);
-
-                                    if (estimatedCharge > 100) {
-                                        estimatedCharge = 100;
-                                    }
-                                    await db.update(Users)
-                                        .set({BatteryCurrent: estimatedCharge.toString()})
-                                        .where(eq(Users.userId, userId))
-                                        .execute();
-                                    return remainingTime;
-
-                                }
-                            }
-                        }
-                    }
-                } 
-                
-            }
-        }
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-}
 

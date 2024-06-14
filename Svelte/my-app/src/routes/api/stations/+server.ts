@@ -19,8 +19,6 @@ import { reservePort } from "$lib/server/db/dbComposables";
  *                 type: string
  *               stationId:
  *                 type: string
- *               occupiedTime:
- *                 type: string
  *     responses:
  *       201:
  *         description: Success
@@ -54,8 +52,7 @@ import { reservePort } from "$lib/server/db/dbComposables";
 export const POST = async ({ request }) => {
     const body = await request.json();
 
-    const port = await reservePort(body.userId, body.portId, body.stationId,body.occupiedTime);
-    console.log("POST:"+body.occupiedTime)
+    const port = await reservePort(body.userId, body.portId, body.stationId);
     if (port) {
         if (port === "User has already reserved a port") {
             return new Response(JSON.stringify({ message: "User has already reserved a port"}), { status: 202 });

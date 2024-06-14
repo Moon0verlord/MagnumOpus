@@ -39,8 +39,7 @@
             body: JSON.stringify({
                 userId: currentUserId,
                 portId: port.portId,
-                stationId: port.stationId,
-                occupiedTime: new Date()
+                stationId: port.stationId
             })
         });
 
