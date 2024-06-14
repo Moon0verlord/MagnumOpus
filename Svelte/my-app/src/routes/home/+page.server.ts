@@ -48,11 +48,21 @@ export const load: PageServerLoad = async ({ cookies }) => {
             {
                 if (user?.lastChargeTime !== null)
                 {
-                    // User has port, so new charge must be calculated based on time away.
-                    let millis = Date.now() - Number(user?.lastChargeTime)
-                    const intervals = Math.floor(millis / 4000);
-                    // Calculate how many 4 second intervals there were, and increase charge by that amount (obviously test numbers and not real but you know)
-                    user.BatteryCurrent = Math.min(100, Number(user.BatteryCurrent) + intervals).toString()
+                    const port = ports[0];
+                    if(port.maxPower) {
+                        const date = new Date();
+                        const millis = date.getTime();
+                        const lastCharge = user.lastChargeTime;
+                        if (lastCharge !== null && lastCharge !== undefined && user.BatteryMax) {
+                            const timeAway = Math.floor((millis - parseFloat(lastCharge)) / 1000);
+                            const chargeRate = parseFloat(user.BatteryMax) / port.maxPower;
+
+                            const charge = Math.min(100, Number(user.BatteryCurrent) + Math.floor(timeAway / chargeRate));
+                            if (charge < 100) {
+                                user.BatteryCurrent = String(charge);
+                            }
+                        }
+                    }
                 }
             }
         }
