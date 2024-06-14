@@ -164,14 +164,23 @@
         }
 
         carIntervalId = setInterval(async () => {
+            try{
             if (currentUserInfo && currentUserInfo.BatteryCurrent) {
-                try {
-                    if (carCharge && portsData.length >= 1)
-                        // Simple increment counter for now, easier to show charging during demo. Switch with actual calculation in production.
-                        carCharge = Math.min(100, carCharge + 1);
-                } catch (error) {
-                    console.error("Error fetching data:", error);
+                const port = portsData[0];
+                const date = new Date();
+                const millis = date.getTime();
+                const lastCharge = currentUserInfo.lastChargeTime;
+                if (lastCharge !== null && lastCharge !== undefined && currentUserInfo.BatteryMax) {
+                    const timeAway = Math.floor((millis - parseFloat(lastCharge)) / 1000);
+                    const chargeRate = parseFloat(currentUserInfo.BatteryMax) / port.maxPower;
+                    console.log(Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate))
+                    const charge = Math.min(100, Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate));
+                    carCharge += Math.min(100,charge-carCharge);
                 }
+            }
+            } catch (error) {
+                console.error("Error calculating charge:", error);
+                
             }
         }, 4000);
 
