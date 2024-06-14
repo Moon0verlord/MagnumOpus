@@ -175,7 +175,7 @@
                         if (lastCharge !== null && lastCharge !== undefined && currentUserInfo.BatteryMax) {
                             const timeAway = Math.floor((millis - parseFloat(lastCharge)) / 1000);
                             const chargeRate = parseFloat(currentUserInfo.BatteryMax) / port.maxPower;
-                            console.log(Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate))
+                            
                             const charge = Math.min(100, Number(currentUserInfo.BatteryCurrent) + Math.floor(timeAway / chargeRate));
                             if(carCharge < 100){
                                 carCharge = charge;
