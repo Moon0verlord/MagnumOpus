@@ -163,6 +163,12 @@
             }
         }
 
+        if (currentUserInfo) {
+            if (!currentUserInfo.carModel) {
+                showNotification();
+            }
+        }
+
         carIntervalId = setInterval(async () => {
             try{
             if (currentUserInfo && currentUserInfo.BatteryCurrent && portsData.length > 0) {
