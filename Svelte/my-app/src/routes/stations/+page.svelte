@@ -294,7 +294,7 @@
                                                                 {/if}
                                                                 {#if port.status === 'available'}
                                                                     <button class="btn w-4/6 btn-success"
-                                                                            on:click={() => reservePort(port)}>Rerserve
+                                                                            on:click={() => reservePort(port)}>Reserve
                                                                     </button>
                                                                 {/if}
                                                                 {#if port.status === 'unavailable'}
