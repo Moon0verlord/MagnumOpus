@@ -261,10 +261,10 @@
                                         </div>
                                     </td>
                                     <td class="p-1">
-                                        <div class="collapse collapse-arrow">
+                                        <div class="collapse collapse-arrow z-0">
                                             <input type="checkbox" disabled={showModal}
                                                    on:change={() => { if (!showModal) selectedStationId = (selectedStationId === station.stationId ? "" : station.stationId) }}/>
-                                            <div class="collapse-title"/>
+                                            <div class="collapse-title z-0"/>
                                         </div>
                                     </td>
                                 </tr>

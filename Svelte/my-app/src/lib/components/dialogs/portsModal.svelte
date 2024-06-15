@@ -110,7 +110,7 @@
 </script>
 
 {#if show}
-    <div class="fixed inset-0 flex items-center justify-center">
+    <div class="fixed inset-1 z-40 flex items-center justify-center">
         <div class="card w-96 glass bg-base-100">
             <div class="card-body">
                 <h2 class="card-title">{data.displayName}</h2>
