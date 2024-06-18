@@ -227,7 +227,7 @@
                 registration.showNotification(
                     `Hello ${currentUserInfo!.name}!`,
                     {
-                        body: "Welcome to the EV Charging Station",
+                        body: "Welcome to Schuberg Hub",
                         icon: "/assets/favicon.ico",
                         tag: "Greeting",
                     },

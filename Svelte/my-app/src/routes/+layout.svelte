@@ -109,7 +109,7 @@
 
     <!-- Mobile Navbar -->
     {#if isMobile && ["/home", "/stations", "/settings", "/account"].includes(currentPage)}
-        <div class="btm-nav">
+        <div class="btm-nav pb-6">
             <a href="/home" class:active={currentPage === "/home"}>
                 <button>
                     <span class="btm-nav-label">Home</span>
